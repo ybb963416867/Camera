@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.util.Log;
+import android.view.SurfaceHolder;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -23,7 +24,9 @@ public class KitkatCamera implements ICamera {
     private Camera.Size preSize;
     private Camera.Size picSize;
     private Point mPicSize;
+    private int  mCameraId;
     private Point mPreSize;
+    private String TAG = "KitkatCamera";
 
     public KitkatCamera() {
         this.mConfig = new ICamera.Config();
@@ -33,9 +36,18 @@ public class KitkatCamera implements ICamera {
         this.sizeComparator = new CameraSizeComparator();
     }
 
+    public int getCameraId() {
+        return mCameraId;
+    }
+
+    public void setCameraId(int mCameraId) {
+        this.mCameraId = mCameraId;
+    }
+
     @Override
     public boolean open(int cameraId) {
-        mCamera = Camera.open(cameraId);
+        this.mCameraId = cameraId;
+        mCamera = Camera.open(mCameraId);
         if (mCamera != null) {
             Camera.Parameters param = mCamera.getParameters();
             picSize = getPropPictureSize(param.getSupportedPictureSizes(), mConfig.rate,
@@ -51,7 +63,7 @@ public class KitkatCamera implements ICamera {
             Camera.Size pic = param.getPictureSize();
             mPicSize = new Point(pic.height, pic.width);
             mPreSize = new Point(pre.height, pre.width);
-            Log.e("wuwang", "camera previewSize:" + mPreSize.x + "/" + mPreSize.y);
+            Log.e(TAG, "camera previewSize:" + mPreSize.x + "/" + mPreSize.y);
             return true;
 
         }
@@ -73,9 +85,15 @@ public class KitkatCamera implements ICamera {
     }
 
     @Override
-    public boolean switchTo(int camreraId) {
+    public boolean switchTo(int cameraId) {
         close();
-        return open(camreraId);
+        return open(cameraId);
+    }
+
+    public void  setDisplayOrientation(int i){
+        if (mCamera!=null){
+            mCamera.setDisplayOrientation(i);
+        }
     }
 
     @Override
@@ -89,6 +107,7 @@ public class KitkatCamera implements ICamera {
             try {
                 mCamera.stopPreview();
                 mCamera.release();
+                mCamera = null;
             } catch (Exception e) {
 
             }
@@ -101,6 +120,20 @@ public class KitkatCamera implements ICamera {
         if (mCamera != null) {
             try {
                 mCamera.setPreviewTexture(texture);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * @param holder
+     */
+    @Override
+    public void setPreviewDisplay(SurfaceHolder holder) {
+        if (mCamera != null) {
+            try {
+                mCamera.setPreviewDisplay(holder);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -147,7 +180,7 @@ public class KitkatCamera implements ICamera {
 
 
     /**
-     * @param list
+     * @param list 相机支持的size 列表
      * @param th
      * @param minWidth
      * @return
