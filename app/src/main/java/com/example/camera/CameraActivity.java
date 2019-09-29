@@ -2,22 +2,19 @@ package com.example.camera;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.base.BaseActivity;
 import com.example.util.PermissionUtils;
+import com.example.view.CustomSurfaceViewCamera;
 
-public class CameraActivity extends BaseActivity implements SurfaceHolder.Callback{
+public class CameraActivity extends BaseActivity {
 
-    private KitkatCamera kitkatCamera;
-    private SurfaceView surfaceView;
-    private Button switchCam;
+    private CustomSurfaceViewCamera surfaceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,18 +32,10 @@ public class CameraActivity extends BaseActivity implements SurfaceHolder.Callba
         public void run() {
             setContentView(R.layout.activity_camera);
             surfaceView = findViewById(R.id.surface);
-            final SurfaceHolder holder = surfaceView.getHolder();
-            kitkatCamera = new KitkatCamera();
-            kitkatCamera.setPreviewDisplay(holder);
-            holder.addCallback(CameraActivity.this);
-            switchCam = findViewById(R.id.switch_cam);
-            switchCam.setOnClickListener(new View.OnClickListener() {
+            findViewById(R.id.switch_cam).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    kitkatCamera.switchTo(kitkatCamera.getCameraId()==0?1:0);
-                    kitkatCamera.setPreviewDisplay(holder);
-                    kitkatCamera.setDisplayOrientation(90);
-                    kitkatCamera.preview();
+                    surfaceView.switchCamera();
                 }
             });
         }
@@ -64,21 +53,4 @@ public class CameraActivity extends BaseActivity implements SurfaceHolder.Callba
         });
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
-        kitkatCamera.open(0);
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-        kitkatCamera.setPreviewDisplay(surfaceHolder);
-        kitkatCamera.setDisplayOrientation(90);
-        kitkatCamera.preview();
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        kitkatCamera.close();
-    }
 }
