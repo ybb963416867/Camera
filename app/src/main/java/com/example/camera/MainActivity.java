@@ -10,6 +10,7 @@ import com.example.base.BaseActivity;
 public class MainActivity extends BaseActivity {
 
     private Button camera1;
+    private Button camera2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +20,14 @@ public class MainActivity extends BaseActivity {
         camera1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,CameraActivity.class));
+                startActivity(new Intent(MainActivity.this, CameraActivity.class));
+            }
+        });
+        camera2 = findViewById(R.id.camera2);
+        camera2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, Camera2Activity.class));
             }
         });
     }
