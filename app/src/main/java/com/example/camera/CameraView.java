@@ -48,7 +48,7 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
             mRunnable.run();
             mRunnable = null;
         }
-        mCamera2.open(cameraId);
+        mCamera2.open( mCamera2.getCameraId() == 1 ? 0 : 1);
         Point point = mCamera2.getPreviewSize();
         mCameraDrawer.setDataSize(point.x, point.y);
         mCamera2.setPreviewTexture(mCameraDrawer.getSurfaceTexture());
@@ -64,6 +64,10 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
         mCameraDrawer.setViewSize(width, height);
+        /**
+         * 前两个是起始位置，后面两个是宽
+         * 坐标系是Y轴朝上，左下角是0，X轴朝右，左下角是0.都是整数。
+         */
         GLES20.glViewport(0, 0, width, height);
     }
 
@@ -73,7 +77,6 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
             @Override
             public void run() {
                 mCamera2.close();
-                cameraId = cameraId == 1 ? 0 : 1;
             }
         };
         onPause();
