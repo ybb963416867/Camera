@@ -1,4 +1,4 @@
-package com.example;
+package com.example.filter;
 
 import android.content.res.Resources;
 import android.opengl.GLES20;
@@ -97,6 +97,22 @@ public abstract class AFilter {
     public AFilter(Resources mRes) {
         this.mRes = mRes;
         initBuffer();
+    }
+
+    public final void create() {
+        onCreate();
+    }
+
+    public final void setSize(int width, int height) {
+        onSizeChanged(width, height);
+    }
+
+    public void draw() {
+        onClear();
+        onUseProgram();
+        onSetExpandData();
+        onBindTexture();
+        onDraw();
     }
 
     public void setMatrix(float[] matrix) {

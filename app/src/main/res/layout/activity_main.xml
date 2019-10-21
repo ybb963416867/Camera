@@ -21,6 +21,15 @@
         android:text="使用TextureView预览摄像头"
         />
 
+    <Button
+        android:id="@+id/camera3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="使用opengl预览摄像头"
+        />
+
+
+
 
 
 </LinearLayout>
