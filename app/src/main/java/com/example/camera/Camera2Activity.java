@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,11 +16,13 @@ import android.widget.Toast;
 import com.example.base.BaseActivity;
 import com.example.util.PermissionUtils;
 import com.example.view.CustomTextureView;
+import com.example.view.FocusImageView;
 
 public class Camera2Activity extends BaseActivity {
 
     private CustomTextureView textureView;
     private String TAG = "Camera2Activity";
+    private FocusImageView focusImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,23 @@ public class Camera2Activity extends BaseActivity {
         public void run() {
             setContentView(R.layout.activity_camera2);
             textureView = findViewById(R.id.texture_view);
+            focusImageView = findViewById(R.id.focus_iv);
+            textureView.setAutoFocus(new KitkatCamera.AutoFocus() {
+                @Override
+                public void startFocus(Point point) {
+                    focusImageView.startFocus(point);
+                }
+
+                @Override
+                public void focusSuccess() {
+                    focusImageView.onFocusSuccess();
+                }
+
+                @Override
+                public void focusFailed() {
+                    focusImageView.onFocusFailed();
+                }
+            });
             findViewById(R.id.btn_switch).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

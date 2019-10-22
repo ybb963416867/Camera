@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.util.PermissionUtils;
+import com.example.view.CameraView;
 
 public class Camera3Activity extends AppCompatActivity {
 

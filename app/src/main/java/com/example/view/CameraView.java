@@ -1,4 +1,4 @@
-package com.example.camera;
+package com.example.view;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -7,6 +7,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
+import com.example.camera.KitkatCamera;
 import com.example.rander.CameraDrawer;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -48,7 +49,7 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
             mRunnable.run();
             mRunnable = null;
         }
-        mCamera2.open( mCamera2.getCameraId() == 1 ? 0 : 1);
+        mCamera2.open(mCamera2.getCameraId() == 1 ? 0 : 1);
         Point point = mCamera2.getPreviewSize();
         mCameraDrawer.setDataSize(point.x, point.y);
         mCamera2.setPreviewTexture(mCameraDrawer.getSurfaceTexture());

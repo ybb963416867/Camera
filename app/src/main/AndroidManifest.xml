@@ -17,8 +17,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".Camera3Activity"></activity>
+        android:theme="@style/MyTheme"
+        android:name="com.example.CameraApplication">
+        <activity android:name=".Camera3Activity" />
         <activity android:name=".Camera2Activity" />
         <activity android:name=".CameraActivity" />
         <activity
