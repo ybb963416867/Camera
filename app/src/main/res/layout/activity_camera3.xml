@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,5 +24,14 @@
 
     </FrameLayout>
 
+    <com.example.view.FocusImageView
+        android:id="@+id/focus_iv"
+        android:layout_width="70dip"
+        android:layout_height="70dip"
+        app:focus_fail_id="@drawable/focus_focus_failed"
+        app:focus_focusing_id="@drawable/focus_focusing"
+        app:focus_success_id="@drawable/focus_focused"
+        android:visibility="invisible" />
 
-</LinearLayout>
+
+</RelativeLayout>

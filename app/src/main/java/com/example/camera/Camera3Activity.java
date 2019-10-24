@@ -4,16 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.util.PermissionUtils;
 import com.example.view.CameraView;
+import com.example.view.FocusImageView;
 
 public class Camera3Activity extends AppCompatActivity {
 
     private CameraView mCameraView;
+    private FocusImageView focusImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,23 @@ public class Camera3Activity extends AppCompatActivity {
         public void run() {
             setContentView(R.layout.activity_camera3);
             mCameraView = findViewById(R.id.texture_view);
+            focusImageView = findViewById(R.id.focus_iv);
+            mCameraView.setAutoFocus(new KitkatCamera.AutoFocus() {
+                @Override
+                public void startFocus(Point point) {
+                    focusImageView.startFocus(point);
+                }
+
+                @Override
+                public void focusSuccess() {
+                    focusImageView.onFocusSuccess();
+                }
+
+                @Override
+                public void focusFailed() {
+                    focusImageView.onFocusFailed();
+                }
+            });
             findViewById(R.id.btn_switch).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

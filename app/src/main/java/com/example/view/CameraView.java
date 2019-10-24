@@ -3,10 +3,14 @@ package com.example.view;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 
+import com.example.CameraApplication;
 import com.example.camera.KitkatCamera;
 import com.example.rander.CameraDrawer;
 
@@ -24,6 +28,8 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
     private CameraDrawer mCameraDrawer;
     private int cameraId;
     private Runnable mRunnable;
+    private String TAG = "CameraView";
+    private KitkatCamera.AutoFocus autoFocus;
 
     public CameraView(Context context) {
         this(context, null);
@@ -32,6 +38,10 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
     public CameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+
+    public void setAutoFocus(KitkatCamera.AutoFocus autoFocus) {
+        this.autoFocus = autoFocus;
     }
 
     private void init() {
@@ -93,5 +103,50 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
     public void onPause() {
         super.onPause();
         mCamera2.close();
+    }
+
+    public void onFocus(Point point, Camera.AutoFocusCallback callback) {
+        mCamera2.onFocus(point, callback);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG, "onTouchEvent");
+        //前置摄像头没有聚焦
+        if (mCamera2.getCameraId() == 1) {
+            return false;
+        }
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_UP:
+                float sRawX = event.getRawX();
+                float sRawY = event.getRawY();
+                Log.d(TAG, "sRawX:" + sRawX + "sRawY:" + sRawY);
+                float rawY = sRawY * CameraApplication.screenWidth / CameraApplication.screenHeight;
+                float temp = sRawX;
+                float rawX = rawY;
+                rawY = (this.getWidth() - temp) * CameraApplication.screenWidth / CameraApplication.screenHeight;
+                Log.d(TAG, "rawx:" + rawX + "rawy:" + rawY);
+                Point point = new Point((int) rawX, (int) rawY);
+                onFocus(point, new Camera.AutoFocusCallback() {
+                    @Override
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        if (success) {
+                            Log.d(TAG, "聚焦成功");
+                            if (autoFocus != null) {
+                                autoFocus.focusSuccess();
+                            }
+                        } else {
+                            Log.d(TAG, "聚焦失败");
+                            if (autoFocus != null) {
+                                autoFocus.focusFailed();
+                            }
+                        }
+                    }
+                });
+                if (autoFocus != null) {
+                    autoFocus.startFocus(new Point((int) sRawX, (int) sRawY));
+                }
+        }
+        return true;
     }
 }
