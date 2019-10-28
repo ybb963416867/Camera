@@ -65,7 +65,6 @@ public class VideoGLSurfaceView extends GLSurfaceView implements GLSurfaceView.R
     public void onDrawFrame(GL10 gl10) {
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        Gl2Utils.getShowMatrix(videoDrawer.mMVP, CameraApplication.screenWidth, CameraApplication.screenHeight, CameraApplication.screenWidth, CameraApplication.screenHeight);
         videoDrawer.draw();
     }
 }
