@@ -78,10 +78,10 @@ public abstract class AFilter {
      * 图片的定点坐标
      */
     private float pos[] = {
-            -1.0f, 1.0f,
-            -1.0f, -1.0f,
-            1.0f, -1.0f,
-            1.0f, 1.0f,
+            -1.0f, 1.0f,//top left
+            -1.0f, -1.0f,//bottom left
+            1.0f, -1.0f,//bottom right
+            1.0f, 1.0f,// top right
     };
 
     /**

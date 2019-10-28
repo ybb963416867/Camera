@@ -8,22 +8,28 @@
 package com.example.util;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
+
 
 /**
  * Description:
  */
 public class Gl2Utils {
 
-    public static final String TAG = "GLUtils";
+    public static final String TAG = "Gl2Utilss";
     public static boolean DEBUG = true;
+    private static final int SIZEOF_FLOAT = 4;
 
     /**
      * 最大
@@ -156,6 +162,7 @@ public class Gl2Utils {
         }
     }
 
+
     public static float[] rotate(float[] m, float angle) {
         Matrix.rotateM(m, 0, angle, 0, 0, 1);
         return m;
@@ -265,6 +272,106 @@ public class Gl2Utils {
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
                 GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
         return texture[0];
+    }
+
+
+    /**
+     * Checks to see if the location we obtained is valid.  GLES returns -1 if a label
+     * could not be found, but does not set the GL error.
+     * <p>
+     * Throws a RuntimeException if the location is invalid.
+     */
+    public static void checkLocation(int location, String label) {
+        if (location < 0) {
+            throw new RuntimeException("Unable to locate '" + label + "' in program");
+        }
+    }
+
+    /**
+     * Creates a texture from raw data.
+     *
+     * @param data   Image data, in a "direct" ByteBuffer.
+     * @param width  Texture width, in pixels (not bytes).
+     * @param height Texture height, in pixels.
+     * @param format Image data format (use constant appropriate for glTexImage2D(), e.g. GL_RGBA).
+     * @return Handle to texture.
+     */
+    public static int createImageTexture(ByteBuffer data, int width, int height, int format) {
+        int[] textureHandles = new int[1];
+        int textureHandle;
+
+        GLES20.glGenTextures(1, textureHandles, 0);
+        textureHandle = textureHandles[0];
+        Gl2Utils.checkGlError("glGenTextures");
+
+        // Bind the texture handle to the 2D texture target.
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
+
+        // Configure min/mag filtering, i.e. what scaling method do we use if what we're rendering
+        // is smaller or larger than the source image.
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        Gl2Utils.checkGlError("loadImageTexture");
+
+        // Load the data from the buffer into the texture handle.
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, format, width, height, 0, format,
+                GLES20.GL_UNSIGNED_BYTE, data);
+        Gl2Utils.checkGlError("loadImageTexture");
+
+        return textureHandle;
+    }
+
+
+    /**
+     * @param count
+     * @return 创建一个纹理数组
+     */
+    public static int[] createTextureID(int count) {
+        int[] texture = new int[count];
+
+        GLES20.glGenTextures(count, texture, 0);
+        // Bind the texture handle to the 2D texture target.
+//        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, texture[0]);
+        // Configure min/mag filtering, i.e. what scaling method do we use if what we're rendering
+        // is smaller or larger than the source image.
+        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+
+        return texture;
+    }
+
+    /**
+     * Allocates a direct float buffer, and populates it with the float array data.
+     */
+    public static FloatBuffer createFloatBuffer(float[] coords) {
+        // Allocate a direct ByteBuffer, using 4 bytes per float, and copy coords into it.
+        ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * SIZEOF_FLOAT);
+        bb.order(ByteOrder.nativeOrder());
+        FloatBuffer fb = bb.asFloatBuffer();
+        fb.put(coords);
+        fb.position(0);
+        return fb;
+    }
+
+
+    /**
+     * Checks to see if a GLES error has been raised.
+     */
+    public static void checkGlError(String op) {
+        int error = GLES20.glGetError();
+        if (error != GLES20.GL_NO_ERROR) {
+            String msg = op + ": glError 0x" + Integer.toHexString(error);
+            Log.e(TAG, msg);
+            throw new RuntimeException(msg);
+        }
     }
 
 }

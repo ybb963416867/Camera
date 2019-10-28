@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.base.BaseActivity;
+import com.example.view.VideoGLSurfaceView;
 
 public class MainActivity extends BaseActivity {
 
@@ -36,6 +37,13 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, Camera2Activity.class));
+            }
+        });
+
+        findViewById(R.id.video_preview).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, VideoPreviewActivity.class));
             }
         });
     }
