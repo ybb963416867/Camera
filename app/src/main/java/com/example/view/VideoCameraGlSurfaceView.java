@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.manager.CameraMediaControl;
+import com.example.manager.CameraMediaControl2;
 import com.example.rander.CameraDrawer2;
 import com.example.rander.IDrawer;
 import com.example.rander.VideoDrawer;
@@ -31,7 +32,8 @@ public class VideoCameraGlSurfaceView extends GLSurfaceView implements GLSurface
 
     private CameraTouchControl control;
     private Context context;
-    private CameraMediaControl mediaControl;
+    private CameraMediaControl2 mediaControl;
+//    private CameraMediaControl mediaControl;
     private ArrayList mSurfaceTextures = new ArrayList<SurfaceTexture>();
     private ArrayList<IDrawer> mDirectDrawers = new ArrayList<>();
 
@@ -57,7 +59,8 @@ public class VideoCameraGlSurfaceView extends GLSurfaceView implements GLSurface
             }
         });
 
-        mediaControl = new CameraMediaControl(context);
+        mediaControl = new CameraMediaControl2(context);
+//        mediaControl = new CameraMediaControl(context);
         mediaControl.prepare();
     }
 

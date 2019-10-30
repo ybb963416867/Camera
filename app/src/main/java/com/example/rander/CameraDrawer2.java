@@ -3,8 +3,10 @@ package com.example.rander;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
+import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
+import com.example.camera.CameraCapture;
 import com.example.camera.KitkatCamera;
 import com.example.camera.R;
 import com.example.util.Gl2Utils;
@@ -46,13 +48,13 @@ public class CameraDrawer2 implements IDrawer {
             0f, 1f - mTextHeightRatio,  // bottom right
             1f, 1f - mTextHeightRatio,  // bottom left
             1f, 0f + mTextHeightRatio,  // top left
-            0f, 0f + mTextHeightRatio,  // top right
+            0f, 0f + mTextHeightRatio  // top right
     };
 
 
     private short[] DRAW_ORDER = {0, 2, 1, 0, 3, 2};
 
-    public float[] mMVP = new float[16];
+    private float[] mMVP = new float[16];
 
     private int mTexture;
 
@@ -103,11 +105,11 @@ public class CameraDrawer2 implements IDrawer {
 
     @Override
     public   void  draw() {
-//        if (KitkatCamera.mCameraId == 1) {
-//            mMVP[5] = Math.abs(mMVP[5]);
-//        } else {
-//            mMVP[5] = -Math.abs(mMVP[5]);
-//        }
+        if (CameraCapture.get().getCameraPosition() == 1) {
+            mMVP[5] = Math.abs(mMVP[5]);
+        } else {
+            mMVP[5] = -Math.abs(mMVP[5]);
+        }
         mSurface.updateTexImage();
         GLES20.glUseProgram(mProgram);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTexture);

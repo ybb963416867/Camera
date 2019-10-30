@@ -47,7 +47,8 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
     private void init() {
         setEGLContextClientVersion(2);
         setRenderer(this);
-        setRenderMode(RENDERMODE_WHEN_DIRTY);
+        //脏模式
+//        setRenderMode(RENDERMODE_WHEN_DIRTY);
         mCamera2 = new KitkatCamera();
         mCameraDrawer = new CameraDrawer(getResources());
     }
@@ -63,12 +64,12 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
         Point point = mCamera2.getPreviewSize();
         mCameraDrawer.setDataSize(point.x, point.y);
         mCamera2.setPreviewTexture(mCameraDrawer.getSurfaceTexture());
-        mCameraDrawer.getSurfaceTexture().setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
-            @Override
-            public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-                requestRender();
-            }
-        });
+//        mCameraDrawer.getSurfaceTexture().setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
+//            @Override
+//            public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+//                requestRender();
+//            }
+//        });
         mCamera2.preview();
     }
 
