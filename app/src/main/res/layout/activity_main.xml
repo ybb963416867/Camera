@@ -35,6 +35,15 @@
         android:text="使用opengl播放本地视频"
         />
 
+    <Button
+        android:id="@+id/video_camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="使用opengl播放本地和相机视频"
+        />
+
+
+
 
 
 

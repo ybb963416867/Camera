@@ -46,6 +46,13 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(MainActivity.this, VideoPreviewActivity.class));
             }
         });
+
+        findViewById(R.id.video_camera_preview).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, VideoCameraActivity.class));
+            }
+        });
     }
 
 

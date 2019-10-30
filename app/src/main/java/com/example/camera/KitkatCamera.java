@@ -26,9 +26,10 @@ public class KitkatCamera implements ICamera {
     private Camera.Size preSize;
     private Camera.Size picSize;
     private Point mPicSize;
-    private int mCameraId;
+    public static int mCameraId;
     private Point mPreSize;
     private String TAG = "KitkatCamera";
+    private SurfaceTexture  mSurfaceTexture;
 
     public KitkatCamera() {
         this.mConfig = new ICamera.Config();
@@ -44,6 +45,10 @@ public class KitkatCamera implements ICamera {
 
     public void setCameraId(int mCameraId) {
         this.mCameraId = mCameraId;
+    }
+
+    public SurfaceTexture getSurfaceTexture() {
+        return mSurfaceTexture;
     }
 
     @Override
@@ -121,6 +126,7 @@ public class KitkatCamera implements ICamera {
     public void setPreviewTexture(SurfaceTexture texture) {
         if (mCamera != null) {
             try {
+                mSurfaceTexture = texture;
                 mCamera.setPreviewTexture(texture);
             } catch (IOException e) {
                 e.printStackTrace();

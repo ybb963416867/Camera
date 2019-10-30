@@ -6,8 +6,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
-import com.example.CameraApplication;
-import com.example.camera.CameraMediaControl;
+import com.example.camera.MediaControl;
 import com.example.rander.VideoDrawer;
 import com.example.util.Gl2Utils;
 
@@ -21,7 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class VideoGLSurfaceView extends GLSurfaceView implements GLSurfaceView.Renderer {
     private Context context;
-    private CameraMediaControl mediaControl;
+    private MediaControl mediaControl;
     private VideoDrawer videoDrawer;
     private SurfaceTexture surfaceTexture;
 
@@ -38,7 +37,7 @@ public class VideoGLSurfaceView extends GLSurfaceView implements GLSurfaceView.R
     private void init() {
         setEGLContextClientVersion(2);
         setRenderer(this);
-        mediaControl = new CameraMediaControl(context);
+        mediaControl = new MediaControl(context);
     }
 
     @Override

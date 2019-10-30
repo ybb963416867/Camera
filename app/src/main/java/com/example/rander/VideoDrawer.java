@@ -18,7 +18,7 @@ import java.nio.ShortBuffer;
  * @date 2019/10/24
  * @Description
  */
-public class VideoDrawer {
+public class VideoDrawer implements IDrawer{
     private int mTexture;
     private Resources mResources;
     private SurfaceTexture mSurfaceTexture;
@@ -43,7 +43,7 @@ public class VideoDrawer {
             1, 0, 3, 3, 1, 2
     };
 
-    public static float[] mMVP = new float[16];
+    public  float[] mMVP = new float[16];
     private int mProgram;
     private int mPositionHandle;
     private int mTextureCoordinatorHandle;
@@ -95,6 +95,7 @@ public class VideoDrawer {
         Matrix.setIdentityM(mMVP,0);
     }
 
+    @Override
     public void  draw(){
         mSurfaceTexture.updateTexImage();
         GLES20.glUseProgram(mProgram);
@@ -116,6 +117,11 @@ public class VideoDrawer {
         GLES20.glDisableVertexAttribArray(mTextureCoordinatorHandle);
         GLES20.glDisableVertexAttribArray(uMVPMatrixHandle);
         GLES20.glDisableVertexAttribArray(mTextureHandle);
+    }
+
+    @Override
+    public float[] getMvp() {
+        return mMVP;
     }
 
 
