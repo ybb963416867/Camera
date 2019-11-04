@@ -10,49 +10,16 @@ import com.example.view.VideoGLSurfaceView;
 
 public class MainActivity extends BaseActivity {
 
-    private Button camera1;
-    private Button camera2;
-    private Button camera3;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        camera1 = findViewById(R.id.camera1);
-        camera1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, CameraActivity.class));
-            }
-        });
-        camera2 = findViewById(R.id.camera2);
-        camera2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, Camera2Activity.class));
-            }
-        });
-        camera3 = findViewById(R.id.camera3);
-        camera3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, Camera2Activity.class));
-            }
-        });
-
-        findViewById(R.id.video_preview).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, VideoPreviewActivity.class));
-            }
-        });
-
-        findViewById(R.id.video_camera_preview).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, VideoCameraActivity.class));
-            }
-        });
+        findViewById(R.id.camera2).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, CameraActivity.class)));
+        findViewById(R.id.camera2).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, Camera2Activity.class)));
+        findViewById(R.id.camera3).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, Camera2Activity.class)));
+        findViewById(R.id.video_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoPreviewActivity.class)));
+        findViewById(R.id.video_camera_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoCameraActivity.class)));
+        findViewById(R.id.egl).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, EglPictureActivity.class)));
     }
 
 

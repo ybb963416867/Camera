@@ -80,8 +80,9 @@ public abstract class AFilter {
     private float pos[] = {
             -1.0f, 1.0f,//top left
             -1.0f, -1.0f,//bottom left
-            1.0f, -1.0f,//bottom right
             1.0f, 1.0f,// top right
+            1.0f, -1.0f,//bottom right
+
     };
 
     /**
@@ -90,8 +91,8 @@ public abstract class AFilter {
     private float[] coord = {
             0.0f, 0.0f,
             0.0f, 1.0f,
+            1.0f, 0.0f,
             1.0f, 1.0f,
-            1.0f, 0.0f
     };
 
     public AFilter(Resources mRes) {
@@ -204,6 +205,7 @@ public abstract class AFilter {
         mVerBuffer.position(0);
         ByteBuffer b = ByteBuffer.allocateDirect(coord.length * 4);
         b.order(ByteOrder.nativeOrder());
+        mTexBuffer = b.asFloatBuffer();
         mTexBuffer.put(coord);
         mTexBuffer.position(0);
     }
@@ -264,6 +266,8 @@ public abstract class AFilter {
      * // 绑定纹理
      * GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
      * GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
+     *
+     * 这个是处理图片用的
      */
     protected void onBindTexture() {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + textureType);
