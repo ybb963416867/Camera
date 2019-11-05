@@ -15,6 +15,7 @@ import com.example.filter.GrayFilter;
 public class EglPictureActivity extends BaseActivity {
 
     private ImageView iv;
+    private GLES20Env mBackEnv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +26,17 @@ public class EglPictureActivity extends BaseActivity {
         Bitmap bmp = drawable.getBitmap();
         int mBmpWidth = bmp.getWidth();
         int mBmpHeight = bmp.getHeight();
-        GLES20Env mBackEnv = new GLES20Env(mBmpWidth, mBmpHeight);
+        mBackEnv = new GLES20Env(mBmpWidth, mBmpHeight);
         mBackEnv.setThreadOwner(getMainLooper().getThread().getName());
         mBackEnv.setFilter(new GrayFilter(getResources()));
         mBackEnv.setInput(bmp);
         iv.setImageBitmap(mBackEnv.getBitmap());
 //        saveBitmap(mBackEnv.getBitmap());
+    }
+
+    @Override
+    protected void onDestroy() {
+        mBackEnv.destroy();
+        super.onDestroy();
     }
 }
