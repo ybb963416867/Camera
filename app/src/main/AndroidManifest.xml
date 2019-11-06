@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".EglPictureActivity"></activity>
+        <activity android:name=".FboActivity"></activity>
+        <activity android:name=".EglPictureActivity" />
         <activity android:name=".VideoCameraActivity" />
         <activity android:name=".VideoPreviewActivity" />
         <activity android:name=".Camera3Activity" />

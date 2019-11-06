@@ -54,6 +54,13 @@
             android:text="egl的使用处理图片"
             />
 
+        <Button
+            android:id="@+id/fbo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="fbo帧缓存用法"
+            />
+
     </LinearLayout>
 
 </ScrollView>

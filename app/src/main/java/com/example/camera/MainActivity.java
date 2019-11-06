@@ -2,11 +2,8 @@ package com.example.camera;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 
 import com.example.base.BaseActivity;
-import com.example.view.VideoGLSurfaceView;
 
 public class MainActivity extends BaseActivity {
 
@@ -20,6 +17,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.video_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoPreviewActivity.class)));
         findViewById(R.id.video_camera_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoCameraActivity.class)));
         findViewById(R.id.egl).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, EglPictureActivity.class)));
+        findViewById(R.id.fbo).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, FboActivity.class)));
     }
 
 

@@ -24,14 +24,14 @@ public class EglPictureActivity extends BaseActivity {
         iv = findViewById(R.id.iv);
         BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(R.mipmap.bg);
         Bitmap bmp = drawable.getBitmap();
-        int mBmpWidth = bmp.getWidth();
-        int mBmpHeight = bmp.getHeight();
+        Bitmap copy = bmp.copy(Bitmap.Config.ARGB_8888, false);
+        int mBmpWidth = copy.getWidth();
+        int mBmpHeight = copy.getHeight();
         mBackEnv = new GLES20Env(mBmpWidth, mBmpHeight);
         mBackEnv.setThreadOwner(getMainLooper().getThread().getName());
         mBackEnv.setFilter(new GrayFilter(getResources()));
-        mBackEnv.setInput(bmp);
+        mBackEnv.setInput(copy);
         iv.setImageBitmap(mBackEnv.getBitmap());
-//        saveBitmap(mBackEnv.getBitmap());
     }
 
     @Override

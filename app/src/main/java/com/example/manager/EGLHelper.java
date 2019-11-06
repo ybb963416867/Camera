@@ -102,6 +102,9 @@ public class EGLHelper {
         return GlError.OK;
     }
 
+    /**
+     *
+     */
     public void makeCurrent(){
         mEgl.eglMakeCurrent(mEglDisplay,mEglSurface,mEglSurface,mEglContext);
         mGL= (GL10)mEglContext.getGL();
