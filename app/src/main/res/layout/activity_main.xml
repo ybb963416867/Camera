@@ -55,6 +55,13 @@
             />
 
         <Button
+            android:id="@+id/pic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="opengl显示一张图片"
+            />
+
+        <Button
             android:id="@+id/fbo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
