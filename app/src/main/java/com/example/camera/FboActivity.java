@@ -7,12 +7,12 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.example.base.BaseActivity;
-import com.example.view.PictureGLSurface;
+import com.example.view.FBOPictureGLSurface;
 
 public class FboActivity extends BaseActivity {
 
     private ImageView iv;
-    private PictureGLSurface pictureGLSurface;
+    private FBOPictureGLSurface pictureGLSurface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

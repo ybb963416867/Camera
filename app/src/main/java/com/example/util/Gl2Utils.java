@@ -57,21 +57,28 @@ public class Gl2Utils {
 
     }
 
-    public static void getShowMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int
-            viewHeight) {
-        if (imgHeight > 0 && imgWidth > 0 && viewWidth > 0 && viewHeight > 0) {
-            float sWhView = (float) viewWidth / viewHeight;
-            float sWhImg = (float) imgWidth / imgHeight;
-            float[] projection = new float[16];
-            float[] camera = new float[16];
-            if (sWhImg > sWhView) {
-                Matrix.orthoM(projection, 0, -sWhView / sWhImg, sWhView / sWhImg, -1, 1, 1, 3);
-            } else {
-                Matrix.orthoM(projection, 0, -1, 1, -sWhImg / sWhView, sWhImg / sWhView, 1, 3);
+    public  static void getPicOriginMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int viewHeight){
+        float sWH=imgWidth/(float)imgHeight;
+        float sWidthHeight=viewWidth/(float)viewHeight;
+        float[] mProjectMatrix = new float[16];
+        float[] mViewMatrix = new float[16];
+        if(viewWidth>viewHeight){
+            if(sWH>sWidthHeight){
+                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight*sWH,sWidthHeight*sWH, -1,1, 3, 7);
+            }else{
+                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight/sWH,sWidthHeight/sWH, -1,1, 3, 7);
             }
-            Matrix.setLookAtM(camera, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
-            Matrix.multiplyMM(matrix, 0, projection, 0, camera, 0);
+        }else{
+            if(sWH>sWidthHeight){
+                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1/sWidthHeight*sWH, 1/sWidthHeight*sWH,3, 7);
+            }else{
+                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -sWH/sWidthHeight, sWH/sWidthHeight,3, 7);
+            }
         }
+        //设置相机位置
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 7.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        //计算变换矩阵
+        Matrix.multiplyMM(matrix,0,mProjectMatrix,0,mViewMatrix,0);
     }
 
     /**
@@ -146,6 +153,13 @@ public class Gl2Utils {
         }
     }
 
+    /**
+     * @param matrix
+     * @param imgWidth
+     * @param imgHeight
+     * @param viewWidth
+     * @param viewHeight
+     */
     public static void getCenterInsideMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int
             viewHeight) {
         if (imgHeight > 0 && imgWidth > 0 && viewWidth > 0 && viewHeight > 0) {
@@ -328,25 +342,27 @@ public class Gl2Utils {
      * @param bmp 图片的bitmap
      * @return 纹理
      */
-    public  static int createTexture(Bitmap bmp){
-        int[] texture=new int[1];
-        if(bmp!=null&&!bmp.isRecycled()){
+    public static int createTexture(Bitmap bmp) {
+        int[] texture = new int[1];
+        if (bmp != null && !bmp.isRecycled()) {
             //生成纹理
-            GLES20.glGenTextures(1,texture,0);
+            GLES20.glGenTextures(1, texture, 0);
             //生成纹理
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,texture[0]);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
             //设置缩小过滤为使用纹理中坐标最接近的一个像素的颜色作为需要绘制的像素颜色
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,GLES20.GL_NEAREST);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
             //设置放大过滤为使用纹理中坐标最接近的若干个颜色，通过加权平均算法得到需要绘制的像素颜色
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,GLES20.GL_TEXTURE_MAG_FILTER,GLES20.GL_LINEAR);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
             //设置环绕方向S，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
             //设置环绕方向T，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
             //根据以上指定的参数，生成一个2D纹理
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bmp, 0);
+            Log.e(TAG, "有纹理");
             return texture[0];
         }
+        Log.e(TAG, "没有纹理");
         return 0;
     }
 
@@ -375,28 +391,6 @@ public class Gl2Utils {
         return texture;
     }
 
-    /**
-     * @param bitmap 用于图片
-     * @return
-     *  通过图片创建纹理
-     */
-    public static int[] createTextureID(Bitmap bitmap) {
-        int[] texture = new int[1];
-        if (bitmap!=null&&!bitmap.isRecycled()){
-            GLES20.glGenTextures(1, texture, 0);
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, bitmap, 0);
-            //设置缩小过滤为使用纹理中坐标最接近的一个像素的颜色作为需要绘制的像素颜色
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-            //设置放大过滤为使用纹理中坐标最接近的若干个颜色，通过加权平均算法得到需要绘制的像素颜色
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-            //设置环绕方向S，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            //设置环绕方向T，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D,0,bitmap,0);
-        }
-        return texture;
-    }
 
     /**
      * Allocates a direct float buffer, and populates it with the float array data.

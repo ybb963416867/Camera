@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".FboActivity">
 
-    <com.example.view.PictureGLSurface
+    <com.example.view.FBOPictureGLSurface
         android:id="@+id/pgl"
         android:layout_width="1dp"
         android:layout_height="1dp" />

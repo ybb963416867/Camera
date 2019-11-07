@@ -43,7 +43,7 @@ public class CameraDrawer implements GLSurfaceView.Renderer {
     }
 
     private void calculateMatrix() {
-        Gl2Utils.getShowMatrix(matrix,this.dataWidth,this.dataHeight,this.width,this.height);
+        Gl2Utils.getPicOriginMatrix(matrix,this.dataWidth,this.dataHeight,this.width,this.height);
         if (cameraId==1){
             Gl2Utils.flip(matrix,true,false);
             Gl2Utils.rotate(matrix,90);
