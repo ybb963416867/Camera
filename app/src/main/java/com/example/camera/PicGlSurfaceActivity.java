@@ -1,10 +1,10 @@
 package com.example.camera;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
-public class PicGlSurfaceActivity extends AppCompatActivity {
+import com.example.base.BaseActivity;
+
+public class PicGlSurfaceActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

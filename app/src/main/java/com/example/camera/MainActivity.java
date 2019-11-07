@@ -17,6 +17,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.video_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoPreviewActivity.class)));
         findViewById(R.id.video_camera_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoCameraActivity.class)));
         findViewById(R.id.egl).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, EglPictureActivity.class)));
+        findViewById(R.id.pic).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, PicGlSurfaceActivity.class)));
         findViewById(R.id.fbo).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, FboActivity.class)));
     }
 
