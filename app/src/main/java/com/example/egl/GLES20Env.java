@@ -34,6 +34,7 @@ public class GLES20Env {
         this.mHeight = height;
         mEGLHelper = new EGLHelper();
         mEGLHelper.eglInit(width, height);
+        mEGLHelper.makeCurrent();
     }
 
     public void setThreadOwner(String threadOwner) {

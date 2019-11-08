@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
  * @date 2019/10/21
  * @Description
  */
-public class CameraDrawer implements GLSurfaceView.Renderer {
+public class CameraRender implements GLSurfaceView.Renderer {
 
     private final OesFilter mOesFilter;
     private int dataWidth;
@@ -26,7 +26,7 @@ public class CameraDrawer implements GLSurfaceView.Renderer {
     private int cameraId;
     private SurfaceTexture  surfaceTexture;
 
-    public CameraDrawer(Resources res) {
+    public CameraRender(Resources res) {
         mOesFilter = new OesFilter(res);
     }
 

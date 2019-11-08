@@ -98,7 +98,6 @@ public class EGLHelper {
             EGL10.EGL_NONE
         };
         mEglContext=mEgl.eglCreateContext(mEglDisplay,mEglConfig,shareContext,contextAttr);
-        makeCurrent();
         return GlError.OK;
     }
 
