@@ -68,6 +68,13 @@
             android:text="fbo帧缓存用法"
             />
 
+        <Button
+            android:id="@+id/openGl_video_recode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="opengl录制视频"
+            />
+
     </LinearLayout>
 
 </ScrollView>
