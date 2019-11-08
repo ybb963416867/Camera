@@ -13,7 +13,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         findViewById(R.id.camera2).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, CameraActivity.class)));
         findViewById(R.id.camera2).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, Camera2Activity.class)));
-        findViewById(R.id.camera3).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, Camera2Activity.class)));
+        findViewById(R.id.camera3).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, Camera3Activity.class)));
         findViewById(R.id.video_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoPreviewActivity.class)));
         findViewById(R.id.video_camera_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoCameraActivity.class)));
         findViewById(R.id.egl).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, EglPictureActivity.class)));
