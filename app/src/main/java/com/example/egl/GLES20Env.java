@@ -65,6 +65,7 @@ public class GLES20Env {
         }
         mFilter.setTextureId(Gl2Utils.createTexture(mBitmap));
         mFilter.draw();
+        mEGLHelper.swapBuffers();
         return convertToBitmap();
     }
 
@@ -79,7 +80,7 @@ public class GLES20Env {
     private Bitmap convertToBitmap() {
         int[] iat = new int[mWidth * mHeight];
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
-        mEGLHelper.mGL.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE,
+        GLES20.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE,
                 ib);
         int[] ia = ib.array();
 
