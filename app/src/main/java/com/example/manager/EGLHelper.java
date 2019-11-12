@@ -27,6 +27,8 @@ public class EGLHelper {
     public EGLConfig mEglConfig;
     public EGLSurface mEglSurface;
     public EGLContext mEglContext;
+    private int mWidth;
+    private int mHeight;
 
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
@@ -63,7 +65,17 @@ public class EGLHelper {
         }
     }
 
-    public GlError eglInit(int width, int height) {
+    /**
+     * @param width
+     * @param height
+     * eglCreatePbufferSurface  需要指定egl中的图片数据的宽高
+     */
+    public void setWidthAndHeight(int width, int height) {
+        this.mWidth = width;
+        this.mHeight = height;
+    }
+
+    public GlError eglInit() {
         int[] attributes = new int[]{
                 EGL10.EGL_RED_SIZE, red,  //指定RGB中的R大小（bits）
                 EGL10.EGL_GREEN_SIZE, green, //指定G大小
@@ -90,12 +102,8 @@ public class EGLHelper {
         }
         mEglConfig = configs[0];
         //创建Surface
-        int[] surAttr = new int[]{
-                EGL10.EGL_WIDTH, width,
-                EGL10.EGL_HEIGHT, height,
-                EGL10.EGL_NONE
-        };
-        mEglSurface = createSurface(surAttr);
+
+        mEglSurface = createSurface();
         //创建Context
         int[] contextAttr = new int[]{
                 EGL_CONTEXT_CLIENT_VERSION, 2,
@@ -135,17 +143,29 @@ public class EGLHelper {
         }
     }
 
-    private EGLSurface createSurface(int[] attr) {
+
+    private EGLSurface createSurface() {
         switch (surfaceType) {
             case SURFACE_WINDOW:
+                int[] surAttr = new int[]{
+                        EGL10.EGL_NONE
+                };
                 //顾名思义WindowSurface是和窗口相关的，也就是在屏幕上的一块显示区的封装，渲染后即显示在界面上。
-                return EGL14.eglCreateWindowSurface(mEglDisplay, mEglConfig, surface_native_obj, attr, 0);
+                return EGL14.eglCreateWindowSurface(mEglDisplay, mEglConfig, surface_native_obj, surAttr, 0);
 //            case SURFACE_PIM:
             //这个是一位图的形式放在内存里面
 //                return EGL14.eglCreatePixmapSurface(mEglDisplay, mEglConfig, 0, attr, 0);
             default:
+                if (mWidth == 0 || mHeight == 0) {
+                    throw new IllegalArgumentException("width is 0 or height is 0");
+                }
                 //在显存中开辟一个空间，将渲染后的数据(帧)存放在这里。
-                return EGL14.eglCreatePbufferSurface(mEglDisplay, mEglConfig, attr, 0);
+                int[] surAttr1 = new int[]{
+                        EGL10.EGL_WIDTH, mWidth,
+                        EGL10.EGL_HEIGHT, mHeight,
+                        EGL10.EGL_NONE
+                };
+                return EGL14.eglCreatePbufferSurface(mEglDisplay, mEglConfig, surAttr1, 0);
         }
     }
 

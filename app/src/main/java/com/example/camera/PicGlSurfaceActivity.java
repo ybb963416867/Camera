@@ -28,7 +28,7 @@ public class PicGlSurfaceActivity extends BaseActivity {
         Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, false);
         picGLSurface.setBitmap(copy);
 
-        imageView.setImageBitmap(convertToBitmap(copy));
+//        imageView.setImageBitmap(convertToBitmap(copy));
     }
 
 

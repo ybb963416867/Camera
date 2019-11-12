@@ -33,7 +33,8 @@ public class GLES20Env {
         this.mWidth = width;
         this.mHeight = height;
         mEGLHelper = new EGLHelper();
-        mEGLHelper.eglInit(width, height);
+        mEGLHelper.setWidthAndHeight(width, height);
+        mEGLHelper.eglInit();
         mEGLHelper.makeCurrent();
     }
 

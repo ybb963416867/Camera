@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Surface;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * @author yangbinbing
@@ -51,6 +52,7 @@ public class MediaRecorder {
      * 用于视频录制的虚拟屏幕
      */
     private Surface encodeInputSurface;
+    private MediaCodec.BufferInfo mBufferInfo;
 
     public MediaRecorder(int width, int height, String outputPath) {
         this.width = width;
@@ -63,7 +65,7 @@ public class MediaRecorder {
     }
 
     public void start() {
-        MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();
+        mBufferInfo = new MediaCodec.BufferInfo();
         /**
          * 配置MediaCodec 编码器
          */
@@ -104,5 +106,107 @@ public class MediaRecorder {
 
         mTrackIndex = -1;
         mMuxerStarted = false;
+    }
+
+
+    /**
+     * @param endOfStream 是否结束
+     * @des 编码成MP4
+     */
+    public void drainEncoder(boolean endOfStream) {
+        final int TIMEOUT_USEC = 10000;
+        Log.d(TAG, "drainEncoder(" + endOfStream + ")");
+
+        if (endOfStream) {
+            Log.d(TAG, "sending EOS to encoder");
+            mEncoder.signalEndOfInputStream();
+        }
+
+        ByteBuffer[] encoderOutputBuffers = mEncoder.getOutputBuffers();
+        while (true) {
+            int encoderStatus = mEncoder.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC);
+            //again later
+            if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
+                // no output available yet
+                if (!endOfStream) {
+                    break;      // out of while
+                } else {
+                    Log.d(TAG, "no output available, spinning to await EOS");
+                }
+                //out buffer hanged
+            } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+                // not expected for an encoder
+                encoderOutputBuffers = mEncoder.getOutputBuffers();
+                //format changed
+            } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                // should happen before receiving buffers, and should only happen once
+                if (mMuxerStarted) {
+                    throw new RuntimeException("format changed twice");
+                }
+                MediaFormat newFormat = mEncoder.getOutputFormat();
+                Log.d(TAG, "encoder output format changed: " + newFormat);
+
+                // now that we have the Magic Goodies, start the muxer
+                mTrackIndex = mMuxer.addTrack(newFormat);
+                mMuxer.start();
+                mMuxerStarted = true;
+            } else if (encoderStatus < 0) {
+                Log.w(TAG, "unexpected result from encoder.dequeueOutputBuffer: " +
+                        encoderStatus);
+                // let's ignore it
+            } else {
+                ByteBuffer encodedData = encoderOutputBuffers[encoderStatus];
+                if (encodedData == null) {
+                    throw new RuntimeException("encoderOutputBuffer " + encoderStatus +
+                            " was null");
+                }
+
+                if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
+                    // The codec config data was pulled out and fed to the muxer when we got
+                    // the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.
+                    Log.d(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
+                    mBufferInfo.size = 0;
+                }
+
+                if (mBufferInfo.size != 0) {
+                    if (!mMuxerStarted) {
+                        throw new RuntimeException("muxer hasn't started");
+                    }
+
+                    // adjust the ByteBuffer values to match BufferInfo (not needed?)
+                    encodedData.position(mBufferInfo.offset);
+                    encodedData.limit(mBufferInfo.offset + mBufferInfo.size);
+
+                    mMuxer.writeSampleData(mTrackIndex, encodedData, mBufferInfo);
+                    Log.d(TAG, "sent " + mBufferInfo.size + " bytes to muxer");
+                }
+
+                mEncoder.releaseOutputBuffer(encoderStatus, false);
+
+                if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+                    if (!endOfStream) {
+                        Log.w(TAG, "reached end of stream unexpectedly");
+                    } else {
+                        Log.d(TAG, "end of stream reached");
+                    }
+                    break;      // out of while
+                }
+            }
+        }
+    }
+
+
+    public void releaseEncoder() {
+        Log.d(TAG, "releasing encoder objects");
+        if (mEncoder != null) {
+            mEncoder.stop();
+            mEncoder.release();
+            mEncoder = null;
+        }
+        if (mMuxer != null) {
+            mMuxer.stop();
+            mMuxer.release();
+            mMuxer = null;
+        }
     }
 }
