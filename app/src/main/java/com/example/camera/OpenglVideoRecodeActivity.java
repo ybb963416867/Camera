@@ -6,12 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.media.MediaCodec;
-import android.media.MediaCodecInfo;
-import android.media.MediaFormat;
-import android.media.MediaMuxer;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -82,7 +77,6 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
                                     }
                                 });
                                 encodeCameraToMpeg();
-//                                CameraToMpegWrapper.runTest(MainActivity.this);
                             } catch (Exception e) {
                                 Log.e("报异常了", e.toString());
                                 e.printStackTrace();
@@ -101,11 +95,6 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
      * Tests encoding of AVC video from Camera input.  The output is saved as an MP4 file.
      */
     private void encodeCameraToMpeg() {
-        // arbitrary but popular values
-        int encWidth = 640;
-        int encHeight = 480;
-        int encBitRate = 6000000;      // Mbps
-        Log.d(TAG, "avc" + " output " + encWidth + "x" + encHeight + " @" + encBitRate);
 
         try {
             kitkatCamera = new KitkatCamera();
