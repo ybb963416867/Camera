@@ -13,6 +13,7 @@ public class CameraApplication extends Application {
     public static int screenWidth;
     public static int screenHeight;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
