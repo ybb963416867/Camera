@@ -11,7 +11,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.camera2).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, CameraActivity.class)));
+        findViewById(R.id.camera1).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, CameraActivity.class)));
         findViewById(R.id.camera2).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, Camera2Activity.class)));
         findViewById(R.id.camera3).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, Camera3Activity.class)));
         findViewById(R.id.video_preview).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, VideoPreviewActivity.class)));
