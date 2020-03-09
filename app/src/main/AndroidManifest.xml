@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".OpenglVideoRecodeActivity"></activity>
+        <activity android:name=".VideoViewActivity"></activity>
+        <activity android:name=".OpenglVideoRecodeActivity" />
         <activity android:name=".PicGlSurfaceActivity" />
         <activity android:name=".FboActivity" />
         <activity android:name=".EglPictureActivity" />

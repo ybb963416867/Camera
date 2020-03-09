@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.MediaCodec;
@@ -15,6 +16,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.example.base.BaseActivity;
 import com.example.manager.EGLHelper;
@@ -45,6 +47,7 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
 
     private Camera mCamera;
     private SurfaceTextureManager mStManager;
+    private String videoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +95,13 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
                             }
                         }
                     }).start();
+                }
+            });
+
+            findViewById(R.id.player).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    VideoViewActivity.launch(OpenglVideoRecodeActivity.this, videoPath);
                 }
             });
         }
@@ -193,7 +203,9 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
     }
 
     private void prepareEncoder(int width, int height) {
-        mediaRecorder = new MediaRecorder(width, height, FileUtils.getStorageMp4(MainActivity.class.getSimpleName()));
+        videoPath = FileUtils.getStorageMp4(MainActivity.class.getSimpleName());
+        Log.i(TAG, "videoPAth:"+videoPath);
+        mediaRecorder = new MediaRecorder(width, height, videoPath);
         mediaRecorder.start();
         eglHelper = new EGLHelper();
         eglHelper.setSurfaceType(EGLHelper.SURFACE_WINDOW, mediaRecorder.getEncodeInputSurface());
@@ -205,6 +217,12 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
      */
     private void releaseEncoder() {
         Log.d(TAG, "releasing encoder objects");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(OpenglVideoRecodeActivity.this, "录制完了", Toast.LENGTH_SHORT).show();
+            }
+        });
         if (mediaRecorder != null) {
             mediaRecorder.releaseEncoder();
         }
