@@ -12,6 +12,12 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
+        int  j;
         assertEquals(4, 2 + 2);
+
+        for (int i=0;i<110;i++){
+            j=(i & 0x01);
+            System.out.println("j::"+j+"...."+"i::"+i);
+        }
     }
 }

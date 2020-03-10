@@ -10,6 +10,8 @@ import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
 
+import com.example.filter.AFilter;
+import com.example.filter.GrayFilter;
 import com.example.filter.OesFilter;
 
 /**
@@ -24,13 +26,15 @@ public class SurfaceTextureManager implements SurfaceTexture.OnFrameAvailableLis
 
     private Object mFrameSyncObject = new Object();
     private boolean mFrameAvailable;
-    private OesFilter oesFilter;
+    private AFilter oesFilter;
 
     /**
      * Creates instances of TextureRender and SurfaceTexture.
      */
     public SurfaceTextureManager(Context context) {
         oesFilter = new OesFilter(context.getResources());
+        //可以使用这个滤镜，但是，需要改下片元着色器的配置，2个地方需要改
+//        oesFilter =new GrayFilter(context.getResources());
         oesFilter.create();
         mSurfaceTexture = new SurfaceTexture(oesFilter.getTextureId());
 
