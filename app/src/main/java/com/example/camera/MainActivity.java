@@ -19,6 +19,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.egl).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, EglPictureActivity.class)));
         findViewById(R.id.pic).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, PicGlSurfaceActivity.class)));
         findViewById(R.id.fbo).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, FboActivity.class)));
+        findViewById(R.id.but_mediaCodec).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, EncodeAndMuxActivity.class)));
         findViewById(R.id.openGl_video_recode).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, OpenglVideoRecodeActivity.class)));
     }
 

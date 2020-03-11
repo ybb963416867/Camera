@@ -70,7 +70,7 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(OpenglVideoRecodeActivity.this, "请等待5s左右,完成会显示Toast,请稍等……", Toast.LENGTH_SHORT);
+                                        Toast.makeText(OpenglVideoRecodeActivity.this, "请等待5s左右,完成会显示Toast,请稍等……", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                                 encodeCameraToMpeg();
