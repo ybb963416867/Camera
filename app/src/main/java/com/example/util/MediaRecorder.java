@@ -160,7 +160,8 @@ public class MediaRecorder {
                     throw new RuntimeException("encoderOutputBuffer " + encoderStatus +
                             " was null");
                 }
-
+                //这个flag 只能为1和4   1的时候是正常的，运行下面的  如果为4的时候是流结束将会走这个方法
+                //这里判断flag为4 的情况，代表这个流结束了，所以不需要。
                 if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
                     // The codec config data was pulled out and fed to the muxer when we got
                     // the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.

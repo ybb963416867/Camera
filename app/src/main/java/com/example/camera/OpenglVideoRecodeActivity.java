@@ -34,17 +34,6 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
     private static final String TAG = "OpenglVideoRecode";
 
     private static final long DURATION_SEC = 8;             // 8 seconds of video
-
-    // Fragment shader that swaps color channels around.
-    private static final String SWAPPED_FRAGMENT_SHADER =
-            "#extension GL_OES_EGL_image_external : require\n" +
-                    "precision mediump float;\n" +
-                    "varying vec2 vTextureCoord;\n" +
-                    "uniform samplerExternalOES sTexture;\n" +
-                    "void main() {\n" +
-                    "  gl_FragColor = texture2D(sTexture, vTextureCoord).rgba;\n" +
-                    "}\n";
-
     private Camera mCamera;
     private SurfaceTextureManager mStManager;
     private String videoPath;
@@ -145,12 +134,6 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
                 // fragment shaders for video editing, this provides a visual indication of
                 // the frame rate: if the camera is capturing at 15fps, the colors will change
                 // once per second.
-                if ((frameCount % 15) == 0) {
-                    String fragmentShader = null;
-                    if ((frameCount & 0x01) != 0) {
-                        fragmentShader = SWAPPED_FRAGMENT_SHADER;
-                    }
-                }
                 frameCount++;
                 Log.d(TAG, "frameCount:" + frameCount);
                 // Acquire a new frame of input, and render it to the Surface.  If we had a

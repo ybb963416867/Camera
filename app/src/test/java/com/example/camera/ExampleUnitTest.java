@@ -16,8 +16,10 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
 
         for (int i=0;i<110;i++){
-            j=(i & 0x01);
-            System.out.println("j::"+j+"...."+"i::"+i);
+//            j=(i & 0x01);
+//            j=i & 2;
+            if ((i & 2 )!=0)
+            System.out.println("j::"+"...."+"i::"+i);
         }
     }
 }
