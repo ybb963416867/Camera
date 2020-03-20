@@ -111,8 +111,12 @@ public class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
     }
 
     public void release() {
-        eglHelper.destroy();
-        mSurface.release();
+        if (eglHelper!=null){
+            eglHelper.destroy();
+        }
+       if (mSurface!=null){
+           mSurface.release();
+       }
         mTextureRender = null;
         mSurfaceTexture = null;
     }

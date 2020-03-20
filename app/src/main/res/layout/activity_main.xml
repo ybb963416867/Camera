@@ -87,7 +87,7 @@
             android:id="@+id/edit_video"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="给视频添加音乐背景"
+            android:text="将一个视频的音频和视频提取出来复制到储存卡里面"
             />
 
 

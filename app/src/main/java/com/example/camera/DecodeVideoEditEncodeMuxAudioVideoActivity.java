@@ -1,63 +1,45 @@
 package com.example.camera;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
-import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.InputDevice;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.manager.EGLHelper;
-import com.example.manager.InputSurface;
 import com.example.util.FileUtils;
 import com.example.util.MediaCodecUtils;
 import com.example.util.PermissionUtils;
 import com.example.view.OutputSurface;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * ********************************
- * 项目名称：${project_NAME}
- *
- * @Author yangbinbing
- * 邮箱： 963416867@qq.com
- * 创建时间： ${DATA} ${TIME}
- * 用途* 目的给视频添加背景音乐
- * 首先需要将本地视频，解码，
- * 然后将本地音乐解码后
- * 将解码后的音乐和视频编辑在一起
- * 然后编码
- * 然后将他们打包成mp4的视频
- * 的视频添加音乐，在编码成mp4的文件
- * ********************************
- */
 
+/**
+*@Author
+*@Time 2020/3/20 22:19
+*@Description
+ * 将一个视频的的音频文件和视频文件提取出来在合并到纯存卡里面
+*/
 public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivity {
     private static String TAG = "DecodeVideoEditEncodeMuxAudioVideoActivity";
-    private String videoPath;
     private int mWidth = 1280;
     private int mHeight = 720;
     private int mSourceResId = R.raw.video_480x360_mp4_h264_500kbps_30fps_aac_stereo_128kbps_44100hz;
@@ -89,11 +71,6 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
     private int mAudioExtractedFrameCount;
     private int mAudioDecodedFrameCount;
     private int mAudioEncodedFrameCount;
-    //h.264 Advance video Coding
-    private static final String OUTPUT_VIDEO_MIME_TYPE = "video/avc";
-    //音频 编码器
-    private static final String OUTPUT_AUDIO_MIME_TYPE = "audio/mp4a-latm";
-
     private String mOutPutPath;
     private MediaMuxer mMuxer;
     private MediaExtractor mVideoExtractor;
@@ -101,9 +78,9 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
     private OutputSurface mOutputSurface;
     private MediaCodec mVideoEncode;
     private MediaExtractor mAudioExtractor;
-    private MediaFormat mEncoderOutAudioFormat;
     private MediaCodec mAudioEncode;
     private MediaCodec mAudioDecoder;
+    Exception exception = null;
 
     private void logState() {
         Log.d(TAG, String.format(
@@ -199,7 +176,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
             findViewById(R.id.player).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    VideoViewActivity.launch(DecodeVideoEditEncodeMuxAudioVideoActivity.this, videoPath);
+                    VideoViewActivity.launch(DecodeVideoEditEncodeMuxAudioVideoActivity.this, mOutPutPath);
                 }
             });
         }
@@ -212,7 +189,6 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
         mDecoderOutputVideoFormat = null;
         mDecoderOutputAudioFormat = null;
         mEncoderOutputVideoFormat = null;
-        mEncoderOutputAudioFormat = null;
 
         mOutputVideoTrack = -1;
         mOutputAudioTrack = -1;
@@ -236,15 +212,15 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
         mAudioExtractedFrameCount = 0;
         mAudioDecodedFrameCount = 0;
         mAudioEncodedFrameCount = 0;
-        MediaCodecInfo videoCodeInfo = MediaCodecUtils.selectCodec(OUTPUT_VIDEO_MIME_TYPE);
+        MediaCodecInfo videoCodeInfo = MediaCodecUtils.selectCodec(MediaFormat.MIMETYPE_VIDEO_AVC);
         if (videoCodeInfo == null) {
-            Log.e(TAG, "不支持该编码器" + OUTPUT_VIDEO_MIME_TYPE);
+            Log.e(TAG, "不支持该编码器" + MediaFormat.MIMETYPE_VIDEO_AVC);
             return;
         }
 
-        MediaCodecInfo audioCodeInfo = MediaCodecUtils.selectCodec(OUTPUT_AUDIO_MIME_TYPE);
+        MediaCodecInfo audioCodeInfo = MediaCodecUtils.selectCodec(MediaFormat.MIMETYPE_AUDIO_AAC);
         if (videoCodeInfo == null) {
-            Log.e(TAG, "不支持该编码器" + OUTPUT_AUDIO_MIME_TYPE);
+            Log.e(TAG, "不支持该编码器" + MediaFormat.MIMETYPE_AUDIO_AAC);
             return;
         }
 
@@ -293,7 +269,70 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
 
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+
+            try {
+
+                if (mVideoExtractor != null) {
+                    mVideoExtractor.release();
+                    mVideoExtractor = null;
+                }
+                if (mAudioExtractor != null) {
+                    mAudioExtractor.release();
+                    mAudioExtractor = null;
+                }
+
+                if (mVideoDecoder != null) {
+                    mVideoDecoder.stop();
+                    mVideoDecoder.release();
+                    mVideoDecoder = null;
+                }
+
+                if (mAudioDecoder != null) {
+                    mAudioDecoder.stop();
+                    mAudioDecoder.release();
+                    mAudioDecoder = null;
+                }
+
+                if (mOutputSurface != null) {
+                    mOutputSurface.release();
+                    mOutputSurface = null;
+                }
+
+                if (mVideoEncode != null) {
+                    mVideoEncode.stop();
+                    mVideoEncode.release();
+                    mVideoEncode = null;
+                }
+
+                if (mAudioEncode != null) {
+                    mAudioEncode.stop();
+                    mAudioEncode.release();
+                    mAudioEncode = null;
+                }
+
+                if (mMuxer != null) {
+                    mMuxer.stop();
+                    mMuxer.release();
+                    mMuxer = null;
+                }
+
+                if (mInputSurface != null) {
+                    mInputSurface.destroy();
+                    mInputSurface = null;
+                }
+
+                if (mVideoDecoderHandlerThread != null) {
+                    mVideoDecoderHandlerThread.quitSafely();
+                    mVideoDecoderHandlerThread = null;
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     private void awaitEncode() {
@@ -330,12 +369,12 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
             @Override
             public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
                 ByteBuffer decoderInputBuffer = codec.getInputBuffer(index);
-                while (!mAudioEncoderDone) {
+                while (!mAudioExtractorDone) {
                     int size = mAudioExtractor.readSampleData(decoderInputBuffer, 0);
                     long presentationTime = mAudioExtractor.getSampleTime();
                     Log.d(TAG, "audio extractor: returned buffer of size " + size);
                     Log.d(TAG, "audio extractor: returned buffer for time " + presentationTime);
-                    if (size > 0) {
+                    if (size >= 0) {
                         codec.queueInputBuffer(index, 0, size, presentationTime, mAudioExtractor.getSampleFlags());
                     }
 
@@ -350,7 +389,6 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
                     if (size >= 0) {
                         break;
                     }
-
                 }
             }
 
@@ -419,7 +457,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
                     throw new RuntimeException("audio encoder changed its output format again?");
                 }
 
-                mEncoderOutAudioFormat = codec.getOutputFormat();
+                mEncoderOutputAudioFormat = codec.getOutputFormat();
                 setupMuxer();
             }
         });
@@ -465,7 +503,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
     }
 
     private void setupMuxer() {
-        if (!mMuxing && (!mCopyAudio || mEncoderOutAudioFormat != null) && (!mCopyVideo || mEncoderOutputVideoFormat != null)) {
+        if (!mMuxing && (!mCopyAudio || mEncoderOutputAudioFormat != null) && (!mCopyVideo || mEncoderOutputVideoFormat != null)) {
 
             if (mCopyVideo) {
                 Log.d(TAG, "muxer: adding video track");
@@ -474,7 +512,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
 
             if (mCopyAudio) {
                 Log.d(TAG, "muxer: adding audio tarck.");
-                mOutputAudioTrack = mMuxer.addTrack(mEncoderOutAudioFormat);
+                mOutputAudioTrack = mMuxer.addTrack(mEncoderOutputAudioFormat);
             }
 
 
@@ -533,8 +571,8 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
 
     private void muxAudio(int index, MediaCodec.BufferInfo info) {
         if (!mMuxing) {
-            mPendingAudioDecoderOutputBufferIndices.add(new Integer(index));
-            mPendingAudioDecoderOutputBufferInfos.add(info);
+            mPendingAudioEncoderOutputBufferIndices.add(new Integer(index));
+            mPendingAudioEncoderOutputBufferInfos.add(info);
             return;
         }
 
@@ -548,7 +586,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
         Log.d(TAG, "audio encoder: returned buffer for time" + info.presentationTimeUs);
 
         if (info.size != 0) {
-            mMuxer.writeSampleData(index, encodeOutputBuffer, info);
+            mMuxer.writeSampleData(mOutputAudioTrack, encodeOutputBuffer, info);
         }
         mAudioEncode.releaseOutputBuffer(index, false);
         mAudioEncodedFrameCount++;
@@ -608,6 +646,9 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
                     return;
                 }
 
+                Log.d(TAG, "video decoder: returned buffer for time "
+                        + info.presentationTimeUs);
+
                 boolean render = info.size != 0;
                 codec.releaseOutputBuffer(index, render);
                 if (render) {
@@ -615,8 +656,8 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
                     Log.d(TAG, "output surface: await new image");
                     mOutputSurface.awaitNewImage();
                     mOutputSurface.drawImage();
-                    mInputSurface.swapBuffers();
                     mInputSurface.setPresentationTime(info.presentationTimeUs * 1000);
+                    mInputSurface.swapBuffers();
                     mInputSurface.checkMakeCurrent();
                     Log.d(TAG, "input surface: swap buffers");
                 }

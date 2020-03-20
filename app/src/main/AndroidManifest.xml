@@ -19,7 +19,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".DecodeVideoEditEncodeMuxAudioVideo2Activity"></activity>
         <activity android:name=".DecodeVideoEditEncodeMuxAudioVideoActivity" />
         <activity android:name=".EncodeAndMuxActivity" />
         <activity android:name=".VideoViewActivity" />
@@ -34,7 +33,7 @@
         <activity android:name=".CameraActivity" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
