@@ -1,6 +1,7 @@
 package com.example.camera;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -33,18 +34,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
-*@Author
-*@Time 2020/3/20 22:19
-*@Description
- * 将一个视频的的音频文件和视频文件提取出来在合并到纯存卡里面
-*/
+ * @Author
+ * @Time 2020/3/20 22:19
+ * @Description 将一个视频的的音频文件和视频文件提取出来在合并到纯存卡里面
+ */
 public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivity {
     private static String TAG = "DecodeVideoEditEncodeMuxAudioVideoActivity";
-    private int mWidth = 1280;
-    private int mHeight = 720;
+    private int mWidth = -1;
+    private int mHeight = -1;
     private int mSourceResId = R.raw.video_480x360_mp4_h264_500kbps_30fps_aac_stereo_128kbps_44100hz;
-    private boolean mCopyAudio = true;
-    private boolean mCopyVideo = true;
+    private boolean mCopyAudio = false;
+    private boolean mCopyVideo = false;
     private MediaFormat mDecoderOutputVideoFormat;
     private MediaFormat mDecoderOutputAudioFormat;
     private MediaFormat mEncoderOutputVideoFormat;
@@ -163,7 +163,12 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
                                         Toast.makeText(DecodeVideoEditEncodeMuxAudioVideoActivity.this, "请等待5s左右,完成会显示Toast,请稍等……", Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                                extractDecodeEditEncodeMux();
+
+//                                copyVideoAndAudioWithWidth1280Height720();
+                                copyAudioWithWidth1280Height720();
+//                                copyVideoWithWidth176Height144();
+//                                copyVideoWithWidth320Height240();
+//                                copyVideoWithWidth1280Height720();
                             } catch (Exception e) {
                                 Log.e("报异常了", e.toString());
                                 e.printStackTrace();
@@ -181,6 +186,95 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
             });
         }
     };
+
+    /**
+     * copy 视频中的视频和音频  宽是1280 高是720
+     */
+    private void copyVideoAndAudioWithWidth1280Height720() {
+        setWidth(1280);
+        setHeight(720);
+        setCopyAudio(true);
+        setCopyVideo(true);
+        extractDecodeEditEncodeMux();
+    }
+
+    /**
+     * opy 视频中的视频  宽是176 高是144
+     */
+    private void copyVideoWithWidth176Height144() {
+        setWidth(176);
+        setHeight(144);
+        setCopyVideo(true);
+        setCopyAudio(false);
+        extractDecodeEditEncodeMux();
+    }
+
+    /**
+     * opy 视频中的视频  宽是176 高是144
+     */
+    private void copyVideoWithWidth320Height240() {
+        setWidth(320);
+        setHeight(240);
+        setCopyVideo(true);
+        setCopyAudio(false);
+        extractDecodeEditEncodeMux();
+    }
+
+    /**
+     * opy 视频中的视频  宽是176 高是144
+     */
+    private void copyVideoWithWidth1280Height720() {
+        setWidth(1280);
+        setHeight(720);
+        setCopyVideo(true);
+        setCopyAudio(false);
+        extractDecodeEditEncodeMux();
+    }
+
+    private void copyAudioWithWidth1280Height720() {
+        setWidth(1280);
+        setHeight(720);
+        setCopyVideo(false);
+        setCopyAudio(true);
+        extractDecodeEditEncodeMux();
+    }
+
+
+    /**
+     * 设置拷贝后的视频的宽
+     *
+     * @param width
+     */
+    public void setWidth(int width) {
+        this.mWidth = width;
+    }
+
+    /**
+     * 设置拷贝后的视频的高
+     *
+     * @param height
+     */
+    public void setHeight(int height) {
+        this.mHeight = height;
+    }
+
+    /**
+     * 设置是否拷贝视屏里面的 音频
+     *
+     * @param copyAudio
+     */
+    public void setCopyAudio(boolean copyAudio) {
+        this.mCopyAudio = copyAudio;
+    }
+
+    /**
+     * 设置是否拷贝视频里面的  视频
+     *
+     * @param copyVideo
+     */
+    public void setCopyVideo(boolean copyVideo) {
+        this.mCopyVideo = copyVideo;
+    }
 
     private void extractDecodeEditEncodeMux() {
         // Exception that may be thrown during release.
@@ -212,6 +306,15 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
         mAudioExtractedFrameCount = 0;
         mAudioDecodedFrameCount = 0;
         mAudioEncodedFrameCount = 0;
+        if (mWidth <= 0 || mHeight <= 0) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(DecodeVideoEditEncodeMuxAudioVideoActivity.this, "请设置宽高", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
         MediaCodecInfo videoCodeInfo = MediaCodecUtils.selectCodec(MediaFormat.MIMETYPE_VIDEO_AVC);
         if (videoCodeInfo == null) {
             Log.e(TAG, "不支持该编码器" + MediaFormat.MIMETYPE_VIDEO_AVC);
@@ -337,7 +440,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
 
     private void awaitEncode() {
         synchronized (this) {
-            while ((mCopyVideo && !mVideoEncoderDone || (mCopyVideo && !mAudioEncoderDone))) {
+            while ((mCopyVideo && !mVideoEncoderDone || (mCopyAudio && !mAudioEncoderDone))) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
