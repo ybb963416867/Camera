@@ -58,6 +58,11 @@ public class EGLHelper {
         this.renderType = renderType;
     }
 
+    /**
+     * @param type 如果type为SURFACE_WINDOW 时需要设置 surface
+     *             如果type为SURFACE_PBUFFER 时需要设置宽高 此时不需要调用这个方法，也不需要设置surface
+     * @param obj
+     */
     public void setSurfaceType(int type, Object... obj) {
         this.surfaceType = type;
         if (obj != null) {
@@ -119,6 +124,12 @@ public class EGLHelper {
     // 而display作为draw（surface）的前端显示。调用后，当前线程使用的EGLContex为context。
     public void makeCurrent() {
         EGL14.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext);
+    }
+
+    public void checkMakeCurrent() {
+        if (!EGL14.eglMakeCurrent(mEglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)) {
+            throw new RuntimeException("eglMakeCurrent failed");
+        }
     }
 
     public boolean swapBuffers() {

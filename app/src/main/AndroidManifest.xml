@@ -19,7 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".EncodeAndMuxActivity"></activity>
+        <activity android:name=".DecodeVideoEditEncodeMuxAudioVideo2Activity"></activity>
+        <activity android:name=".DecodeVideoEditEncodeMuxAudioVideoActivity" />
+        <activity android:name=".EncodeAndMuxActivity" />
         <activity android:name=".VideoViewActivity" />
         <activity android:name=".OpenglVideoRecodeActivity" />
         <activity android:name=".PicGlSurfaceActivity" />
