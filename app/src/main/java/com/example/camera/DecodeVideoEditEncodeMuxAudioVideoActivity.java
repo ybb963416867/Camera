@@ -5,12 +5,14 @@ import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -25,7 +27,7 @@ import com.example.manager.EGLHelper;
 import com.example.util.FileUtils;
 import com.example.util.MediaCodecUtils;
 import com.example.util.PermissionUtils;
-import com.example.view.OutputSurface;
+import com.example.view.SurfaceTextureManager;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -37,6 +39,26 @@ import java.util.concurrent.atomic.AtomicReference;
  * @Author
  * @Time 2020/3/20 22:19
  * @Description 将一个视频的的音频文件和视频文件提取出来在合并到纯存卡里面
+ * <p>
+ * 整个炒作过程为：：：
+ * 1  使用 MediaExtractor  提取相应的媒体文件中的视频轨道，和音频轨道
+ * （对于视频来说）
+ * 2  创建 MediaCodec 使用h264 也就是说video/avc 将提取的视频轨道去解码
+ * 3  解码完成后监听到outputbuffer中有数据则进行编码成新的视频结构
+ * 4  使用 MediaMuxer 多媒体混合器去编辑成mp4 的视频文件
+ * <p>
+ * 注意整个视频的复制的过程，其实是数据流的传输过程，  首先通过解码decode  将解码后的一帧一帧的画面绘制到OutputSurface 中创建的surface中
+ * 而这个sruface 又和SurfaceTexture 关联，SurfaceTexture 和Render 渲染器关联，当编码后的流可以用的时候会调用
+ * mOutputSurface.drawImage() 的渲染器的draw方法  此时会调用mOutputSurface的onFrameAvailable 去mSurfaceTexture.updateTexImage()更新纹理
+ * 然后通过egl  mInputSurface.swapBuffers() 拿到渲染好的帧画面的数据，在通过egl 将流画面渲染到egl的surface 中 该surface就是mediaCodec  解码器也就是
+ * mVideoEncode MediaCodec。 此时如果有如果 surface 有数据  则会回调mVideoEncode的onOutputBufferAvailable方法，然后给MeidaMuxer媒体复合器去生成MP4文件
+ *
+ *
+ * <p>
+ * （对于音频来说）
+ * 2 创建 MediaCodec 使用aac 也就是说audio/mp4a-latm 将提取的音频轨道去解码
+ * 3  解码完成后监听到outputbuffer中有数据则进行编码成新的视频结构中
+ * 4  使用 MediaMuxer 多媒体混合器去编辑成mp4 的视频文件
  */
 public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivity {
     private static String TAG = "DecodeVideoEditEncodeMuxAudioVideoActivity";
@@ -75,7 +97,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
     private MediaMuxer mMuxer;
     private MediaExtractor mVideoExtractor;
     private EGLHelper mInputSurface;
-    private OutputSurface mOutputSurface;
+    private SurfaceTextureManager mOutputSurface;
     private MediaCodec mVideoEncode;
     private MediaExtractor mAudioExtractor;
     private MediaCodec mAudioEncode;
@@ -111,19 +133,6 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
                 mMuxing, mOutputVideoTrack, mOutputAudioTrack));
     }
 
-    /**
-     * Used for editing the frames.
-     *
-     * <p>Swaps green and blue channels by storing an RBGA color in an RGBA buffer.
-     */
-    private static final String FRAGMENT_SHADER =
-            "#extension GL_OES_EGL_image_external : require\n" +
-                    "precision mediump float;\n" +
-                    "varying vec2 vTextureCoord;\n" +
-                    "uniform samplerExternalOES sTexture;\n" +
-                    "void main() {\n" +
-                    "  gl_FragColor = texture2D(sTexture, vTextureCoord).rbga;\n" +
-                    "}\n";
     private MediaCodec mVideoDecoder;
     private HandlerThread mVideoDecoderHandlerThread;
     private CallBack mVideoDecoderHandle;
@@ -164,8 +173,8 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
                                     }
                                 });
 
-//                                copyVideoAndAudioWithWidth1280Height720();
-                                copyAudioWithWidth1280Height720();
+                                copyVideoAndAudioWithWidth1280Height720();
+//                                copyAudioWithWidth1280Height720();
 //                                copyVideoWithWidth176Height144();
 //                                copyVideoWithWidth320Height240();
 //                                copyVideoWithWidth1280Height720();
@@ -276,6 +285,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
         this.mCopyVideo = copyVideo;
     }
 
+    @SuppressLint("Recycle")
     private void extractDecodeEditEncodeMux() {
         // Exception that may be thrown during release.
         Exception exception = null;
@@ -341,15 +351,16 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
 
                 MediaFormat outputVideoFormat = MediaCodecUtils.createMediaFormat(mWidth, mHeight, 2000000, 15, 10);
                 AtomicReference<Surface> inputSurfaceReference = new AtomicReference<>();
+                //注意先创建编码器，等待解码完成后交给编码器去编码
                 mVideoEncode = createVideoEncode(videoCodeInfo, outputVideoFormat, inputSurfaceReference);
                 mInputSurface = new EGLHelper();
                 mInputSurface.setSurfaceType(EGLHelper.SURFACE_WINDOW, inputSurfaceReference.get());
                 mInputSurface.eglInit();
                 mInputSurface.makeCurrent();
-                mOutputSurface = new OutputSurface();
-                mOutputSurface.changeFragmentShader(FRAGMENT_SHADER);
-                mVideoDecoder = createVideoDecoder(inputFormat, mOutputSurface.getSurface());
-                mInputSurface.checkMakeCurrent();
+                mOutputSurface = new SurfaceTextureManager(DecodeVideoEditEncodeMuxAudioVideoActivity.this);
+                Surface surface = new Surface(mOutputSurface.getSurfaceTexture());
+                mVideoDecoder = createVideoDecoder(inputFormat, surface);
+                mInputSurface.releaseEGlContextAndDisplay();
             }
 
 
@@ -365,6 +376,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
 
                 mAudioEncode = createAudioEncoder(audioCodeInfo, outputAudioFormat);
                 mAudioDecoder = createAudioDecoder(inputFormat);
+
             }
 
             awaitEncode();
@@ -466,6 +478,13 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
 
     }
 
+    /**
+     * 创建一个音频的解码器
+     *
+     * @param inputFormat
+     * @return
+     * @throws IOException
+     */
     private MediaCodec createAudioDecoder(MediaFormat inputFormat) throws IOException {
         MediaCodec audioDecoder = MediaCodecUtils.createAudioDecoder(inputFormat, null, null, 0);
         audioDecoder.setCallback(new MediaCodec.Callback() {
@@ -578,6 +597,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
         int encoderIndex = mPendingAudioEncoderInputBufferIndices.poll();
 
         MediaCodec.BufferInfo info = mPendingAudioDecoderOutputBufferInfos.poll();
+        //encoderInputBuffer这个是没有数据的
         ByteBuffer encoderInputBuffer = mAudioEncode.getInputBuffer(encoderIndex);
         int size = info.size;
         long presentationTimeUs = info.presentationTimeUs;
@@ -587,9 +607,12 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
         Log.d(TAG, "audio decoder: pending buffer for time " + presentationTimeUs);
 
         if (size >= 0) {
+            //通过mPendingAudioDecoderOutputBufferIndices 去取音频数据
             ByteBuffer decoderOutputBuffer = mAudioDecoder.getOutputBuffer(decoderIndex).duplicate();
             decoderOutputBuffer.position(info.offset);
             decoderOutputBuffer.limit(info.offset + size);
+
+            //将decode后的数据放入encoderInputBuffer 中
             encoderInputBuffer.position(0);
             encoderInputBuffer.put(decoderOutputBuffer);
             mAudioEncode.queueInputBuffer(encoderIndex, 0, size, presentationTimeUs, info.flags);
@@ -704,6 +727,13 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
     }
 
 
+    /**
+     * 创建一个解码器
+     *
+     * @param inputFormat 输入的多媒体的编码格式
+     * @param surface     渲染的窗口
+     * @return
+     */
     private MediaCodec createVideoDecoder(MediaFormat inputFormat, Surface surface) {
         mVideoDecoderHandlerThread = new HandlerThread("DecodeThread");
         mVideoDecoderHandlerThread.start();
@@ -742,7 +772,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
 
                 Log.d(TAG, "video decoder: returned output buffer: " + index);
                 Log.d(TAG, "video decoder: returned buffer of size " + info.size);
-
+                //媒体流中有一部分是流中媒体格式的信息  这个不做编码所以需要去除
                 if ((info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
                     Log.d(TAG, "video decoder: codec config buffer");
                     codec.releaseOutputBuffer(index, false);
@@ -761,7 +791,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
                     mOutputSurface.drawImage();
                     mInputSurface.setPresentationTime(info.presentationTimeUs * 1000);
                     mInputSurface.swapBuffers();
-                    mInputSurface.checkMakeCurrent();
+                    mInputSurface.releaseEGlContextAndDisplay();
                     Log.d(TAG, "input surface: swap buffers");
                 }
 

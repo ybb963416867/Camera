@@ -126,7 +126,10 @@ public class EGLHelper {
         EGL14.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext);
     }
 
-    public void checkMakeCurrent() {
+    /**
+     * 释放EGL 中的上下文和 虚拟屏， 如果多个地方需要调用倒Egl 需要调用这个区切换
+     */
+    public void releaseEGlContextAndDisplay() {
         if (!EGL14.eglMakeCurrent(mEglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)) {
             throw new RuntimeException("eglMakeCurrent failed");
         }

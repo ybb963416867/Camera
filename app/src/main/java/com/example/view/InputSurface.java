@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.manager;
+package com.example.view;
 
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;
