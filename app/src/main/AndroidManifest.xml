@@ -19,6 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
+        <activity
+            android:name=".MediaDealActivity"
+            android:exported="false" />
         <activity android:name=".DecodeVideoEditEncodeMuxAudioVideoActivity" />
         <activity android:name=".EncodeAndMuxActivity" />
         <activity android:name=".VideoViewActivity" />

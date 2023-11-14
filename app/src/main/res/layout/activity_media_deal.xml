@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    tools:context=".MediaDealActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/but_start_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/start_server" />
+
+        <Button
+            android:id="@+id/but_capture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/capture" />
+
+        <Button
+            android:id="@+id/but_stop_capture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/stop_capture" />
+
+        <Button
+            android:id="@+id/but_capture_region"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/capture_region" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/but_recorder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/start_recorder" />
+
+        <Button
+            android:id="@+id/but_recorder_region"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/recorder_region" />
+
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/fl_recorder"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="15dp"
+        android:background="@android:color/holo_orange_dark">
+
+        <TextView
+            android:id="@+id/tv_num"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:textColor="@android:color/white" />
+
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:background="@android:color/holo_blue_dark"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/capture_image" />
+    </FrameLayout>
+
+
+</LinearLayout>
