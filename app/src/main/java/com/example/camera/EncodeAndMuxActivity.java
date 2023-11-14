@@ -116,7 +116,7 @@ public class EncodeAndMuxActivity extends AppCompatActivity {
     }
 
     private void prepareEncoder(int width, int height) {
-        videoPath = FileUtils.getStorageMp4(EncodeAndMuxActivity.class.getSimpleName());
+        videoPath = FileUtils.getStorageMp4(getApplicationContext(), EncodeAndMuxActivity.class.getSimpleName());
         Log.i(TAG, "videoPAth:" + videoPath);
         mediaRecorder = new MediaRecorder(width, height, videoPath);
         mediaRecorder.start();

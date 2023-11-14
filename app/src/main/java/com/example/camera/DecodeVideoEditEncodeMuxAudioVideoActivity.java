@@ -337,7 +337,7 @@ public class DecodeVideoEditEncodeMuxAudioVideoActivity extends AppCompatActivit
             return;
         }
 
-        mOutPutPath = FileUtils.getStorageMp4(DecodeVideoEditEncodeMuxAudioVideoActivity.class.getSimpleName()) + "testYbb.mp4";
+        mOutPutPath = FileUtils.getStorageMp4(getApplicationContext(), DecodeVideoEditEncodeMuxAudioVideoActivity.class.getSimpleName() + "testYbb");
 
         try {
             mMuxer = MediaCodecUtils.createMuxer(mOutPutPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);

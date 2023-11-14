@@ -186,8 +186,8 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
     }
 
     private void prepareEncoder(int width, int height) {
-        videoPath = FileUtils.getStorageMp4(MainActivity.class.getSimpleName());
-        Log.i(TAG, "videoPAth:"+videoPath);
+        videoPath = FileUtils.getStorageMp4(getApplicationContext(), MainActivity.class.getSimpleName());
+        Log.i(TAG, "videoPAth:" + videoPath);
         mediaRecorder = new MediaRecorder(width, height, videoPath);
         mediaRecorder.start();
         eglHelper = new EGLHelper();
