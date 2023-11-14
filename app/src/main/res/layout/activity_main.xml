@@ -68,12 +68,28 @@
             android:text="fbo帧缓存用法"
             />
 
+
+        <Button
+            android:id="@+id/but_mediaCodec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="mediaCodec中编码器Encode和封装器Mux的用法"
+            />
+
         <Button
             android:id="@+id/openGl_video_recode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="opengl egl录制视频"
             />
+
+        <Button
+            android:id="@+id/edit_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="将一个视频的音频和视频提取出来复制到储存卡里面"
+            />
+
 
     </LinearLayout>
 

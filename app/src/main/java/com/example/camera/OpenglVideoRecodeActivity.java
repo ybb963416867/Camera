@@ -4,12 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
+import android.media.MediaFormat;
+import android.media.MediaMuxer;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.example.base.BaseActivity;
 import com.example.manager.EGLHelper;
@@ -27,8 +34,9 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
     private static final String TAG = "OpenglVideoRecode";
 
     private static final long DURATION_SEC = 8;             // 8 seconds of video
-
+    private Camera mCamera;
     private SurfaceTextureManager mStManager;
+    private String videoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +70,11 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(OpenglVideoRecodeActivity.this, "请等待5s左右,完成会显示Toast,请稍等……", Toast.LENGTH_SHORT);
+                                        Toast.makeText(OpenglVideoRecodeActivity.this, "请等待5s左右,完成会显示Toast,请稍等……", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                                 encodeCameraToMpeg();
+//                                CameraToMpegWrapper.runTest(MainActivity.this);
                             } catch (Exception e) {
                                 Log.e("报异常了", e.toString());
                                 e.printStackTrace();
@@ -77,6 +86,13 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
                     }).start();
                 }
             });
+
+            findViewById(R.id.player).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    VideoViewActivity.launch(OpenglVideoRecodeActivity.this, videoPath);
+                }
+            });
         }
     };
 
@@ -84,6 +100,11 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
      * Tests encoding of AVC video from Camera input.  The output is saved as an MP4 file.
      */
     private void encodeCameraToMpeg() {
+        // arbitrary but popular values
+        int encWidth = 640;
+        int encHeight = 480;
+        int encBitRate = 6000000;      // Mbps
+        Log.d(TAG, "avc" + " output " + encWidth + "x" + encHeight + " @" + encBitRate);
 
         try {
             kitkatCamera = new KitkatCamera();
@@ -109,6 +130,10 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
                 // Feed any pending encoder output into the muxer.
                 mediaRecorder.drainEncoder(false);
 
+                // Switch up the colors every 15 frames.  Besides demonstrating the use of
+                // fragment shaders for video editing, this provides a visual indication of
+                // the frame rate: if the camera is capturing at 15fps, the colors will change
+                // once per second.
                 frameCount++;
                 Log.d(TAG, "frameCount:" + frameCount);
                 // Acquire a new frame of input, and render it to the Surface.  If we had a
@@ -161,7 +186,9 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
     }
 
     private void prepareEncoder(int width, int height) {
-        mediaRecorder = new MediaRecorder(width, height, FileUtils.getStorageMp4(MainActivity.class.getSimpleName()));
+        videoPath = FileUtils.getStorageMp4(getApplicationContext(), MainActivity.class.getSimpleName());
+        Log.i(TAG, "videoPAth:" + videoPath);
+        mediaRecorder = new MediaRecorder(width, height, videoPath);
         mediaRecorder.start();
         eglHelper = new EGLHelper();
         eglHelper.setSurfaceType(EGLHelper.SURFACE_WINDOW, mediaRecorder.getEncodeInputSurface());
@@ -173,6 +200,12 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
      */
     private void releaseEncoder() {
         Log.d(TAG, "releasing encoder objects");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(OpenglVideoRecodeActivity.this, "录制完了", Toast.LENGTH_SHORT).show();
+            }
+        });
         if (mediaRecorder != null) {
             mediaRecorder.releaseEncoder();
         }

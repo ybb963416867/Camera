@@ -66,22 +66,7 @@ public class MediaRecorder {
 
     public void start() {
         mBufferInfo = new MediaCodec.BufferInfo();
-        /**
-         * 配置MediaCodec 编码器
-         */
-        //视频格式
-        // 类型（avc高级编码 h264） 编码出的宽、高
-        MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
-        //参数配置
-        // 1500kbs码率
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        //设置帧率
-        format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
-        //设置码率
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-        //设置关键帧间距
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, iFrameInterval);
-        Log.d(TAG, "format: " + format);
+        MediaFormat format = MediaCodecUtils.createMediaFormat(width, height, bitRate, frameRate, iFrameInterval);
         try {
             mEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
         } catch (IOException e) {
@@ -99,7 +84,7 @@ public class MediaRecorder {
         //封装器 复用器
         // 一个 mp4 的封装器 将h.264 通过它写出到文件就可以了
         try {
-            mMuxer = new MediaMuxer(mOutputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            mMuxer = MediaCodecUtils.createMuxer(mOutputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         } catch (IOException ioe) {
             throw new RuntimeException("MediaMuxer creation failed", ioe);
         }
@@ -107,7 +92,6 @@ public class MediaRecorder {
         mTrackIndex = -1;
         mMuxerStarted = false;
     }
-
 
     /**
      * @param endOfStream 是否结束
@@ -160,7 +144,8 @@ public class MediaRecorder {
                     throw new RuntimeException("encoderOutputBuffer " + encoderStatus +
                             " was null");
                 }
-
+                //这个flag 只能为1和4   1的时候是正常的，运行下面的  如果为4的时候是流结束将会走这个方法
+                //这里判断flag为4 的情况，代表这个流结束了，所以不需要。
                 if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
                     // The codec config data was pulled out and fed to the muxer when we got
                     // the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.

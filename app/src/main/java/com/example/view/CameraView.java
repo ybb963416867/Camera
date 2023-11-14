@@ -25,7 +25,6 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
 
     private KitkatCamera mCamera2;
     private CameraRender mCameraRender;
-    private int cameraId;
     private Runnable mRunnable;
     private String TAG = "CameraView";
     private KitkatCamera.AutoFocus autoFocus;
@@ -49,6 +48,8 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
         //脏模式
 //        setRenderMode(RENDERMODE_WHEN_DIRTY);
         mCamera2 = new KitkatCamera();
+        mCamera2.open(mCamera2.getCameraId() == 1 ? 0 : 1);
+        mCamera2.preview();
         mCameraRender = new CameraRender(getResources());
     }
 
@@ -59,9 +60,9 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
             mRunnable.run();
             mRunnable = null;
         }
-        mCamera2.open(mCamera2.getCameraId() == 1 ? 0 : 1);
         Point point = mCamera2.getPreviewSize();
         mCameraRender.setDataSize(point.x, point.y);
+        mCameraRender.setCameraId(mCamera2.getCameraId());
         mCamera2.setPreviewTexture(mCameraRender.getSurfaceTexture());
 //        mCameraRender.getSurfaceTexture().setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
 //            @Override
@@ -69,7 +70,6 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
 //                requestRender();
 //            }
 //        });
-        mCamera2.preview();
     }
 
     @Override
@@ -83,14 +83,9 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
     }
 
     public void switchCamera() {
-        mRunnable = new Runnable() {
-
-            @Override
-            public void run() {
-                mCamera2.close();
-            }
-        };
         onPause();
+        mCamera2.open(mCamera2.getCameraId() == 1 ? 0 : 1);
+        mCamera2.preview();
         onResume();
     }
 
@@ -102,11 +97,19 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "GLSurfaceView 的onPause");
         mCamera2.close();
     }
 
     public void onFocus(Point point, Camera.AutoFocusCallback callback) {
         mCamera2.onFocus(point, callback);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCamera2.preview();
+        Log.d(TAG, "GLSurfaceView 的onResume");
     }
 
     @Override

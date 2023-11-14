@@ -2,7 +2,9 @@ package com.example.rander;
 
 import android.content.res.Resources;
 import android.graphics.SurfaceTexture;
+import android.nfc.Tag;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import com.example.filter.OesFilter;
 import com.example.util.Gl2Utils;
@@ -25,6 +27,7 @@ public class CameraRender implements GLSurfaceView.Renderer {
     private int height;
     private int cameraId;
     private SurfaceTexture  surfaceTexture;
+    private String TAG = "CameraRender";
 
     public CameraRender(Resources res) {
         mOesFilter = new OesFilter(res);
@@ -44,11 +47,13 @@ public class CameraRender implements GLSurfaceView.Renderer {
 
     private void calculateMatrix() {
         Gl2Utils.getPicOriginMatrix(matrix,this.dataWidth,this.dataHeight,this.width,this.height);
-        if (cameraId==1){
-            Gl2Utils.flip(matrix,true,false);
-            Gl2Utils.rotate(matrix,90);
-        }else {
-            Gl2Utils.rotate(matrix,270);
+        if (cameraId == 1) {
+            Log.e(TAG, "1");
+            Gl2Utils.flip(matrix, true, false);
+            Gl2Utils.rotate(matrix, 90);
+        } else {
+            Log.e(TAG, "0");
+            Gl2Utils.rotate(matrix, 270);
         }
         mOesFilter.setMatrix(matrix);
     }
