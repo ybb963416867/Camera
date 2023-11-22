@@ -30,7 +30,7 @@ public class LineShape extends Shape {
 
     private int mProgram;
 
-    static final int COORDS_PER_VERTEX = 2;
+    static final int COORDS_PER_VERTEX = 3;
     static float triangleCoords[] = {
             0.5f,  0.5f, 0.0f, // top
             0.5f, -0.5f, 0.0f  // bottom right
