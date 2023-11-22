@@ -19,9 +19,9 @@ public class LineGlSurface extends GLSurfaceView {
     }
 
     private void initView() {
-        mRender = new LineRender();
+        mRender = new LineRender(this);
         setEGLContextClientVersion(2);
-        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         setRenderer(mRender);
+        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 }
