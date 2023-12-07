@@ -35,12 +35,13 @@ public class PictureRender implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        Log.d(TAG,"onSurfaceChanged");
+        Log.d(TAG, "onSurfaceChanged");
         //按GLSurfaceView 的大小进行显示
-        GLES20.glViewport(0,0,width,height);
+        GLES20.glViewport(0, 0, width, height);
         //按图片的原本大小居中进行显示
-//        GLES20.glViewport((width-mBitmap.getWidth())/2,(height-mBitmap.getHeight())/2,mBitmap.getWidth(),mBitmap.getHeight());
-        Gl2Utils.getPicOriginMatrix(Gl2Utils.getOriginalMatrix(),mBitmap.getWidth(),mBitmap.getHeight(),width,height);
+        //GLES20.glViewport((width-mBitmap.getWidth())/2,(height-mBitmap.getHeight())/2,mBitmap.getWidth(),mBitmap.getHeight());
+        //Gl2Utils.getPicOriginMatrix(Gl2Utils.getOriginalMatrix(),mBitmap.getWidth(),mBitmap.getHeight(),width,height);
+        Gl2Utils.getPicOriginMatrix(picFilter.getMatrix(), mBitmap.getWidth(), mBitmap.getHeight(), width, height);
     }
 
     @Override
