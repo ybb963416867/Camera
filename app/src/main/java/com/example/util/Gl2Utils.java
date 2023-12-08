@@ -82,6 +82,102 @@ public class Gl2Utils {
     }
 
     /**
+     * 左上对齐
+     *
+     * @param matrix
+     * @param imgWidth
+     * @param imgHeight
+     * @param viewWidth
+     * @param viewHeight
+     * @param type
+     */
+    public static void getPicOriginMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int viewHeight, int type) {
+        float sWH = imgWidth / (float) imgHeight;
+        float sWidthHeight = viewWidth / (float) viewHeight;
+        float[] mProjectMatrix = new float[16];
+        float[] mViewMatrix = new float[16];
+        if (type == 0) {
+            if (viewWidth > viewHeight) {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / (sWidthHeight / sWH), 1 / (sWidthHeight / sWH), 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight / sWH, sWidthHeight / sWH, -1, 1, 3, 7);
+                }
+            } else {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / sWidthHeight * sWH, 1 / sWidthHeight * sWH, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1 / sWH * sWidthHeight, 1 / sWH * sWidthHeight, -1, 1, 3, 7);
+                }
+            }
+        } else if (type == 1) {
+            if (viewWidth > viewHeight) {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / (sWidthHeight / sWH)) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (sWidthHeight / sWH) * 2 - 1, -1, 1, 3, 7);
+                }
+            } else {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / sWidthHeight * sWH) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (1 / sWH * sWidthHeight) * 2 - 1, -1, 1, 3, 7);
+                }
+            }
+        } else if (type == 2) {
+            if (viewWidth > viewHeight) {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / (sWidthHeight / sWH)) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (sWidthHeight / sWH) * 2, 1, -1, 1, 3, 7);
+                }
+            } else {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / sWidthHeight * sWH) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / sWH * sWidthHeight) * 2, 1, -1, 1, 3, 7);
+                }
+            }
+        } else if (type == 3) {
+            if (viewWidth > viewHeight) {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / (sWidthHeight / sWH)) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (sWidthHeight / sWH) * 2 - 1, -1, 1, 3, 7);
+                }
+            } else {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / sWidthHeight * sWH) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (1 / sWH * sWidthHeight) * 2 - 1, -1, 1, 3, 7);
+                }
+            }
+        } else if (type == 4) {
+            if (viewWidth > viewHeight) {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / (sWidthHeight / sWH)) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (sWidthHeight / sWH) * 2, 1, -1, 1, 3, 7);
+                }
+            } else {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / sWidthHeight * sWH) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / sWH * sWidthHeight) * 2, 1, -1, 1, 3, 7);
+                }
+            }
+        }else {
+            throw new IllegalArgumentException("please check argument type");
+        }
+
+        //设置相机位置
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 7.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        //计算变换矩阵
+        Matrix.multiplyMM(matrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
+
+    }
+
+    /**
      * @param matrix     4*4的浮点矩阵
      * @param type
      * @param imgWidth
