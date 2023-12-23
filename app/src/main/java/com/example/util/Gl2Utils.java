@@ -89,7 +89,7 @@ public class Gl2Utils {
      * @param imgHeight
      * @param viewWidth
      * @param viewHeight
-     * @param type
+     * @param type       0 center  1 左上 2 右上 3左下  4 右下  5 中上
      */
     public static void getPicOriginMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int viewHeight, int type) {
         float sWH = imgWidth / (float) imgHeight;
@@ -166,7 +166,22 @@ public class Gl2Utils {
                     Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / sWH * sWidthHeight) * 2, 1, -1, 1, 3, 7);
                 }
             }
-        }else {
+        } else if (type == 5) {
+            if (viewWidth > viewHeight) {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - 1 / (sWidthHeight / sWH) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight / sWH, sWidthHeight / sWH, -1, 1, 3, 7);
+                }
+            } else {
+                if (sWH > sWidthHeight) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / sWidthHeight * sWH * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1 / sWH * sWidthHeight, 1 / sWH * sWidthHeight, -1, 1, 3, 7);
+                }
+            }
+
+        } else {
             throw new IllegalArgumentException("please check argument type");
         }
 

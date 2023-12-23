@@ -24,7 +24,7 @@ public class PicGlSurfaceActivity extends BaseActivity {
         setContentView(R.layout.activity_pic_gl_surface);
         picGLSurface = findViewById(R.id.pic_surface);
         imageView = findViewById(R.id.iv);
-        @SuppressLint("UseCompatLoadingForDrawables") BitmapDrawable  bitmapDrawable= (BitmapDrawable) getResources().getDrawable(R.mipmap.photo);
+        @SuppressLint("UseCompatLoadingForDrawables") BitmapDrawable  bitmapDrawable= (BitmapDrawable) getResources().getDrawable(R.mipmap.bg);
         Bitmap bitmap = bitmapDrawable.getBitmap();
         Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, false);
         picGLSurface.setBitmap(copy);
