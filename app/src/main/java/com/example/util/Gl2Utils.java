@@ -175,7 +175,7 @@ public class Gl2Utils {
                 }
             } else {
                 if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / sWidthHeight * sWH * 2, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - 1 / sWidthHeight * sWH * 2, 1, 3, 7);
                 } else {
                     Matrix.orthoM(mProjectMatrix, 0, -1 / sWH * sWidthHeight, 1 / sWH * sWidthHeight, -1, 1, 3, 7);
                 }
