@@ -97,6 +97,13 @@
             android:text="使用opengl 绘制线"
             />
 
+        <Button
+            android:id="@+id/but_recorder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="视频录制"
+            />
+
 
     </LinearLayout>
 

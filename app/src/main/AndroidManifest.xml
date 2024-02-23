@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 写储存卡权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name="com.example.CameraApplication"
         android:allowBackup="true"
@@ -43,6 +45,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.gpengl.MainRecordActivity"
+            android:exported="false" />
+        <activity android:name="com.example.gpengl.second.SecondActivity" android:exported="false"/>
+
+        <activity android:name="com.example.gpengl.third.ThirdActivity" android:exported="false"/>
+        <activity android:name="com.example.gpengl.first.FirstActivity" android:exported="false"/>
+
     </application>
 
 </manifest>
