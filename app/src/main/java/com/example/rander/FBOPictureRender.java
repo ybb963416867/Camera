@@ -84,6 +84,9 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
             GLES20.glViewport(0, 0, width, height);
+            //处理后的纹理，也就是黑白图的纹理
+//            picFilter.setTextureId(fTexture[1]);
+            //没有处理的纹理，也就是原始图像
             picFilter.setTextureId(fTexture[0]);
             picFilter.draw();
 //            destroy();
