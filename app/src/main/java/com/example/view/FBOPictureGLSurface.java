@@ -45,4 +45,6 @@ public class FBOPictureGLSurface extends GLSurfaceView {
         pictureRender.setCallBack(pb);
     }
 
+
+
 }

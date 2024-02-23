@@ -8,6 +8,7 @@ import android.opengl.GLUtils;
 import android.util.Log;
 
 import com.example.filter.GrayFilter;
+import com.example.filter.PicFilter;
 import com.example.util.Gl2Utils;
 
 import java.nio.ByteBuffer;
@@ -25,11 +26,14 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
 
     private Bitmap mBitmap;
     private final GrayFilter grayFilter;
+    private final PicFilter picFilter;
     private int[] fFrame = new int[1];
     private int[] fRender = new int[1];
     private int[] fTexture = new int[2];
     private ByteBuffer mBuffer;
     private FBOPictureRender.PicCallBack callBack;
+    private int width;
+    private int height;
 
     public void setCallBack(PicCallBack callBack) {
         this.callBack = callBack;
@@ -40,17 +44,22 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
      */
     public FBOPictureRender(Resources resources) {
         grayFilter = new GrayFilter(resources);
+        picFilter = new PicFilter(resources);
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         grayFilter.create();
         grayFilter.setMatrix(Gl2Utils.flip(Gl2Utils.getOriginalMatrix(), false, true));
+        picFilter.create();
     }
 
     @Override
-    public void onSurfaceChanged(GL10 gl10, int i, int i1) {
+    public void onSurfaceChanged(GL10 gl10, int width, int height) {
+        Gl2Utils.getPicOriginMatrix(picFilter.getMatrix(), mBitmap.getWidth(), mBitmap.getHeight(), width, height, 6);
 
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -71,7 +80,13 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
             if (callBack != null) {
                 callBack.callBack(mBuffer);
             }
-            destroy();
+
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+
+            GLES20.glViewport(0, 0, width, height);
+            picFilter.setTextureId(fTexture[0]);
+            picFilter.draw();
+//            destroy();
         }
 
 
@@ -116,7 +131,7 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
                  * 　pixels ---- 包含了纹理图像数据，这个数据描述了纹理图像本身和它的边界。
                  * 指定fbo帧缓存中的数据的宽高
                  */
-//                GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+                GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
                 GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mBitmap, 0);
             }
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
