@@ -104,6 +104,20 @@
             android:text="视频录制"
             />
 
+        <Button
+            android:id="@+id/but_exo_play"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="exoplay"
+            />
+
+        <Button
+            android:id="@+id/but_color_texture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="颜色纹理"
+            />
+
 
     </LinearLayout>
 

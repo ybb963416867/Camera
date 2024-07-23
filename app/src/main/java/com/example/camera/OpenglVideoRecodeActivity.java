@@ -90,7 +90,7 @@ public class OpenglVideoRecodeActivity extends BaseActivity {
             findViewById(R.id.player).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    VideoViewActivity.launch(OpenglVideoRecodeActivity.this, videoPath);
+                    VideoViewActivity.launch(OpenglVideoRecodeActivity.this, "/storage/emulated/0/Android/data/com.example.camera/cache/Movies/01000003.mp4");
                 }
             });
         }

@@ -3,6 +3,7 @@ package com.example.rander;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.util.Log;
@@ -66,7 +67,6 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl10) {
         if (mBitmap != null && !mBitmap.isRecycled()) {
             Log.e("ybb", "onDrawFrame");
-            //创建纹理，一个纹理用于绘制，一个纹理用于fbo
             createTexture();
             //将一个2D纹理的某个mip级别或者立方图面连接到帧缓存区附着点
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, fTexture[1], 0);
@@ -82,12 +82,13 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
             }
 
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+            GLES20.glBindTexture(GLES30.GL_TEXTURE_2D, 0);
 
             GLES20.glViewport(0, 0, width, height);
             //处理后的纹理，也就是黑白图的纹理
-//            picFilter.setTextureId(fTexture[1]);
+            picFilter.setTextureId(fTexture[1]);
             //没有处理的纹理，也就是原始图像
-            picFilter.setTextureId(fTexture[0]);
+//            picFilter.setTextureId(fTexture[0]);
             picFilter.draw();
 //            destroy();
         }
@@ -105,6 +106,8 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
     }
 
     private void createTexture() {
+
+        //创建纹理，一个纹理用于绘制，一个纹理用于fbo
         //创建一个帧缓存区对象
         GLES20.glGenFramebuffers(1, fFrame, 0);
         //将该帧缓存区绑定对象绑定到管线上面
@@ -115,6 +118,7 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
         GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, fRender[0]);
         //指定保存渲染缓存区的大小和格式
         GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_DEPTH_COMPONENT16, mBitmap.getWidth(), mBitmap.getHeight());
+
         //创建纹理
         GLES20.glGenTextures(2, fTexture, 0);
 

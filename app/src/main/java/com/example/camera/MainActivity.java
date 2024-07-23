@@ -25,6 +25,8 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.edit_video).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DecodeVideoEditEncodeMuxAudioVideoActivity.class)));
         findViewById(R.id.draw_line).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LineActivity.class)));
         findViewById(R.id.but_recorder).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, MainRecordActivity.class)));
+        findViewById(R.id.but_exo_play).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ExoPlayActivity.class)));
+        findViewById(R.id.but_color_texture).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ColorTextureActivity.class)));
     }
 
 
