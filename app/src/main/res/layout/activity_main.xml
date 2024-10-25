@@ -118,6 +118,13 @@
             android:text="颜色纹理"
             />
 
+        <Button
+            android:id="@+id/but_enhance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="图像增强"
+            />
+
 
     </LinearLayout>
 

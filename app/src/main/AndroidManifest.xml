@@ -20,9 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
         <activity
+            android:name=".EnhanceActivity"
+            android:exported="false" />
+        <activity
             android:name=".ExoPlayActivity"
             android:exported="false" />
-
         <activity
             android:name=".ColorTextureActivity"
             android:exported="false" />
