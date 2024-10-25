@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
         <activity
+            android:name=".MultipleTextureActivity"
+            android:exported="false" />
+        <activity
             android:name=".EnhanceActivity"
             android:exported="false" />
         <activity
