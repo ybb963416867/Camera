@@ -15,7 +15,6 @@ public class Texture {
     private FloatBuffer vertexBuffer;
     private FloatBuffer texCoordBuffer;
     private Context context;
-    private int resourceId;
     private int imageWidth;
     private int imageHeight;
 
@@ -26,27 +25,11 @@ public class Texture {
             1.0f, 0.0f
     };
 
-    public Texture(Context context, int resourceId) {
+    public Texture(Context context) {
         this.context = context;
-        this.resourceId = resourceId;
 
-        // 加载纹理并获取宽高
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
-        imageWidth = bitmap.getWidth();
-        imageHeight = bitmap.getHeight();
-        textureId = loadTexture(bitmap);
-        bitmap.recycle();
-
-        ByteBuffer texbb = ByteBuffer.allocateDirect(texCoords.length * 4);
-        texbb.order(ByteOrder.nativeOrder());
-        texCoordBuffer = texbb.asFloatBuffer();
+        texCoordBuffer = ByteBuffer.allocateDirect(texCoords.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         texCoordBuffer.put(texCoords).position(0);
-    }
-
-    // 设置根据屏幕尺寸和纹理大小计算的顶点坐标
-    public void updateVertices(int screenWidth, int screenHeight) {
-//        float ratioX = (float) imageWidth / screenWidth;
-//        float ratioY = (float) imageHeight / screenHeight;
 
         float[] vertices = {
                 -0.8f,  0.8f, 0.0f,   // 左上角
@@ -55,10 +38,22 @@ public class Texture {
                 0.0f,  0.8f, 0.0f    // 右上角
         };
 
-        ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
-        bb.order(ByteOrder.nativeOrder());
-        vertexBuffer = bb.asFloatBuffer();
+        vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         vertexBuffer.put(vertices).position(0);
+
+        textureId = loadTexture(context,  R.mipmap.bg);
+    }
+
+    public void onCreate() {
+        textureId = loadTexture(context,  R.mipmap.bg);
+    }
+
+    // 设置根据屏幕尺寸和纹理大小计算的顶点坐标
+    public void updateVertices(int screenWidth, int screenHeight) {
+//        float ratioX = (float) imageWidth / screenWidth;
+//        float ratioY = (float) imageHeight / screenHeight;
+
+
     }
 
     public void draw(int shaderProgram) {
@@ -82,17 +77,27 @@ public class Texture {
         GLES20.glDisableVertexAttribArray(texCoordHandle);
     }
 
-    private int loadTexture(Bitmap bitmap) {
+    // 加载纹理的方法
+    private int loadTexture(Context context, int resourceId) {
         final int[] textureHandle = new int[1];
         GLES20.glGenTextures(1, textureHandle, 0);
 
         if (textureHandle[0] != 0) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
+
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+            bitmap.recycle();
         }
         return textureHandle[0];
     }
+
+
 }
 
