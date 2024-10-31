@@ -21,7 +21,7 @@ class PicTexture(val context: Context) : BaseTexture() {
             screenWith,
             screenHeight,
             coordinateRegion,
-            PositionType.LEFT_TOP
+            PositionType.MIDDLE_TOP
         )
     }
 

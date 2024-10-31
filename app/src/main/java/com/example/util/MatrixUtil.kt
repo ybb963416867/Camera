@@ -189,13 +189,50 @@ object MatrixUtil {
                     ), 0f
                 )
             }
+
             PositionType.LEFT_BOTTOM -> {
-
-
+                Matrix.translateM(
+                    matrix, 0,
+                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f - difWidth.div(
+                        2f
+                    ),
+                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
+                        2f
+                    ), 0f
+                )
             }
-            PositionType.RIGHT_BOTTOM -> TODO()
-            PositionType.MIDDLE_TOP -> TODO()
-            PositionType.MIDDLE_BOTTOM -> TODO()
+
+            PositionType.RIGHT_BOTTOM -> {
+                Matrix.translateM(
+                    matrix, 0,
+                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f + difWidth.div(
+                        2f
+                    ),
+                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
+                        2f
+                    ), 0f
+                )
+            }
+
+            PositionType.MIDDLE_TOP -> {
+                Matrix.translateM(
+                    matrix, 0,
+                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f,
+                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f + difHeight.div(
+                        2f
+                    ), 0f
+                )
+            }
+
+            PositionType.MIDDLE_BOTTOM -> {
+                Matrix.translateM(
+                    matrix, 0,
+                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f,
+                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
+                        2f
+                    ), 0f
+                )
+            }
         }
     }
 
