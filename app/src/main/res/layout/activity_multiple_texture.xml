@@ -7,9 +7,71 @@
     android:layout_height="match_parent"
     tools:context=".MultipleTextureActivity">
 
-    <android.opengl.GLSurfaceView
-        android:id="@+id/glSurfaceView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <com.example.view.MultipleTextureGlSurface
+            android:id="@+id/glSurfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="50dp"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <Button
+                android:id="@+id/but_load_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="加载图片"
+                />
+
+            <Button
+                android:id="@+id/but_load_pic1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="加载图片1"
+                />
+
+            <Button
+                android:id="@+id/but_load_pic2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="加载图片2"
+                />
+
+            <Button
+                android:id="@+id/but_load_pic3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="加载图片3"
+                />
+
+            <Button
+                android:id="@+id/but_adjust_position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="调整位置"
+                />
+
+            <Button
+                android:id="@+id/but_adjust_position1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="调整位置1"
+                />
+
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

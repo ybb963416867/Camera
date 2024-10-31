@@ -7,6 +7,8 @@
  */
 package com.example.util;
 
+import static java.lang.Math.abs;
+
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.opengl.GLES11Ext;
@@ -58,21 +60,21 @@ public class Gl2Utils {
     }
 
     public static void getPicOriginMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int viewHeight) {
-        float sWH = imgWidth / (float) imgHeight;
-        float sWidthHeight = viewWidth / (float) viewHeight;
+        float bitmapAspectRatio = imgWidth / (float) imgHeight;
+        float viewAspectRatio = viewWidth / (float) viewHeight;
         float[] mProjectMatrix = new float[16];
         float[] mViewMatrix = new float[16];
         if (viewWidth > viewHeight) {
-            if (sWH > sWidthHeight) {
-                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / (sWidthHeight / sWH), 1 / (sWidthHeight / sWH), 3, 7);
+            if (bitmapAspectRatio > viewAspectRatio) {
+                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / (viewAspectRatio / bitmapAspectRatio), 1 / (viewAspectRatio / bitmapAspectRatio), 3, 7);
             } else {
-                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight / sWH, sWidthHeight / sWH, -1, 1, 3, 7);
+                Matrix.orthoM(mProjectMatrix, 0, -viewAspectRatio / bitmapAspectRatio, viewAspectRatio / bitmapAspectRatio, -1, 1, 3, 7);
             }
         } else {
-            if (sWH > sWidthHeight) {
-                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / sWidthHeight * sWH, 1 / sWidthHeight * sWH, 3, 7);
+            if (bitmapAspectRatio > viewAspectRatio) {
+                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / viewAspectRatio * bitmapAspectRatio, 1 / viewAspectRatio * bitmapAspectRatio, 3, 7);
             } else {
-                Matrix.orthoM(mProjectMatrix, 0, -1 / sWH * sWidthHeight, 1 / sWH * sWidthHeight, -1, 1, 3, 7);
+                Matrix.orthoM(mProjectMatrix, 0, -1 / bitmapAspectRatio * viewAspectRatio, 1 / bitmapAspectRatio * viewAspectRatio, -1, 1, 3, 7);
             }
         }
         //设置相机位置
@@ -92,107 +94,107 @@ public class Gl2Utils {
      * @param type       0 center  1 左上 2 右上 3左下  4 右下  5 中上 6 中下
      */
     public static void getPicOriginMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int viewHeight, int type) {
-        float sWH = imgWidth / (float) imgHeight;
-        float sWidthHeight = viewWidth / (float) viewHeight;
+        float bitmapAspectRatio = imgWidth / (float) imgHeight;
+        float viewAspectRatio = viewWidth / (float) viewHeight;
         float[] mProjectMatrix = new float[16];
         float[] mViewMatrix = new float[16];
         if (type == 0) {
             if (viewWidth > viewHeight) {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / (sWidthHeight / sWH), 1 / (sWidthHeight / sWH), 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / (viewAspectRatio / bitmapAspectRatio), 1 / (viewAspectRatio / bitmapAspectRatio), 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight / sWH, sWidthHeight / sWH, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -viewAspectRatio / bitmapAspectRatio, viewAspectRatio / bitmapAspectRatio, -1, 1, 3, 7);
                 }
             } else {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / sWidthHeight * sWH, 1 / sWidthHeight * sWH, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / viewAspectRatio * bitmapAspectRatio, 1 / viewAspectRatio * bitmapAspectRatio, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -1 / sWH * sWidthHeight, 1 / sWH * sWidthHeight, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -1 / bitmapAspectRatio * viewAspectRatio, 1 / bitmapAspectRatio * viewAspectRatio, -1, 1, 3, 7);
                 }
             }
         } else if (type == 1) {
             if (viewWidth > viewHeight) {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / (sWidthHeight / sWH)) * 2, 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / (viewAspectRatio / bitmapAspectRatio)) * 2, 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, (sWidthHeight / sWH) * 2 - 1, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (viewAspectRatio / bitmapAspectRatio) * 2 - 1, -1, 1, 3, 7);
                 }
             } else {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / sWidthHeight * sWH) * 2, 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / viewAspectRatio * bitmapAspectRatio) * 2, 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, (1 / sWH * sWidthHeight) * 2 - 1, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (1 / bitmapAspectRatio * viewAspectRatio) * 2 - 1, -1, 1, 3, 7);
                 }
             }
         } else if (type == 2) {
             if (viewWidth > viewHeight) {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / (sWidthHeight / sWH)) * 2, 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / (viewAspectRatio / bitmapAspectRatio)) * 2, 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, 1 - (sWidthHeight / sWH) * 2, 1, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (viewAspectRatio / bitmapAspectRatio) * 2, 1, -1, 1, 3, 7);
                 }
             } else {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / sWidthHeight * sWH) * 2, 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / viewAspectRatio * bitmapAspectRatio) * 2, 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / sWH * sWidthHeight) * 2, 1, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / bitmapAspectRatio * viewAspectRatio) * 2, 1, -1, 1, 3, 7);
                 }
             }
         } else if (type == 3) {
             if (viewWidth > viewHeight) {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / (sWidthHeight / sWH)) * 2 - 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / (viewAspectRatio / bitmapAspectRatio)) * 2 - 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, (sWidthHeight / sWH) * 2 - 1, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (viewAspectRatio / bitmapAspectRatio) * 2 - 1, -1, 1, 3, 7);
                 }
             } else {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / sWidthHeight * sWH) * 2 - 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / viewAspectRatio * bitmapAspectRatio) * 2 - 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, (1 / sWH * sWidthHeight) * 2 - 1, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (1 / bitmapAspectRatio * viewAspectRatio) * 2 - 1, -1, 1, 3, 7);
                 }
             }
         } else if (type == 4) {
             if (viewWidth > viewHeight) {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / (sWidthHeight / sWH)) * 2 - 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / (viewAspectRatio / bitmapAspectRatio)) * 2 - 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, 1 - (sWidthHeight / sWH) * 2, 1, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (viewAspectRatio / bitmapAspectRatio) * 2, 1, -1, 1, 3, 7);
                 }
             } else {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / sWidthHeight * sWH) * 2 - 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / viewAspectRatio * bitmapAspectRatio) * 2 - 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / sWH * sWidthHeight) * 2, 1, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / bitmapAspectRatio * viewAspectRatio) * 2, 1, -1, 1, 3, 7);
                 }
             }
         } else if (type == 5) {
             if (viewWidth > viewHeight) {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - 1 / (sWidthHeight / sWH) * 2, 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - 1 / (viewAspectRatio / bitmapAspectRatio) * 2, 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight / sWH, sWidthHeight / sWH, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -viewAspectRatio / bitmapAspectRatio, viewAspectRatio / bitmapAspectRatio, -1, 1, 3, 7);
                 }
             } else {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - 1 / sWidthHeight * sWH * 2, 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - 1 / viewAspectRatio * bitmapAspectRatio * 2, 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -1 / sWH * sWidthHeight, 1 / sWH * sWidthHeight, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -1 / bitmapAspectRatio * viewAspectRatio, 1 / bitmapAspectRatio * viewAspectRatio, -1, 1, 3, 7);
                 }
             }
 
         } else if (type == 6) {
             if (viewWidth > viewHeight) {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, 1 / (sWidthHeight / sWH) * 2 - 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, 1 / (viewAspectRatio / bitmapAspectRatio) * 2 - 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight / sWH, sWidthHeight / sWH, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -viewAspectRatio / bitmapAspectRatio, viewAspectRatio / bitmapAspectRatio, -1, 1, 3, 7);
                 }
             } else {
-                if (sWH > sWidthHeight) {
-                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, 1 / sWidthHeight * sWH * 2 - 1, 3, 7);
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, 1 / viewAspectRatio * bitmapAspectRatio * 2 - 1, 3, 7);
                 } else {
-                    Matrix.orthoM(mProjectMatrix, 0, -1 / sWH * sWidthHeight, 1 / sWH * sWidthHeight, -1, 1, 3, 7);
+                    Matrix.orthoM(mProjectMatrix, 0, -1 / bitmapAspectRatio * viewAspectRatio, 1 / bitmapAspectRatio * viewAspectRatio, -1, 1, 3, 7);
                 }
             }
         } else {
@@ -204,6 +206,157 @@ public class Gl2Utils {
         //计算变换矩阵
         Matrix.multiplyMM(matrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
 
+    }
+
+    /**
+     * 左上对齐
+     *
+     * @param matrix
+     * @param imgWidth
+     * @param imgHeight
+     * @param viewWidth
+     * @param viewHeight
+     * @param type       0 center  1 左上 2 右上 3左下  4 右下  5 中上 6 中下
+     */
+    public static void getPicOriginMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int viewHeight, int surfaceWidth, int surfaceHeight, float left, float right, float bottom, float top, int type) {
+        float bitmapAspectRatio = imgWidth / (float) imgHeight;
+        float viewAspectRatio = viewWidth / (float) viewHeight;
+        float[] mProjectMatrix = new float[16];
+        float[] mViewMatrix = new float[16];
+
+        float offsetX = 0;
+        if (type == 0) {
+            if (viewWidth > viewHeight) {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / (viewAspectRatio / bitmapAspectRatio), 1 / (viewAspectRatio / bitmapAspectRatio), 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -viewAspectRatio / bitmapAspectRatio, viewAspectRatio / bitmapAspectRatio, -1, 1, 3, 7);
+                }
+            } else {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1 / viewAspectRatio * bitmapAspectRatio, 1 / viewAspectRatio * bitmapAspectRatio, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1 / bitmapAspectRatio * viewAspectRatio, 1 / bitmapAspectRatio * viewAspectRatio, -1, 1, 3, 7);
+                }
+            }
+        } else if (type == 1) {
+            if (viewWidth > viewHeight) {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / (viewAspectRatio / bitmapAspectRatio)) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (viewAspectRatio / bitmapAspectRatio) * 2 - 1, -1, 1, 3, 7);
+                }
+            } else {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / viewAspectRatio * bitmapAspectRatio) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, bottom, top, 3, 7);
+                }
+            }
+        } else if (type == 2) {
+            if (viewWidth > viewHeight) {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / (viewAspectRatio / bitmapAspectRatio)) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (viewAspectRatio / bitmapAspectRatio) * 2, 1, -1, 1, 3, 7);
+                }
+            } else {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - (1 / viewAspectRatio * bitmapAspectRatio) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / bitmapAspectRatio * viewAspectRatio) * 2, 1, -1, 1, 3, 7);
+                }
+            }
+        } else if (type == 3) {
+            if (viewWidth > viewHeight) {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / (viewAspectRatio / bitmapAspectRatio)) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (viewAspectRatio / bitmapAspectRatio) * 2 - 1, -1, 1, 3, 7);
+                }
+            } else {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / viewAspectRatio * bitmapAspectRatio) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, (1 / bitmapAspectRatio * viewAspectRatio) * 2 - 1, -1, 1, 3, 7);
+                }
+            }
+        } else if (type == 4) {
+            if (viewWidth > viewHeight) {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / (viewAspectRatio / bitmapAspectRatio)) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (viewAspectRatio / bitmapAspectRatio) * 2, 1, -1, 1, 3, 7);
+                }
+            } else {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, (1 / viewAspectRatio * bitmapAspectRatio) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, 1 - (1 / bitmapAspectRatio * viewAspectRatio) * 2, 1, -1, 1, 3, 7);
+                }
+            }
+        } else if (type == 5) {
+            if (viewWidth > viewHeight) {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - 1 / (viewAspectRatio / bitmapAspectRatio) * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -viewAspectRatio / bitmapAspectRatio, viewAspectRatio / bitmapAspectRatio, -1, 1, 3, 7);
+                }
+            } else {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, 1 - 1 / viewAspectRatio * bitmapAspectRatio * 2, 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1 / bitmapAspectRatio * viewAspectRatio, 1 / bitmapAspectRatio * viewAspectRatio, -1, 1, 3, 7);
+                }
+            }
+
+        } else if (type == 6) {
+            if (viewWidth > viewHeight) {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, 1 / (viewAspectRatio / bitmapAspectRatio) * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -viewAspectRatio / bitmapAspectRatio, viewAspectRatio / bitmapAspectRatio, -1, 1, 3, 7);
+                }
+            } else {
+                if (bitmapAspectRatio > viewAspectRatio) {
+                    Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1, 1 / viewAspectRatio * bitmapAspectRatio * 2 - 1, 3, 7);
+                } else {
+                    Matrix.orthoM(mProjectMatrix, 0, -1 / bitmapAspectRatio * viewAspectRatio, 1 / bitmapAspectRatio * viewAspectRatio, -1, 1, 3, 7);
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("please check argument type");
+        }
+
+
+        Matrix.setLookAtM(mViewMatrix, 0, (left + right) / 2f, (bottom + top) / 2f, 5f, (left + right) / 2f, (bottom + top) / 2f, 0f, 0f, 1.0f, 0.0f);
+        //设置相机位置
+//        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 7.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Log.e("xxx", "center x" + (-viewAspectRatio / bitmapAspectRatio + viewAspectRatio / bitmapAspectRatio) / 2f + " y = " + (-1 + 1) / 2 + "  left = " + left + " right = " + right + " bottom " + bottom + " top = " + top);
+
+        offsetX = (left + right) / 2f;
+        offsetX = offsetX <= 0 ? (1 + offsetX) - surfaceWidth / (float) surfaceHeight : surfaceWidth / (float) surfaceHeight - offsetX - 1;
+        //计算变换矩阵
+        Matrix.multiplyMM(matrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
+        Matrix.translateM(matrix, 0, (right - left) / 2f * 1.6666f - 1.6666f, (bottom + top) / 2f, 0);
+//        Matrix.translateM(matrix, 0, -(1.25f * left), (bottom + top) / 2f, 0);
+
+    }
+
+    public static void a(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int viewHeight, int surfaceWidth, int surfaceHeight, float left, float right, float bottom, float top, int type) {
+        if (imgHeight > 0 && imgWidth > 0 && viewWidth > 0 && viewHeight > 0) {
+            float viewAspectRatio = (float) viewWidth / viewHeight;
+            float bitmapAspectRatio = (float) imgWidth / imgHeight;
+            float[] projection = new float[16];
+            float[] mViewMatrix = new float[16];
+            if (bitmapAspectRatio > viewAspectRatio) {
+                Matrix.orthoM(projection, 0, -1, 1, -bitmapAspectRatio / viewAspectRatio, bitmapAspectRatio / viewAspectRatio, 1, 3);
+            } else {
+                Matrix.orthoM(projection, 0, -viewAspectRatio / bitmapAspectRatio, viewAspectRatio / bitmapAspectRatio, -1, 1, 1, 3);
+            }
+            Matrix.setLookAtM(mViewMatrix, 0, (left + right) / 2f, (bottom + top) / 2f, 1f, (left + right) / 2f, (bottom + top) / 2f, 0f, 0f, 1.0f, 0.0f);
+            Matrix.multiplyMM(matrix, 0, projection, 0, mViewMatrix, 0);
+        }
     }
 
     /**
@@ -240,36 +393,36 @@ public class Gl2Utils {
                  */
                 Matrix.multiplyMM(matrix, 0, projection, 0, camera, 0);
             }
-            float sWhView = (float) viewWidth / viewHeight;
-            float sWhImg = (float) imgWidth / imgHeight;
-            if (sWhImg > sWhView) {
+            float bitmapAspectRatioView = (float) viewWidth / viewHeight;
+            float bitmapAspectRatioImg = (float) imgWidth / imgHeight;
+            if (bitmapAspectRatioImg > bitmapAspectRatioView) {
                 switch (type) {
                     case TYPE_CENTERCROP:
-                        Matrix.orthoM(projection, 0, -sWhView / sWhImg, sWhView / sWhImg, -1, 1, 1, 3);
+                        Matrix.orthoM(projection, 0, -bitmapAspectRatioView / bitmapAspectRatioImg, bitmapAspectRatioView / bitmapAspectRatioImg, -1, 1, 1, 3);
                         break;
                     case TYPE_CENTERINSIDE:
-                        Matrix.orthoM(projection, 0, -1, 1, -sWhImg / sWhView, sWhImg / sWhView, 1, 3);
+                        Matrix.orthoM(projection, 0, -1, 1, -bitmapAspectRatioImg / bitmapAspectRatioView, bitmapAspectRatioImg / bitmapAspectRatioView, 1, 3);
                         break;
                     case TYPE_FITSTART:
-                        Matrix.orthoM(projection, 0, -1, 1, 1 - 2 * sWhImg / sWhView, 1, 1, 3);
+                        Matrix.orthoM(projection, 0, -1, 1, 1 - 2 * bitmapAspectRatioImg / bitmapAspectRatioView, 1, 1, 3);
                         break;
                     case TYPE_FITEND:
-                        Matrix.orthoM(projection, 0, -1, 1, -1, 2 * sWhImg / sWhView - 1, 1, 3);
+                        Matrix.orthoM(projection, 0, -1, 1, -1, 2 * bitmapAspectRatioImg / bitmapAspectRatioView - 1, 1, 3);
                         break;
                 }
             } else {
                 switch (type) {
                     case TYPE_CENTERCROP:
-                        Matrix.orthoM(projection, 0, -1, 1, -sWhImg / sWhView, sWhImg / sWhView, 1, 3);
+                        Matrix.orthoM(projection, 0, -1, 1, -bitmapAspectRatioImg / bitmapAspectRatioView, bitmapAspectRatioImg / bitmapAspectRatioView, 1, 3);
                         break;
                     case TYPE_CENTERINSIDE:
-                        Matrix.orthoM(projection, 0, -sWhView / sWhImg, sWhView / sWhImg, -1, 1, 1, 3);
+                        Matrix.orthoM(projection, 0, -bitmapAspectRatioView / bitmapAspectRatioImg, bitmapAspectRatioView / bitmapAspectRatioImg, -1, 1, 1, 3);
                         break;
                     case TYPE_FITSTART:
-                        Matrix.orthoM(projection, 0, -1, 2 * sWhView / sWhImg - 1, -1, 1, 1, 3);
+                        Matrix.orthoM(projection, 0, -1, 2 * bitmapAspectRatioView / bitmapAspectRatioImg - 1, -1, 1, 1, 3);
                         break;
                     case TYPE_FITEND:
-                        Matrix.orthoM(projection, 0, 1 - 2 * sWhView / sWhImg, 1, -1, 1, 1, 3);
+                        Matrix.orthoM(projection, 0, 1 - 2 * bitmapAspectRatioView / bitmapAspectRatioImg, 1, -1, 1, 1, 3);
                         break;
                 }
             }
@@ -288,14 +441,14 @@ public class Gl2Utils {
     public static void getCenterInsideMatrix(float[] matrix, int imgWidth, int imgHeight, int viewWidth, int
             viewHeight) {
         if (imgHeight > 0 && imgWidth > 0 && viewWidth > 0 && viewHeight > 0) {
-            float sWhView = (float) viewWidth / viewHeight;
-            float sWhImg = (float) imgWidth / imgHeight;
+            float bitmapAspectRatioView = (float) viewWidth / viewHeight;
+            float bitmapAspectRatioImg = (float) imgWidth / imgHeight;
             float[] projection = new float[16];
             float[] camera = new float[16];
-            if (sWhImg > sWhView) {
-                Matrix.orthoM(projection, 0, -1, 1, -sWhImg / sWhView, sWhImg / sWhView, 1, 3);
+            if (bitmapAspectRatioImg > bitmapAspectRatioView) {
+                Matrix.orthoM(projection, 0, -1, 1, -bitmapAspectRatioImg / bitmapAspectRatioView, bitmapAspectRatioImg / bitmapAspectRatioView, 1, 3);
             } else {
-                Matrix.orthoM(projection, 0, -sWhView / sWhImg, sWhView / sWhImg, -1, 1, 1, 3);
+                Matrix.orthoM(projection, 0, -bitmapAspectRatioView / bitmapAspectRatioImg, bitmapAspectRatioView / bitmapAspectRatioImg, -1, 1, 1, 3);
             }
             Matrix.setLookAtM(camera, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
             Matrix.multiplyMM(matrix, 0, projection, 0, camera, 0);
@@ -392,7 +545,6 @@ public class Gl2Utils {
             Log.e(TAG, "glError:" + code + "---" + index);
         }
     }
-
 
     public static float[] scale(float[] m, float x, float y) {
         Matrix.scaleM(m, 0, x, y, 1);
