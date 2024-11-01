@@ -10,6 +10,7 @@ import com.example.gpengl.multiple.IBaseTexture
 import com.example.gpengl.multiple.PicTexture
 import com.example.gpengl.multiple.PicTextureT
 import com.example.gpengl.multiple.TextureInfo
+import com.example.gpengl.multiple.generateBitmapTexture
 import com.example.gpengl.multiple.getHeight
 import com.example.gpengl.multiple.offSet
 import com.example.util.Gl2Utils
@@ -86,31 +87,33 @@ class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
         baseTextureList.forEachIndexed { index, iBaseTexture ->
 //            iBaseTexture.setTextureInfo(TextureInfo().generateBitmapTexture(context, resourceId))
 //            iBaseTexture.loadBitmapTexture(resourceId)
-            val textureInfo = TextureInfo()
-            textureInfo.textureId = iBaseTexture.getTextureId()
-            val options = BitmapFactory.Options()
-            options.inScaled = false
-            val bitmap = BitmapFactory.decodeResource(context.resources, resourceId, options)
+//            val textureInfo = TextureInfo()
+//            textureInfo.textureId = iBaseTexture.getTextureId()
+//            val options = BitmapFactory.Options()
+//            options.inScaled = false
+//            val bitmap = BitmapFactory.decodeResource(context.resources, resourceId, options)
+//
+//            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
+//
+//            GLES20.glTexParameteri(
+//                GLES20.GL_TEXTURE_2D,
+//                GLES20.GL_TEXTURE_MIN_FILTER,
+//                GLES20.GL_LINEAR
+//            )
+//            GLES20.glTexParameteri(
+//                GLES20.GL_TEXTURE_2D,
+//                GLES20.GL_TEXTURE_MAG_FILTER,
+//                GLES20.GL_LINEAR
+//            )
+//
+//            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+//            textureInfo.width = bitmap.width
+//            textureInfo.height = bitmap.height
+//            bitmap.recycle()
+//
+//            iBaseTexture.updateTextureInfo(textureInfo)
 
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
-
-            GLES20.glTexParameteri(
-                GLES20.GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MIN_FILTER,
-                GLES20.GL_LINEAR
-            )
-            GLES20.glTexParameteri(
-                GLES20.GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MAG_FILTER,
-                GLES20.GL_LINEAR
-            )
-
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
-            textureInfo.width = bitmap.width
-            textureInfo.height = bitmap.height
-            bitmap.recycle()
-
-            iBaseTexture.updateTextureInfo(textureInfo)
+            iBaseTexture.updateTextureInfo(TextureInfo().generateBitmapTexture(context, resourceId))
         }
     }
 

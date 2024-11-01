@@ -32,6 +32,49 @@ fun TextureInfo.generateBitmapTexture(context: Context, resourceId: Int): Textur
         options.inScaled = false
         val bitmap = BitmapFactory.decodeResource(context.resources, resourceId, options)
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_MIN_FILTER,
+            GLES20.GL_LINEAR
+        )
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_MAG_FILTER,
+            GLES20.GL_LINEAR
+        )
+        width = bitmap.width
+        height = bitmap.height
+        textureId = createTextureID
+        bitmap.recycle()
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+    } else {
+        Log.e("TextureInfo", "textureId == 0 ")
+    }
+
+    return this
+}
+
+fun TextureInfo.generateBitmapTexture(
+    createTextureID: Int,
+    context: Context,
+    resourceId: Int
+): TextureInfo {
+    if (createTextureID != 0) {
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, createTextureID)
+        val options = BitmapFactory.Options()
+        options.inScaled = false
+        val bitmap = BitmapFactory.decodeResource(context.resources, resourceId, options)
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_MIN_FILTER,
+            GLES20.GL_LINEAR
+        )
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_MAG_FILTER,
+            GLES20.GL_LINEAR
+        )
         width = bitmap.width
         height = bitmap.height
         textureId = createTextureID
