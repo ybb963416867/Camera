@@ -37,6 +37,7 @@ dependencies {
     implementation "androidx.media3:media3-ui:1.2.1"
     implementation 'androidx.activity:activity:1.8.0'
     implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'com.github.ChillingVan:android-openGL-canvas:v1.5.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.5.2'

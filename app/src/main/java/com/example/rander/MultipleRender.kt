@@ -1,15 +1,12 @@
 package com.example.rander
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.opengl.GLUtils
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.IBaseTexture
 import com.example.gpengl.multiple.PicTexture
 import com.example.gpengl.multiple.PicTextureT
-import com.example.gpengl.multiple.TextureInfo
 import com.example.gpengl.multiple.generateBitmapTexture
 import com.example.gpengl.multiple.generateCoordinateRegion
 import com.example.gpengl.multiple.getHeight
@@ -19,7 +16,7 @@ import com.example.util.Gl2Utils
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
+open class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
 
     private var shaderProgram = 0
     private var baseTextureList = listOf<IBaseTexture>(
@@ -33,7 +30,6 @@ class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
-
         shaderProgram = Gl2Utils.createGlProgram(
             Gl2Utils.uRes(context.resources, "shader/base_vert.glsl"),
             Gl2Utils.uRes(context.resources, "shader/base_frag.glsl")

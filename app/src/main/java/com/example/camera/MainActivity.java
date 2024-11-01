@@ -29,6 +29,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.but_color_texture).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ColorTextureActivity.class)));
         findViewById(R.id.but_enhance).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, EnhanceActivity.class)));
         findViewById(R.id.but_multi_texture).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, MultipleTextureActivity.class)));
+        findViewById(R.id.but_multi_texture_canvas).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, CanvasMultipleTextureActivity.class)));
         findViewById(R.id.but_test).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, TestActivity.class)));
     }
 
