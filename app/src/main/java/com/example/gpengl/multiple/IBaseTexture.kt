@@ -5,7 +5,8 @@ interface IBaseTexture {
     fun onSurfaceChanged(screenWith: Int, screenHeight: Int)
     fun onDrawFrame(shaderProgram: Int)
     fun updateTexCord(coordinateRegion: CoordinateRegion)
-    fun loadBitmapTexture(resourceId: Int)
-    fun updateTextureInfo(textureInfo: TextureInfo)
-    fun getTextureId(): Int
+    fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean = false)
+    fun getTextureInfo(): TextureInfo
+    fun getScreenWidth(): Int
+    fun getScreenHeight(): Int
 }

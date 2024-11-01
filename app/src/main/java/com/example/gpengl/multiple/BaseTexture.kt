@@ -9,10 +9,10 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 open class BaseTexture : IBaseTexture {
-    var screenWith = 0
-    var screenHeight = 0
+    private var screenWith = 0
+    private var screenHeight = 0
 
-    var textureInfo1 = TextureInfo()
+    private var textureInfo = TextureInfo()
     private var vertexBuffer: FloatBuffer
     private var texCoordBuffer: FloatBuffer
     val matrix: FloatArray = Gl2Utils.getOriginalMatrix()
@@ -45,9 +45,7 @@ open class BaseTexture : IBaseTexture {
     }
 
 
-    override fun updateTexCord(coordinateRegion: CoordinateRegion){
-        Log.e("ybb", coordinateRegion.toString())
-
+    override fun updateTexCord(coordinateRegion: CoordinateRegion) {
         GLES20.glViewport(
             coordinateRegion.leftTop.x.toInt(),
             coordinateRegion.leftTop.y.toInt(),
@@ -67,13 +65,8 @@ open class BaseTexture : IBaseTexture {
         ).position(0)
     }
 
-    override fun loadBitmapTexture(resourceId: Int){
-
-    }
-
-
     override fun onSurfaceCreated() {
-        textureInfo1.textureId = Gl2Utils.createTextureID(1)[0]
+        textureInfo.textureId = Gl2Utils.createTextureID(1)[0]
     }
 
     override fun onSurfaceChanged(screenWith: Int, screenHeight: Int) {
@@ -81,15 +74,33 @@ open class BaseTexture : IBaseTexture {
         this.screenHeight = screenHeight
     }
 
-    override fun updateTextureInfo(textureInfo: TextureInfo){
-        this.textureInfo1.textureId = textureInfo.textureId
+    override fun getTextureInfo(): TextureInfo {
+        return textureInfo
+    }
+
+    override fun getScreenWidth(): Int {
+        return screenWith
+    }
+
+    override fun getScreenHeight(): Int {
+        return screenHeight
+    }
+
+    override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
+        this.textureInfo.textureId = textureInfo.textureId
         Matrix.setIdentityM(matrix, 0)
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
-    }
-
-    override fun getTextureId(): Int {
-        return textureInfo1.textureId
+        if (isRecoverCord) {
+            updateTexCord(
+                CoordinateRegion().generateCoordinateRegion(
+                    0f,
+                    0f,
+                    screenWith,
+                    screenHeight
+                )
+            )
+        }
     }
 
     override fun onDrawFrame(shaderProgram: Int) {
@@ -107,7 +118,7 @@ open class BaseTexture : IBaseTexture {
         GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo1.textureId)
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
         GLES20.glUniform1i(textureUniform, 0)
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)

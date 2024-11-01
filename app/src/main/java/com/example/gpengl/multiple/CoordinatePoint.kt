@@ -102,6 +102,17 @@ data class CoordinateRegion(
     var rightBottom: CoordinatePoint = CoordinatePoint()
 )
 
+fun CoordinateRegion.generateCoordinateRegion(left: Float, top: Float, width: Int, height: Int) = this.apply {
+    leftTop.x = left
+    leftTop.y = top
+    rightTop.x = left + width
+    rightTop.y = top
+    leftBottom.x = left
+    leftBottom.y = top + height
+    rightBottom.x = left + width
+    rightBottom.y = top + height
+}.check()
+
 fun CoordinateRegion.getSurfaceArea(
     surfaceWidth: Float, surfaceHeight: Float, xBoundary: Float = 1.0f,
     yBoundary: Float = 1.0f
