@@ -79,7 +79,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         combinedVertexBuffer = aa.asFloatBuffer();
         combinedVertexBuffer.put(vertexData);
         combinedVertexBuffer.position(0);
-//        Matrix.setIdentityM(combinedProjectionMatrix, 0);
+
     }
 
     @Override
@@ -137,32 +137,27 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
-        float aspectRatio = (float) bitmap.getWidth() / bitmap.getHeight();
-        Log.d("ybb", "width = " + width + " height = " + height + " aspectRatio = " + aspectRatio);
-        for (int i = 0; i < textures.length; i++) {
-
-            // 设置正交投影矩阵，保持图片的宽高比
-            if (width > height) {
-                Matrix.orthoM(projectionMatrices[i], 0, -aspectRatio, aspectRatio, -1, 1, -1, 1);
-            } else {
-                Matrix.orthoM(projectionMatrices[i], 0, -1, 1, -1 / aspectRatio, 1 / aspectRatio, -1, 1);
-            }
-
-//            Matrix.setIdentityM(projectionMatrices[i], 0);
-
-//            Matrix.orthoM(projectionMatrices[i], 0, -1, 1, -1, 1, -1, 1);
-//
-//            // 设置位置偏移，确保两个图像分开显示
-            float offset = (i == 0) ? -1f : 0f;
-//            Matrix.translateM(projectionMatrices[i], 0, offset, 0, 0);
-        }
-
-        // 设置合并纹理的投影矩阵
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0]);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+        // 设置合并纹理的正交投影矩阵，确保宽高比一致
         Matrix.setIdentityM(combinedProjectionMatrix, 0);
-        if (width > height) {
-            Matrix.orthoM(combinedProjectionMatrix, 0, -aspectRatio, aspectRatio, -1, 1, -1, 1);
-        } else {
-            Matrix.orthoM(combinedProjectionMatrix, 0, -1, 1, -1 / aspectRatio, 1 / aspectRatio, -1, 1);
+        Matrix.orthoM(combinedProjectionMatrix, 0, -1, 1, -1, 1, -1, 1);
+
+        // 设置每个纹理的正交投影矩阵，保持宽高比一致
+        float aspectRatio = (float) bitmap.getWidth() / bitmap.getHeight();
+        for (int i = 0; i < textures.length; i++) {
+            Matrix.setIdentityM(projectionMatrices[i], 0);
+//            if (width > height) {
+//                Matrix.orthoM(projectionMatrices[i], 0, -aspectRatio, aspectRatio, -1, 1, -1, 1);
+//            } else {
+//                Matrix.orthoM(projectionMatrices[i], 0, -1, 1, -1 / aspectRatio, 1 / aspectRatio, -1, 1);
+//            }
+//
+//            float offset = (i == 0) ? -1f : 0f;
+//            Matrix.translateM(projectionMatrices[i], 0, offset, 0, 0);
+
+            Matrix.setIdentityM(projectionMatrices[i], 0);
+            Matrix.orthoM(projectionMatrices[i], 0, -1, 1, -1, 1, -1, 1);
         }
     }
 
@@ -171,13 +166,12 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
+        // 绘制纹理到 FBO
         for (int i = 0; i < textures.length; i++) {
             GLES20.glUniformMatrix4fv(uProjectionMatrixHandle, 1, false, projectionMatrices[i], 0);
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[i]);
             GLES20.glUniform1i(uTextureHandle, 0);
 
-            // 设置顶点属性
             GLES20.glEnableVertexAttribArray(aPositionHandle);
             GLES20.glVertexAttribPointer(aPositionHandle, 2, GLES20.GL_FLOAT, false, 4 * 4, vertexBuffer);
 
@@ -191,24 +185,15 @@ public class GLRenderer implements GLSurfaceView.Renderer {
             GLES20.glDisableVertexAttribArray(aTexCoordHandle);
         }
 
-        // 解绑 FBO
+        // 解绑 FBO 并恢复视口大小
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-        GLES20.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getWidth()); // 恢复视口大小
+        GLES20.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
 
-        // 渲染合并纹理到屏幕
+        // 使用合并投影矩阵绘制合并纹理到屏幕
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0]);
-
-        // 使用合并纹理的投影矩阵
-//        float aspectRatio = (float) (surfaceView.getWidth()) / surfaceView.getHeight(); // 合并纹理的宽高比
-//        if (surfaceView.getWidth() > surfaceView.getHeight()) {
-//            Matrix.orthoM(combinedProjectionMatrix, 0, -1, 1, -1, 1, -1, 1);
-//        } else {
-//            Matrix.orthoM(combinedProjectionMatrix, 0, -1, 1, -1, 1, -1, 1);
-//        }
         GLES20.glUniformMatrix4fv(uProjectionMatrixHandle, 1, false, combinedProjectionMatrix, 0);
 
-        // ... (设置顶点属性和绘制的代码，使用 combinedTexture[0] 作为纹理)
         GLES20.glEnableVertexAttribArray(aPositionHandle);
         GLES20.glVertexAttribPointer(aPositionHandle, 2, GLES20.GL_FLOAT, false, 4 * 4, combinedVertexBuffer);
 
@@ -217,6 +202,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glVertexAttribPointer(aTexCoordHandle, 2, GLES20.GL_FLOAT, false, 4 * 4, combinedVertexBuffer);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
+
         GLES20.glDisableVertexAttribArray(aPositionHandle);
         GLES20.glDisableVertexAttribArray(aTexCoordHandle);
 
