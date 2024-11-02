@@ -22,6 +22,14 @@ public class TestActivity extends AppCompatActivity {
         });
 
         CustomGLSurfaceView customGLSurfaceView = findViewById(R.id.customGLSurfaceView);
+        findViewById(R.id.but_recorder_start).setOnClickListener(v -> {
+
+        });
+
+        findViewById(R.id.but_recorder_stop).setOnClickListener(v -> {
+
+        });
+
 //        // 设置图片的宽和高
 //        customGLSurfaceView.setImageDimensions(300, 300);
 //

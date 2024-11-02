@@ -15,6 +15,27 @@
             android:id="@+id/customGLSurfaceView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/but_recorder_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开始录制"
+                />
+
+            <Button
+                android:id="@+id/but_recorder_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="停止录制"
+                />
+
+        </LinearLayout>
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
