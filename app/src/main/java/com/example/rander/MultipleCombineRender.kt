@@ -4,6 +4,7 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.util.Log
+import com.example.filter.PicFilter
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.IBaseTexture
 import com.example.gpengl.multiple.PicTextureT
@@ -46,8 +47,9 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
     )
 
     private var vertexBuffer: FloatBuffer
-    private var texCoordBuffer: FloatBuffer
-//    private var picFilter: PicFilter
+    private var texCoordBuffer: FloatBuffer = ByteBuffer.allocateDirect(texCoords.size * 4).order(ByteOrder.nativeOrder())
+        .asFloatBuffer()
+    private var picFilter: PicFilter
 
     private val fbo = IntArray(1)
     private val combinedTexture = IntArray(1)
@@ -55,23 +57,20 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
     val matrix: FloatArray = Gl2Utils.getOriginalMatrix()
 
     init {
-        texCoordBuffer =
-            ByteBuffer.allocateDirect(texCoords.size * 4).order(ByteOrder.nativeOrder())
-                .asFloatBuffer()
         texCoordBuffer.put(texCoords).position(0)
 
         vertexBuffer = ByteBuffer.allocateDirect(vertices.size * 4).order(ByteOrder.nativeOrder())
             .asFloatBuffer()
         vertexBuffer.put(vertices).position(0)
 
-//        picFilter = PicFilter(surfaceView.context.resources)
+        picFilter = PicFilter(surfaceView.context.resources)
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
+        picFilter.create()
         GLES20.glGenFramebuffers(1, fbo, 0)
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0])
-
 
         // 创建合并纹理
         GLES20.glGenTextures(1, combinedTexture, 0)
@@ -95,11 +94,8 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
 
         // 将合并纹理附加到 FBO
         GLES20.glFramebufferTexture2D(
-            GLES20.GL_FRAMEBUFFER,
-            GLES20.GL_COLOR_ATTACHMENT0,
-            GLES20.GL_TEXTURE_2D,
-            combinedTexture[0],
-            0
+            GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D,
+            combinedTexture[0], 0
         )
 
         // 检查 FBO 状态
@@ -126,7 +122,8 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
-        Matrix.setIdentityM(matrix, 0)
+        picFilter.setSize(width, height)
+        Matrix.orthoM(matrix, 0, -1f, 1f, -1f, 1f, -1f, 1f)
         baseTextureList.forEach {
             it.onSurfaceChanged(width, height)
         }
@@ -134,14 +131,19 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
 
     override fun onDrawFrame(gl: GL10?) {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0])
-        // 将合并纹理附加到 FBO
+//        // 将合并纹理附加到 FBO
         GLES20.glFramebufferTexture2D(
             GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D,
             combinedTexture[0], 0
         )
+
+        val status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER)
+        if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+            Log.e("GLRenderer", "Framebuffer incomplete: $status")
+        }
+
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         // 使用着色器程序
-        GLES20.glViewport(0, 0, surfaceView.width, surfaceView.height)
         GLES20.glUseProgram(shaderProgram)
         baseTextureList.forEach {
             it.onDrawFrame(shaderProgram)
@@ -151,30 +153,33 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
         GLES20.glViewport(0, 0, surfaceView.width, surfaceView.height)
         //处理后的纹理，也就是黑白图的纹理
+        picFilter.draw()
 
-        val positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
-        val texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
-        val textureUniform = GLES20.glGetUniformLocation(shaderProgram, "vTexture")
-        val matrixHandle = GLES20.glGetUniformLocation(shaderProgram, "vMatrix")
         // 使用合并投影矩阵绘制合并纹理到屏幕
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0])
-
-        GLES20.glEnableVertexAttribArray(positionHandle)
-        GLES20.glEnableVertexAttribArray(texCoordHandle)
-
-        GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer)
-        GLES20.glVertexAttribPointer(texCoordHandle, 2, GLES20.GL_FLOAT, false, 8, texCoordBuffer)
-
-        GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
-
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0])
-        GLES20.glUniform1i(textureUniform, 0)
-
-        GLES20.glDisableVertexAttribArray(positionHandle)
-        GLES20.glDisableVertexAttribArray(texCoordHandle)
+//        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0])
+//
+//        val positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
+//        val texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
+//        val textureUniform = GLES20.glGetUniformLocation(shaderProgram, "vTexture")
+//        val matrixHandle = GLES20.glGetUniformLocation(shaderProgram, "vMatrix")
+//
+//        GLES20.glEnableVertexAttribArray(positionHandle)
+//        GLES20.glEnableVertexAttribArray(texCoordHandle)
+//
+//        GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer)
+//        GLES20.glVertexAttribPointer(texCoordHandle, 2, GLES20.GL_FLOAT, false, 8, texCoordBuffer)
+//
+//        GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
+//
+//        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+////        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0])
+//        GLES20.glUniform1i(textureUniform, 0)
+//
+//        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
+//
+//        GLES20.glDisableVertexAttribArray(positionHandle)
+//        GLES20.glDisableVertexAttribArray(texCoordHandle)
     }
 
     fun updateTexCord(coordinateRegion: CoordinateRegion) {
