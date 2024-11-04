@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 读取储存卡权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 写储存卡权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name="com.example.CameraApplication"
@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
         <activity
-            android:name=".CanvasMultipleTextureActivity"
+            android:name=".MultipleTextureCombineActivity"
             android:exported="false" />
         <activity
             android:name=".TestActivity"

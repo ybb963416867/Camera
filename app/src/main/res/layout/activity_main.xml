@@ -133,10 +133,10 @@
             />
 
         <Button
-            android:id="@+id/but_multi_texture_canvas"
+            android:id="@+id/but_multi_texture_combine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="多纹理canvas"
+            android:text="多纹理合并"
             />
 
         <Button
