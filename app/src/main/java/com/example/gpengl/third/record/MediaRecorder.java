@@ -37,9 +37,11 @@ public class MediaRecorder {
     private int index;
     private float mSpeed;
 
+    private int recodeTextureId;
+
     /**
      * @param context 上下文
-     * @param path    保存视频的地址
+     * @param eglContext    保存视频的地址
      * @param width   视频宽
      * @param height  视频高
      *                还可以让人家传递帧率 fps、码率等参数
@@ -124,6 +126,7 @@ public class MediaRecorder {
      * 相当于调用一次就有一个新的图像需要编码
      */
     public void encodeFrame(final int textureId, final long timestamp) {
+        this.recodeTextureId = textureId;
         if (!isStart) {
             return;
         }
@@ -131,7 +134,7 @@ public class MediaRecorder {
             @Override
             public void run() {
                 //把图像画到虚拟屏幕
-                mEglBase.draw(textureId, timestamp);
+                mEglBase.draw(recodeTextureId, timestamp);
                 //从编码器的输出缓冲区获取编码后的数据就ok了
                 getCodec(false);
             }

@@ -68,6 +68,19 @@
                 android:text="调整位置1"
                 />
 
+            <Button
+                android:id="@+id/but_recorder_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开始录制"
+                />
+
+            <Button
+                android:id="@+id/but_recorder_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="停止录制"
+                />
 
         </LinearLayout>
 

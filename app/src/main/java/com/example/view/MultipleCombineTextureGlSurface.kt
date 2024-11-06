@@ -33,6 +33,21 @@ class MultipleCombineTextureGlSurface(
         requestRender()
     }
 
+    fun startRecord(){
+        multipleRender.startRecord()
+        queueEvent {
+            renderMode = RENDERMODE_CONTINUOUSLY
+        }
+    }
+
+    fun stopRecord(){
+        multipleRender.stopRecord()
+        queueEvent {
+            renderMode = RENDERMODE_WHEN_DIRTY
+        }
+
+    }
+
 
 
 }

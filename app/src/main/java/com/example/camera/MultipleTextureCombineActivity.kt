@@ -1,5 +1,6 @@
 package com.example.camera
 
+import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
@@ -69,6 +70,14 @@ class MultipleTextureCombineActivity : AppCompatActivity() {
                     rightBottom = CoordinatePoint(x = 500f, y = 400f)
                 )
             )
+        }
+
+        findViewById<Button>(R.id.but_recorder_start).setOnClickListener {
+            glSurfaceView.startRecord()
+        }
+
+        findViewById<Button>(R.id.but_recorder_stop).setOnClickListener {
+            glSurfaceView.stopRecord()
         }
 
 

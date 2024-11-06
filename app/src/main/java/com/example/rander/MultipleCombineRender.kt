@@ -1,7 +1,9 @@
 package com.example.rander
 
+import android.opengl.EGL14
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.util.Log
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.FboCombineTexture
 import com.example.gpengl.multiple.IBaseTexture
@@ -12,6 +14,8 @@ import com.example.gpengl.multiple.generateCoordinateRegion
 import com.example.gpengl.multiple.getHeight
 import com.example.gpengl.multiple.getWidth
 import com.example.gpengl.multiple.offSet
+import com.example.gpengl.third.record.MediaRecorder
+import java.io.IOException
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -28,6 +32,8 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
         PicTexture(surfaceView.context),
     )
 
+    private var mMediaRecorder: MediaRecorder? = null
+
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
@@ -35,6 +41,8 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
         baseTextureList.forEach {
             it.onSurfaceCreated()
         }
+        mMediaRecorder =
+            MediaRecorder(surfaceView.context, surfaceView.width, surfaceView.height, EGL14.eglGetCurrentContext())
 
     }
 
@@ -57,7 +65,11 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
             it.onDrawFrame()
         }
 
+        Log.e("ybb", "onDrawFrame")
+
         combineTexture.onDrawFrame()
+        //进行录制
+        mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[0], System.nanoTime())
     }
 
     fun updateTexCord(coordinateRegion: CoordinateRegion) {
@@ -113,6 +125,18 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
                 ), true
             )
         }
+    }
+
+    fun startRecord() {
+        try {
+            mMediaRecorder?.start(1f)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun stopRecord() {
+        mMediaRecorder?.stop()
     }
 
 
