@@ -12,13 +12,11 @@ import com.example.gpengl.multiple.generateCoordinateRegion
 import com.example.gpengl.multiple.getHeight
 import com.example.gpengl.multiple.getWidth
 import com.example.gpengl.multiple.offSet
-import com.example.util.Gl2Utils
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 open class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
 
-    private var shaderProgram = 0
     private var baseTextureList = listOf<IBaseTexture>(
         PicTextureT(context),
         PicTexture(context),
@@ -30,12 +28,7 @@ open class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
-        shaderProgram = Gl2Utils.createGlProgram(
-            Gl2Utils.uRes(context.resources, "shader/base_vert.glsl"),
-            Gl2Utils.uRes(context.resources, "shader/base_frag.glsl")
-        )
 
-        GLES20.glLinkProgram(shaderProgram)
         baseTextureList.forEach {
             it.onSurfaceCreated()
         }
@@ -51,9 +44,8 @@ open class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
     override fun onDrawFrame(gl: GL10?) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         // 使用着色器程序
-        GLES20.glUseProgram(shaderProgram)
         baseTextureList.forEach {
-            it.onDrawFrame(shaderProgram)
+            it.onDrawFrame()
         }
     }
 

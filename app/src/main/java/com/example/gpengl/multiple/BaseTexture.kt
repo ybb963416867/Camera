@@ -1,5 +1,6 @@
 package com.example.gpengl.multiple
 
+import android.content.Context
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
@@ -8,7 +9,9 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-open class BaseTexture : IBaseTexture {
+open class BaseTexture(private var context: Context, private var vertPath: String, private var fragPath: String) :
+    IBaseTexture {
+    private var shaderProgram = 0
     private var screenWith = 0
     private var screenHeight = 0
 
@@ -66,6 +69,14 @@ open class BaseTexture : IBaseTexture {
     }
 
     override fun onSurfaceCreated() {
+
+        shaderProgram = Gl2Utils.createGlProgram(
+            Gl2Utils.uRes(context.resources, vertPath),
+            Gl2Utils.uRes(context.resources, fragPath)
+        )
+
+        GLES20.glLinkProgram(shaderProgram)
+
         textureInfo.textureId = Gl2Utils.createTextureID(1)[0]
     }
 
@@ -103,7 +114,10 @@ open class BaseTexture : IBaseTexture {
         }
     }
 
-    override fun onDrawFrame(shaderProgram: Int) {
+    override fun onDrawFrame() {
+
+        GLES20.glUseProgram(shaderProgram)
+
         val positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
         val texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
         val textureUniform = GLES20.glGetUniformLocation(shaderProgram, "vTexture")

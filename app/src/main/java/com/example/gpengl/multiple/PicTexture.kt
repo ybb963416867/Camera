@@ -5,7 +5,11 @@ import com.example.util.MatrixUtil
 import com.example.util.PositionType
 
 
-class PicTexture(val context: Context) : BaseTexture() {
+class PicTexture(
+    private val context: Context,
+    vertPath: String = "shader/base_vert.glsl",
+    fragPath: String = "shader/base_frag.glsl"
+) : BaseTexture(context, vertPath, fragPath) {
 
     override fun updateTexCord(coordinateRegion: CoordinateRegion) {
         super.updateTexCord(coordinateRegion)
