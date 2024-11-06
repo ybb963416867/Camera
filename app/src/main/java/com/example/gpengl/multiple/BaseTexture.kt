@@ -15,7 +15,7 @@ open class BaseTexture(
     private var fragPath: String
 ) :
     IBaseTexture {
-    private var screenWith = 0
+    private var screenWidth = 0
     private var screenHeight = 0
 
     private var textureInfo = TextureInfo()
@@ -66,7 +66,7 @@ open class BaseTexture(
 
         vertexBuffer.clear()
         val newVertices = coordinateRegion.getFloatArray(
-            screenWidth = screenWith.toFloat(),
+            screenWidth = screenWidth.toFloat(),
             screenHeight = screenHeight.toFloat()
         )
 
@@ -95,8 +95,8 @@ open class BaseTexture(
         textureInfo.textureId = Gl2Utils.createTextureID(1)[0]
     }
 
-    override fun onSurfaceChanged(screenWith: Int, screenHeight: Int) {
-        this.screenWith = screenWith
+    override fun onSurfaceChanged(screenWidth: Int, screenHeight: Int) {
+        this.screenWidth = screenWidth
         this.screenHeight = screenHeight
     }
 
@@ -105,7 +105,7 @@ open class BaseTexture(
     }
 
     override fun getScreenWidth(): Int {
-        return screenWith
+        return screenWidth
     }
 
     override fun getScreenHeight(): Int {
@@ -122,7 +122,7 @@ open class BaseTexture(
                 CoordinateRegion().generateCoordinateRegion(
                     0f,
                     0f,
-                    screenWith,
+                    screenWidth,
                     screenHeight
                 )
             )
