@@ -9,9 +9,12 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-open class BaseTexture(private var context: Context, private var vertPath: String, private var fragPath: String) :
+open class BaseTexture(
+    private var context: Context,
+    private var vertPath: String,
+    private var fragPath: String
+) :
     IBaseTexture {
-    private var shaderProgram = 0
     private var screenWith = 0
     private var screenHeight = 0
 
@@ -21,6 +24,11 @@ open class BaseTexture(private var context: Context, private var vertPath: Strin
     val matrix: FloatArray = Gl2Utils.getOriginalMatrix()
     var textureWidth = 0
     var textureHeight = 0
+
+    private var positionHandle = 0
+    private var texCoordHandle = 0
+    private var uTextureHandle = 0
+    private var matrixHandle = 0
 
     private val texCoords = floatArrayOf(
         0.0f, 0.0f,
@@ -70,12 +78,19 @@ open class BaseTexture(private var context: Context, private var vertPath: Strin
 
     override fun onSurfaceCreated() {
 
-        shaderProgram = Gl2Utils.createGlProgram(
+        val shaderProgram = Gl2Utils.createGlProgram(
             Gl2Utils.uRes(context.resources, vertPath),
             Gl2Utils.uRes(context.resources, fragPath)
         )
 
         GLES20.glLinkProgram(shaderProgram)
+
+        GLES20.glUseProgram(shaderProgram)
+
+        positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
+        texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
+        uTextureHandle = GLES20.glGetUniformLocation(shaderProgram, "vTexture")
+        matrixHandle = GLES20.glGetUniformLocation(shaderProgram, "vMatrix")
 
         textureInfo.textureId = Gl2Utils.createTextureID(1)[0]
     }
@@ -115,14 +130,6 @@ open class BaseTexture(private var context: Context, private var vertPath: Strin
     }
 
     override fun onDrawFrame() {
-
-        GLES20.glUseProgram(shaderProgram)
-
-        val positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
-        val texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
-        val textureUniform = GLES20.glGetUniformLocation(shaderProgram, "vTexture")
-        val matrixHandle = GLES20.glGetUniformLocation(shaderProgram, "vMatrix")
-
         GLES20.glEnableVertexAttribArray(positionHandle)
         GLES20.glEnableVertexAttribArray(texCoordHandle)
 
@@ -133,7 +140,7 @@ open class BaseTexture(private var context: Context, private var vertPath: Strin
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
-        GLES20.glUniform1i(textureUniform, 0)
+        GLES20.glUniform1i(uTextureHandle, 0)
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
 

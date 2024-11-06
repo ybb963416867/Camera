@@ -1,9 +1,6 @@
 package com.example.gpengl.multiple
 
-interface IBaseTexture {
-    fun onSurfaceCreated()
-    fun onSurfaceChanged(screenWith: Int, screenHeight: Int)
-    fun onDrawFrame()
+interface IBaseTexture: ITexture {
     fun updateTexCord(coordinateRegion: CoordinateRegion)
     fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean = false)
     fun getTextureInfo(): TextureInfo
