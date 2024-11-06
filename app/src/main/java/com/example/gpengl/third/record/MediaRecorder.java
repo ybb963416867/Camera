@@ -130,14 +130,11 @@ public class MediaRecorder {
         if (!isStart) {
             return;
         }
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                //把图像画到虚拟屏幕
-                mEglBase.draw(recodeTextureId, timestamp);
-                //从编码器的输出缓冲区获取编码后的数据就ok了
-                getCodec(false);
-            }
+        mHandler.post(() -> {
+            //把图像画到虚拟屏幕
+            mEglBase.draw(recodeTextureId, timestamp);
+            //从编码器的输出缓冲区获取编码后的数据就ok了
+            getCodec(false);
         });
     }
 
