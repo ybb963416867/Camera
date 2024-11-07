@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.util.MatrixUtil
 import com.example.util.PositionType
 
-class PicBackgroundTexture(
+class PicBackgroundTexture2(
     context: Context,
     vertPath: String = "shader/base_vert.glsl",
     fragPath: String = "shader/base_frag.glsl"
@@ -21,7 +21,7 @@ class PicBackgroundTexture(
             getScreenWidth(),
             getScreenHeight(),
             coordinateRegion,
-            PositionType.MIDDLE_TOP
+            PositionType.RIGHT_TOP
         )
     }
 }
