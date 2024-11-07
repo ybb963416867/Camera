@@ -3,6 +3,7 @@ package com.example.rander;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
@@ -63,7 +64,7 @@ public class ColorRender implements GLSurfaceView.Renderer {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
 
         // 获取颜色数据0x26C9ED 2542061  0xF0CA27 15780391
-        int[] pixels = genColorImage(mWidth, mHeight, 0x1c1c1c | 0xff000000);
+        int[] pixels = genColorImage(mWidth, mHeight, 0xffA728F0);
         IntBuffer buffer = IntBuffer.allocate(pixels.length);
         // 创建ByteBuffer并填充数据
 //        ByteBuffer buffer = ByteBuffer.allocateDirect(pixels.length * 4);
@@ -97,7 +98,8 @@ public class ColorRender implements GLSurfaceView.Renderer {
     }
 
     /**
-     *  android 设备的gpu需要小端显示
+     * android 设备的gpu需要小端显示
+     *
      * @param color 颜色
      * @return 颜色
      */
@@ -107,7 +109,10 @@ public class ColorRender implements GLSurfaceView.Renderer {
         byte green = (byte) ((color >> 8) & 0xFF);  // 提取绿色分量
         byte blue = (byte) (color & 0xFF);          // 提取蓝色分量
         byte alpha = (byte) ((color >> 24) & 0xFF); // 提取Alpha分量（如果有）
-        Log.d("ybb", "red: " + red + " green: " + green + " blue: " + blue + " alpha:" + alpha);
+        if (alpha == 0) {
+            alpha = (byte) 0xFF;
+        }
+        Log.d("ybb", "red: " + red + " green: " + green + " blue: " + blue + " alpha:" + (alpha & 0xFF));
         // 重新组合成小端格式的整
         //return ((blue & 0xFF)) |
         //        ((green & 0xFF) << 8) |
