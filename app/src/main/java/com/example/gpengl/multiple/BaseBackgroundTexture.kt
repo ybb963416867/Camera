@@ -11,8 +11,8 @@ open class BaseBackgroundTexture(
     fragPath: String
 ) :
     IBaseTexture {
-    val frameTexture = FrameTexture(glSurfaceView.context, vertPath, fragPath)
-    private val backgroundTexture = ColorTexture(glSurfaceView.context, vertPath, fragPath)
+    val frameTexture = FrameTexture(glSurfaceView, vertPath, fragPath)
+    private val backgroundTexture = ColorTexture(glSurfaceView, vertPath, fragPath)
     private var isDispatch = false
 
     private var currentRegion = CoordinateRegion()

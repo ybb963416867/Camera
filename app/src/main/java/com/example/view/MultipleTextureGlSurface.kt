@@ -15,7 +15,7 @@ class MultipleTextureGlSurface(
 
     init {
         setEGLContextClientVersion(2)
-        multipleRender = MultipleRender(this.context)
+        multipleRender = MultipleRender(this)
         setRenderer(multipleRender)
         renderMode = RENDERMODE_WHEN_DIRTY
     }

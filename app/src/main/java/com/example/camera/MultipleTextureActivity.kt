@@ -47,8 +47,7 @@ class MultipleTextureActivity : AppCompatActivity() {
             glSurfaceView.updateTexCord(
                 CoordinateRegion(
                     leftTop = CoordinatePoint(
-                        x = 100f,
-                        y = 100f
+                        x = 100f, y = 100f
                     ),
                     rightTop = CoordinatePoint(x = 600f, y = 100f),
                     leftBottom = CoordinatePoint(x = 100f, y = 400f),
@@ -61,8 +60,7 @@ class MultipleTextureActivity : AppCompatActivity() {
             glSurfaceView.updateTexCord(
                 CoordinateRegion(
                     leftTop = CoordinatePoint(
-                        x = 0f,
-                        y = 0f
+                        x = 0f, y = 0f
                     ),
                     rightTop = CoordinatePoint(x = 500f, y = 0f),
                     leftBottom = CoordinatePoint(x = 0f, y = 400f),

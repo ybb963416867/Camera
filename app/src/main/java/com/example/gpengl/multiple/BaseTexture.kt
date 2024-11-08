@@ -1,18 +1,18 @@
 package com.example.gpengl.multiple
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
 import android.view.MotionEvent
+import android.view.SurfaceView
 import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 open class BaseTexture(
-    private var context: Context,
+    private var surfaceView: SurfaceView,
     private var vertPath: String,
     private var fragPath: String
 ) :
@@ -84,8 +84,8 @@ open class BaseTexture(
     override fun onSurfaceCreated() {
 
         val shaderProgram = Gl2Utils.createGlProgram(
-            Gl2Utils.uRes(context.resources, vertPath),
-            Gl2Utils.uRes(context.resources, fragPath)
+            Gl2Utils.uRes(surfaceView.context.resources, vertPath),
+            Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
 
         GLES20.glLinkProgram(shaderProgram)

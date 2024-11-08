@@ -1,9 +1,9 @@
 package com.example.gpengl.multiple
 
-import android.content.Context
+import android.view.SurfaceView
 
 class FrameTexture(
-    private val context: Context,
+    private var surfaceView: SurfaceView,
     vertPath: String = "shader/base_vert.glsl",
     fragPath: String = "shader/base_frag.glsl"
-) : BaseTexture(context, vertPath, fragPath)
+) : BaseTexture(surfaceView, vertPath, fragPath)

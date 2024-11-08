@@ -24,12 +24,12 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
 
     private var combineTexture = FboCombineTexture(surfaceView.context)
     private var baseTextureList = listOf<IBaseTexture>(
-        PicTextureT(surfaceView.context),
-        PicTexture(surfaceView.context),
-        PicTexture(surfaceView.context),
-        PicTextureT(surfaceView.context),
-        PicTextureT(surfaceView.context),
-        PicTexture(surfaceView.context),
+        PicTextureT(surfaceView),
+        PicTexture(surfaceView),
+        PicTexture(surfaceView),
+        PicTextureT(surfaceView),
+        PicTextureT(surfaceView),
+        PicTexture(surfaceView),
     )
 
     private var mMediaRecorder: MediaRecorder? = null

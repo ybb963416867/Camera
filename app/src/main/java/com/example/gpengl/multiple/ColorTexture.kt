@@ -5,6 +5,7 @@ import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
 import android.view.MotionEvent
+import android.view.SurfaceView
 import com.example.rander.ColorRender
 import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
@@ -14,7 +15,7 @@ import java.nio.IntBuffer
 import java.util.Arrays
 
 class ColorTexture(
-    private var context: Context, private var vertPath: String = "shader/base_vert.glsl",
+    private var surfaceView: SurfaceView, private var vertPath: String = "shader/base_vert.glsl",
     private var fragPath: String = "shader/base_frag.glsl"
 ) : IBaseTexture {
     private var screenWidth = 0
@@ -118,7 +119,8 @@ class ColorTexture(
     override fun onSurfaceCreated() {
 
         val shaderProgram = Gl2Utils.createGlProgram(
-            Gl2Utils.uRes(context.resources, vertPath), Gl2Utils.uRes(context.resources, fragPath)
+            Gl2Utils.uRes(surfaceView.context.resources, vertPath),
+            Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
 
         GLES20.glLinkProgram(shaderProgram)

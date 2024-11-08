@@ -3,6 +3,7 @@ package com.example.rander
 import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.view.SurfaceView
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.IBaseTexture
 import com.example.gpengl.multiple.PicTexture
@@ -15,15 +16,15 @@ import com.example.gpengl.multiple.offSet
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-open class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
+open class MultipleRender(private var surfaceView: SurfaceView,) : GLSurfaceView.Renderer {
 
     private var baseTextureList = listOf<IBaseTexture>(
-        PicTextureT(context),
-        PicTexture(context),
-        PicTexture(context),
-        PicTextureT(context),
-        PicTextureT(context),
-        PicTexture(context),
+        PicTextureT(surfaceView),
+        PicTexture(surfaceView),
+        PicTexture(surfaceView),
+        PicTextureT(surfaceView),
+        PicTextureT(surfaceView),
+        PicTexture(surfaceView),
     )
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
@@ -97,11 +98,11 @@ open class MultipleRender(var context: Context) : GLSurfaceView.Renderer {
         baseTextureList.forEachIndexed { index, iBaseTexture ->
             when (index) {
                 4, 5 -> iBaseTexture.updateTextureInfo(
-                    iBaseTexture.getTextureInfo().generateBitmapTexture(context, resourceId), true
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(surfaceView.context, resourceId), true
                 )
 
                 else -> iBaseTexture.updateTextureInfo(
-                    iBaseTexture.getTextureInfo().generateBitmapTexture(context, resourceId)
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(surfaceView.context, resourceId)
                 )
             }
 
