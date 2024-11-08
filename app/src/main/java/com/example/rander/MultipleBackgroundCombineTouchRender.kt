@@ -116,12 +116,23 @@ class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceVie
 
 
     fun loadTexture(resourceId: Int) {
-        baseTextureList.forEach {
-            it.updateTextureInfo(
-                it.getTextureInfo().generateBitmapTexture(
-                    it.getTextureInfo().textureId, surfaceView.context, resourceId
-                ), true
-            )
+
+        baseTextureList.forEachIndexed { index, iBaseTexture ->
+            when (index) {
+                0 -> iBaseTexture.updateTextureInfo(
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(
+                        iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
+                    ), true
+                )
+
+                else -> {
+                    iBaseTexture.updateTextureInfo(
+                        iBaseTexture.getTextureInfo().generateBitmapTexture(
+                            iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
+                        ), false
+                    )
+                }
+            }
         }
     }
 
