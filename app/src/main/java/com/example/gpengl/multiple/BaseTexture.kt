@@ -11,11 +11,8 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 open class BaseTexture(
-    private var surfaceView: SurfaceView,
-    private var vertPath: String,
-    private var fragPath: String
-) :
-    IBaseTexture {
+    private var surfaceView: SurfaceView, private var vertPath: String, private var fragPath: String
+) : IBaseTexture {
     private var screenWidth = 0
     private var screenHeight = 0
 
@@ -33,10 +30,7 @@ open class BaseTexture(
     private var currentRegion = CoordinateRegion()
 
     private val texCoords = floatArrayOf(
-        0.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f,
-        1.0f, 0.0f
+        0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f
     )
 
     private var vertices: FloatArray = floatArrayOf(
@@ -64,8 +58,7 @@ open class BaseTexture(
 
         vertexBuffer.clear()
         val newVertices = currentRegion.getFloatArray(
-            screenWidth = screenWidth.toFloat(),
-            screenHeight = screenHeight.toFloat()
+            screenWidth = screenWidth.toFloat(), screenHeight = screenHeight.toFloat()
         )
 
         vertexBuffer.put(
@@ -124,14 +117,17 @@ open class BaseTexture(
         Matrix.setIdentityM(matrix, 0)
         if (isRecoverCord) {
             currentRegion = CoordinateRegion().generateCoordinateRegion(
-                0f,
-                0f,
-                screenWidth,
-                screenHeight
+                0f, 0f, screenWidth, screenHeight
             )
         }
         updateTexCord(currentRegion)
 
+    }
+
+    override fun updateTextureInfo(
+        textureInfo: TextureInfo, isRecoverCord: Boolean, backgroundColor: String?
+    ) {
+        this.updateTextureInfo(textureInfo, isRecoverCord)
     }
 
     override fun onDrawFrame() {

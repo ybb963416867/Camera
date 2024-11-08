@@ -41,13 +41,9 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
         baseTextureList.forEach {
             it.onSurfaceCreated()
         }
-        mMediaRecorder =
-            MediaRecorder(
-                surfaceView.context,
-                surfaceView.width,
-                surfaceView.height,
-                EGL14.eglGetCurrentContext()
-            )
+        mMediaRecorder = MediaRecorder(
+            surfaceView.context, surfaceView.width, surfaceView.height, EGL14.eglGetCurrentContext()
+        )
 
     }
 
@@ -92,8 +88,7 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
                 2 -> {
                     iBaseTexture.updateTexCord(
                         coordinateRegion.offSet(
-                            0f,
-                            coordinateRegion.getHeight() + 50f
+                            0f, coordinateRegion.getHeight() + 50f
                         )
                     )
                 }
@@ -101,8 +96,7 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
                 3 -> {
                     iBaseTexture.updateTexCord(
                         coordinateRegion.offSet(
-                            0f,
-                            coordinateRegion.getHeight() * 2 + 100f
+                            0f, coordinateRegion.getHeight() * 2 + 100f
                         )
                     )
                 }
@@ -126,11 +120,23 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
                     ), true
                 )
 
+                1 -> iBaseTexture.updateTextureInfo(
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(
+                        iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
+                    ), false, "#80A728F0"
+                )
+
+                2 -> iBaseTexture.updateTextureInfo(
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(
+                        iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
+                    ), false, "#3872F0"
+                )
+
                 else -> {
                     iBaseTexture.updateTextureInfo(
                         iBaseTexture.getTextureInfo().generateBitmapTexture(
                             iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                        ), false
+                        ), false, "#4D000000"
                     )
                 }
             }

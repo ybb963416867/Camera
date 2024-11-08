@@ -2,6 +2,7 @@ package com.example.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.PixelFormat
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -22,6 +23,7 @@ class MultipleCombineBackgroundTouchGlSurface(
         multipleRender = MultipleBackgroundCombineTouchRender(this)
         setRenderer(multipleRender)
         renderMode = RENDERMODE_WHEN_DIRTY
+        holder.setFormat(PixelFormat.TRANSLUCENT)
     }
 
     fun loadTexture(resourceId: Int) {

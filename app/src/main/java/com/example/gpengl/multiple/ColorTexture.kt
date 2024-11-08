@@ -1,12 +1,11 @@
 package com.example.gpengl.multiple
 
-import android.content.Context
+import android.graphics.Color
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
-import com.example.rander.ColorRender
 import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -15,7 +14,8 @@ import java.nio.IntBuffer
 import java.util.Arrays
 
 class ColorTexture(
-    private var surfaceView: SurfaceView, private var vertPath: String = "shader/base_vert.glsl",
+    private var surfaceView: SurfaceView,
+    private var vertPath: String = "shader/base_vert.glsl",
     private var fragPath: String = "shader/base_frag.glsl"
 ) : IBaseTexture {
     private var screenWidth = 0
@@ -33,6 +33,7 @@ class ColorTexture(
     private var uTextureHandle = 0
     private var matrixHandle = 0
     private var currentRegion = CoordinateRegion()
+    private var colorStr = "#00000000"
 
     private var colorBuffer: IntBuffer? = null
 
@@ -73,9 +74,7 @@ class ColorTexture(
 
 
         val genColorImage = genColorImage(
-            currentRegion.getWidth().toInt(),
-            currentRegion.getHeight().toInt(),
-            (0xffA728F0).toInt()
+            currentRegion.getWidth().toInt(), currentRegion.getHeight().toInt(), colorStr
         )
         colorBuffer = IntBuffer.allocate(genColorImage.size).apply {
             put(genColorImage).position(0)
@@ -95,14 +94,10 @@ class ColorTexture(
         )
 
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MIN_FILTER,
-            GLES20.GL_LINEAR
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR
         )
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MAG_FILTER,
-            GLES20.GL_LINEAR
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR
         )
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
@@ -155,7 +150,9 @@ class ColorTexture(
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
 
-        val genColorImage = genColorImage(currentRegion.getWidth().toInt(), currentRegion.getHeight().toInt(), (0xffA728F0).toInt())
+        val genColorImage = genColorImage(
+            currentRegion.getWidth().toInt(), currentRegion.getHeight().toInt(), colorStr
+        )
         colorBuffer = IntBuffer.allocate(genColorImage.size).apply {
             put(genColorImage).position(0)
         }
@@ -174,24 +171,30 @@ class ColorTexture(
         )
 
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MIN_FILTER,
-            GLES20.GL_LINEAR
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR
         )
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MAG_FILTER,
-            GLES20.GL_LINEAR
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR
         )
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
         Matrix.setIdentityM(matrix, 0)
     }
 
+    override fun updateTextureInfo(
+        textureInfo: TextureInfo, isRecoverCord: Boolean, backgroundColor: String?
+    ) {
+        if (backgroundColor != null) {
+            colorStr = backgroundColor
+        }
+        this.updateTextureInfo(textureInfo, isRecoverCord)
+    }
+
     override fun onDrawFrame() {
         GLES20.glEnableVertexAttribArray(positionHandle)
         GLES20.glEnableVertexAttribArray(texCoordHandle)
-
+        GLES20.glEnable(GLES20.GL_BLEND)
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
         GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer)
         GLES20.glVertexAttribPointer(texCoordHandle, 2, GLES20.GL_FLOAT, false, 8, texCoordBuffer)
 
@@ -215,12 +218,9 @@ class ColorTexture(
         return false
     }
 
-    fun genColorImage(width: Int, height: Int, color: Int): IntArray {
+    private fun genColorImage(width: Int, height: Int, color: String): IntArray {
         val pixels = IntArray(width * height)
-        // 重新组合成小端格式的整数
-        val colorPixel = ColorRender.convertToLittleEndian(color)
-
-        Log.d("ybb", "colorPixel: $colorPixel")
+        val colorPixel = Color.parseColor(color)
         Arrays.fill(pixels, colorPixel)
         return pixels
     }

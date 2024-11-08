@@ -125,11 +125,23 @@ class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceVie
                     ), true
                 )
 
+                1 -> iBaseTexture.updateTextureInfo(
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(
+                        iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
+                    ), false, "#80A728F0"
+                )
+
+                2 -> iBaseTexture.updateTextureInfo(
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(
+                        iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
+                    ), false, "#3872F0"
+                )
+
                 else -> {
                     iBaseTexture.updateTextureInfo(
                         iBaseTexture.getTextureInfo().generateBitmapTexture(
                             iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                        ), false
+                        ), false, "#4D000000"
                     )
                 }
             }

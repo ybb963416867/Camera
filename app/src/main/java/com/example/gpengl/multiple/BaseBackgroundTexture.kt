@@ -64,11 +64,26 @@ open class BaseBackgroundTexture(
     }
 
     override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
-        if (isRecoverCord){
-            currentRegion = CoordinateRegion().generateCoordinateRegion(0f, 0f, screenWidth, screenHeight)
+        if (isRecoverCord) {
+            currentRegion =
+                CoordinateRegion().generateCoordinateRegion(0f, 0f, screenWidth, screenHeight)
         }
         frameTexture.updateTextureInfo(textureInfo, isRecoverCord)
         backgroundTexture.updateTextureInfo(textureInfo, isRecoverCord)
+        updateTexCord(currentRegion)
+    }
+
+    override fun updateTextureInfo(
+        textureInfo: TextureInfo,
+        isRecoverCord: Boolean,
+        backgroundColor: String?
+    ) {
+        if (isRecoverCord) {
+            currentRegion =
+                CoordinateRegion().generateCoordinateRegion(0f, 0f, screenWidth, screenHeight)
+        }
+        frameTexture.updateTextureInfo(textureInfo, isRecoverCord)
+        backgroundTexture.updateTextureInfo(textureInfo, isRecoverCord, backgroundColor)
         updateTexCord(currentRegion)
     }
 
