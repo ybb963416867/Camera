@@ -1,12 +1,11 @@
 package com.example.gpengl.multiple
 
 import android.opengl.GLSurfaceView
-import android.util.Log
 import android.view.MotionEvent
 import com.example.util.HandlerTouchDrag
 
 open class BaseBackgroundTexture(
-    glSurfaceView: GLSurfaceView,
+    var glSurfaceView: GLSurfaceView,
     vertPath: String,
     fragPath: String
 ) :
@@ -31,18 +30,8 @@ open class BaseBackgroundTexture(
                 xDiff: Float,
                 yDiff: Float
             ) {
-                Log.e(
-                    "ybb",
-                    "onDrag 前: xDiff = $xDiff yDiff = $yDiff width = ${currentRegion.getWidth()} height = ${currentRegion.getHeight()}"
-                )
-
                 updateTexCord(currentRegion.offSet(xDiff, yDiff))
                 glSurfaceView.requestRender()
-
-                Log.e(
-                    "ybb",
-                    "onDrag 后: xDiff = $xDiff yDiff = $yDiff width = ${currentRegion.getWidth()} height = ${currentRegion.getHeight()}"
-                )
             }
 
             override fun onZoomX(
@@ -75,7 +64,9 @@ open class BaseBackgroundTexture(
     }
 
     override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
-        currentRegion = currentRegion.generateCoordinateRegion(0f, 0f, screenWidth, screenHeight)
+        if (isRecoverCord){
+            currentRegion = CoordinateRegion().generateCoordinateRegion(0f, 0f, screenWidth, screenHeight)
+        }
         frameTexture.updateTextureInfo(textureInfo, isRecoverCord)
         backgroundTexture.updateTextureInfo(textureInfo, isRecoverCord)
         frameTexture.updateTexCord(currentRegion)
@@ -99,6 +90,12 @@ open class BaseBackgroundTexture(
     }
 
     override fun onSurfaceCreated() {
+        currentRegion = currentRegion.generateCoordinateRegion(
+            0f,
+            0f,
+            glSurfaceView.width,
+            glSurfaceView.height
+        )
         frameTexture.onSurfaceCreated()
         backgroundTexture.onSurfaceCreated()
     }
@@ -138,7 +135,6 @@ open class BaseBackgroundTexture(
 
     override fun onTouch(baseTexture: IBaseTexture, event: MotionEvent): Boolean {
         if (isDispatch) {
-            Log.e("ybb", "onTouch: ${baseTexture.javaClass.simpleName}")
             handlerTouchDrag.onTouchEvent(event)
         }
         return isDispatch

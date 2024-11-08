@@ -60,15 +60,7 @@ class ColorTexture(
 
 
     override fun updateTexCord(coordinateRegion: CoordinateRegion) {
-        GLES20.glViewport(
-            coordinateRegion.leftTop.x.toInt(),
-            coordinateRegion.leftTop.y.toInt(),
-            coordinateRegion.getWidth().toInt(),
-            coordinateRegion.getHeight().toInt()
-        )
-
         currentRegion = coordinateRegion.copyCoordinateRegion()
-
         vertexBuffer.clear()
         val newVertices = currentRegion.getFloatArray(
             screenWidth = screenWidth.toFloat(), screenHeight = screenHeight.toFloat()
@@ -81,8 +73,8 @@ class ColorTexture(
 
 
         val genColorImage = genColorImage(
-            coordinateRegion.getWidth().toInt(),
-            coordinateRegion.getHeight().toInt(),
+            currentRegion.getWidth().toInt(),
+            currentRegion.getHeight().toInt(),
             (0xffA728F0).toInt()
         )
         colorBuffer = IntBuffer.allocate(genColorImage.size).apply {
@@ -94,8 +86,8 @@ class ColorTexture(
             GLES20.GL_TEXTURE_2D,
             0,
             GLES20.GL_RGBA,
-            coordinateRegion.getWidth().toInt(),
-            coordinateRegion.getHeight().toInt(),
+            currentRegion.getWidth().toInt(),
+            currentRegion.getHeight().toInt(),
             0,
             GLES20.GL_RGBA,
             GLES20.GL_UNSIGNED_BYTE,
@@ -122,7 +114,7 @@ class ColorTexture(
             Gl2Utils.uRes(surfaceView.context.resources, vertPath),
             Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
-
+        Matrix.setIdentityM(matrix, 0)
         GLES20.glLinkProgram(shaderProgram)
 
         GLES20.glUseProgram(shaderProgram)
@@ -157,7 +149,6 @@ class ColorTexture(
     }
 
     override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
-        Matrix.setIdentityM(matrix, 0)
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
 
@@ -193,10 +184,12 @@ class ColorTexture(
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
 
         if (isRecoverCord) {
+            Matrix.setIdentityM(matrix, 0)
+            currentRegion = CoordinateRegion().generateCoordinateRegion(
+                0f, 0f, screenWidth, screenHeight
+            )
             updateTexCord(
-                CoordinateRegion().generateCoordinateRegion(
-                    0f, 0f, screenWidth, screenHeight
-                )
+                currentRegion
             )
         }
     }

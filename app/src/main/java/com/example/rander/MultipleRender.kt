@@ -1,6 +1,5 @@
 package com.example.rander
 
-import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.view.SurfaceView
@@ -16,7 +15,7 @@ import com.example.gpengl.multiple.offSet
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-open class MultipleRender(private var surfaceView: SurfaceView,) : GLSurfaceView.Renderer {
+open class MultipleRender(private var surfaceView: SurfaceView) : GLSurfaceView.Renderer {
 
     private var baseTextureList = listOf<IBaseTexture>(
         PicTextureT(surfaceView),
@@ -97,12 +96,12 @@ open class MultipleRender(private var surfaceView: SurfaceView,) : GLSurfaceView
     fun loadTexture(resourceId: Int) {
         baseTextureList.forEachIndexed { index, iBaseTexture ->
             when (index) {
-                4, 5 -> iBaseTexture.updateTextureInfo(
-                    iBaseTexture.getTextureInfo().generateBitmapTexture(surfaceView.context, resourceId), true
+                2, 3, 4, 5 -> iBaseTexture.updateTextureInfo(
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(surfaceView.context, resourceId), false
                 )
 
                 else -> iBaseTexture.updateTextureInfo(
-                    iBaseTexture.getTextureInfo().generateBitmapTexture(surfaceView.context, resourceId)
+                    iBaseTexture.getTextureInfo().generateBitmapTexture(surfaceView.context, resourceId), true
                 )
             }
 

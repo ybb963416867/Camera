@@ -3,7 +3,6 @@ package com.example.gpengl.multiple
 import android.annotation.SuppressLint
 import android.opengl.GLES20
 import android.opengl.Matrix
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import com.example.util.Gl2Utils
@@ -60,12 +59,6 @@ open class BaseTexture(
 
 
     override fun updateTexCord(coordinateRegion: CoordinateRegion) {
-//        GLES20.glViewport(
-//            coordinateRegion.leftTop.x.toInt(),
-//            coordinateRegion.leftTop.y.toInt(),
-//            coordinateRegion.getWidth().toInt(),
-//            coordinateRegion.getHeight().toInt()
-//        )
 
         currentRegion = coordinateRegion.copyCoordinateRegion()
 
@@ -75,7 +68,6 @@ open class BaseTexture(
             screenHeight = screenHeight.toFloat()
         )
 
-        Log.e("ybb", "newVertices: " + newVertices.contentToString())
         vertexBuffer.put(
             newVertices
         ).position(0)
@@ -87,6 +79,10 @@ open class BaseTexture(
             Gl2Utils.uRes(surfaceView.context.resources, vertPath),
             Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
+
+        Matrix.setIdentityM(matrix, 0)
+        currentRegion =
+            currentRegion.generateCoordinateRegion(0f, 0f, surfaceView.width, surfaceView.height)
 
         GLES20.glLinkProgram(shaderProgram)
 
@@ -123,19 +119,19 @@ open class BaseTexture(
 
     override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
         this.textureInfo.textureId = textureInfo.textureId
-        Matrix.setIdentityM(matrix, 0)
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
         if (isRecoverCord) {
-            updateTexCord(
-                CoordinateRegion().generateCoordinateRegion(
-                    0f,
-                    0f,
-                    screenWidth,
-                    screenHeight
-                )
+            Matrix.setIdentityM(matrix, 0)
+            currentRegion = CoordinateRegion().generateCoordinateRegion(
+                0f,
+                0f,
+                screenWidth,
+                screenHeight
             )
+            updateTexCord(currentRegion)
         }
+
     }
 
     override fun onDrawFrame() {
