@@ -80,5 +80,6 @@ class MultipleTextureTouchActivity : AppCompatActivity() {
         findViewById<Button>(R.id.but_recorder_stop).setOnClickListener {
             glSurfaceView.stopRecord()
         }
+
     }
 }

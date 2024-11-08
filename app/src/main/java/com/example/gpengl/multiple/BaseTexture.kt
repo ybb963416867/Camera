@@ -32,6 +32,7 @@ open class BaseTexture(
     private var texCoordHandle = 0
     private var uTextureHandle = 0
     private var matrixHandle = 0
+    private var currentRegion = CoordinateRegion()
 
     private val texCoords = floatArrayOf(
         0.0f, 0.0f,
@@ -67,8 +68,10 @@ open class BaseTexture(
 //            coordinateRegion.getHeight().toInt()
 //        )
 
+        currentRegion = coordinateRegion.copyCoordinateRegion()
+
         vertexBuffer.clear()
-        val newVertices = coordinateRegion.getFloatArray(
+        val newVertices = currentRegion.getFloatArray(
             screenWidth = screenWidth.toFloat(),
             screenHeight = screenHeight.toFloat()
         )
@@ -113,6 +116,10 @@ open class BaseTexture(
 
     override fun getScreenHeight(): Int {
         return screenHeight
+    }
+
+    override fun getTexCoordinateRegion(): CoordinateRegion {
+        return currentRegion
     }
 
     override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {

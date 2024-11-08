@@ -32,14 +32,18 @@ open class BaseBackgroundTexture(
                 xDiff: Float,
                 yDiff: Float
             ) {
-                Log.e("ybb", "onDrag 前: xDiff = $xDiff yDiff = $yDiff width = ${currentRegion.getWidth()} height = ${currentRegion.getHeight()}")
-                glSurfaceView.queueEvent {
-                    currentRegion = currentRegion.copyCoordinateRegion().offSet(xDiff, -yDiff)
-                    updateTexCord(currentRegion)
-                    glSurfaceView.requestRender()
+                Log.e(
+                    "ybb",
+                    "onDrag 前: xDiff = $xDiff yDiff = $yDiff width = ${currentRegion.getWidth()} height = ${currentRegion.getHeight()}"
+                )
 
-                    Log.e("ybb", "onDrag 后: xDiff = $xDiff yDiff = $yDiff width = ${currentRegion.getWidth()} height = ${currentRegion.getHeight()}")
-                }
+                updateTexCord(currentRegion.offSet(xDiff, yDiff))
+                glSurfaceView.requestRender()
+
+                Log.e(
+                    "ybb",
+                    "onDrag 后: xDiff = $xDiff yDiff = $yDiff width = ${currentRegion.getWidth()} height = ${currentRegion.getHeight()}"
+                )
             }
 
             override fun onZoomX(
@@ -89,6 +93,10 @@ open class BaseBackgroundTexture(
 
     override fun getScreenHeight(): Int {
         return screenHeight
+    }
+
+    override fun getTexCoordinateRegion(): CoordinateRegion {
+        return currentRegion
     }
 
     override fun onSurfaceCreated() {

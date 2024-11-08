@@ -6,4 +6,5 @@ interface IBaseTexture: ITexture, TextureTouchEvent {
     fun getTextureInfo(): TextureInfo
     fun getScreenWidth(): Int
     fun getScreenHeight(): Int
+    fun getTexCoordinateRegion(): CoordinateRegion
 }

@@ -20,6 +20,7 @@ import com.example.gpengl.multiple.getWidth
 import com.example.gpengl.multiple.offSet
 import com.example.gpengl.third.record.MediaRecorder
 import java.io.IOException
+import java.util.concurrent.CopyOnWriteArrayList
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -28,11 +29,15 @@ class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceVie
 
 
     private var combineTexture = FboCombineTexture(surfaceView.context)
-    var baseTextureList = listOf<IBaseTexture>(
+    private var baseTextureList1 = mutableListOf<IBaseTexture>(
         PicBackgroundTextureT(surfaceView),
-//        PicBackgroundTexture(surfaceView),
-//        PicBackgroundTexture1(surfaceView),
-//        PicBackgroundTexture2(surfaceView)
+        PicBackgroundTexture(surfaceView),
+        PicBackgroundTexture1(surfaceView),
+        PicBackgroundTexture2(surfaceView)
+    )
+
+    var baseTextureList = CopyOnWriteArrayList(
+        baseTextureList1.toList()
     )
 
     private var mMediaRecorder: MediaRecorder? = null
@@ -134,6 +139,4 @@ class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceVie
     fun stopRecord() {
         mMediaRecorder?.stop()
     }
-
-
 }

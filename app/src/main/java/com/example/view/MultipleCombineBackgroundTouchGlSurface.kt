@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import com.example.gpengl.multiple.CoordinateRegion
+import com.example.gpengl.multiple.IBaseTexture
 import com.example.rander.MultipleBackgroundCombineTouchRender
 
 class MultipleCombineBackgroundTouchGlSurface(
@@ -15,6 +15,7 @@ class MultipleCombineBackgroundTouchGlSurface(
 ) : GLSurfaceView(context, attrs) {
 
     private var multipleRender: MultipleBackgroundCombineTouchRender
+    private var currentActiveTexture: IBaseTexture? = null
 
     init {
         setEGLContextClientVersion(2)
@@ -36,14 +37,14 @@ class MultipleCombineBackgroundTouchGlSurface(
         requestRender()
     }
 
-    fun startRecord(){
+    fun startRecord() {
         multipleRender.startRecord()
         queueEvent {
             renderMode = RENDERMODE_CONTINUOUSLY
         }
     }
 
-    fun stopRecord(){
+    fun stopRecord() {
         multipleRender.stopRecord()
         queueEvent {
             renderMode = RENDERMODE_WHEN_DIRTY
@@ -53,14 +54,35 @@ class MultipleCombineBackgroundTouchGlSurface(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        multipleRender.baseTextureList.forEach {
-            if (it.onTouch(it, event)){
-                return@forEach
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                currentActiveTexture =
+                    multipleRender.baseTextureList.lastOrNull { it.onTouch(it, event) }
+                currentActiveTexture?.let {
+                    multipleRender.baseTextureList.remove(it)
+                    multipleRender.baseTextureList.add(it)
+                }
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                currentActiveTexture?.let {
+                    it.onTouch(it, event)
+                }
+                currentActiveTexture = null
             }
         }
+
+        currentActiveTexture?.let {
+            it.onTouch(it, event)
+        }
+
+
+//        multipleRender.baseTextureList.any {
+//            it.onTouch(it, event)
+//        }
+
+
         return true
     }
-
-
 
 }
