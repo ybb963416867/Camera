@@ -6,7 +6,6 @@ import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -156,6 +155,10 @@ open class BaseTexture(
 
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(texCoordHandle)
+    }
+
+    override fun acceptTouchEvent(event: MotionEvent): Boolean {
+        return false
     }
 
 

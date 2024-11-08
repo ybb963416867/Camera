@@ -57,17 +57,16 @@ class MultipleCombineBackgroundTouchGlSurface(
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 currentActiveTexture =
-                    multipleRender.baseTextureList.lastOrNull { it.onTouch(it, event) }
+                    multipleRender.baseTextureList.lastOrNull { it.acceptTouchEvent(event) }
                 currentActiveTexture?.let {
                     multipleRender.baseTextureList.remove(it)
                     multipleRender.baseTextureList.add(it)
+                    requestRender()
                 }
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                currentActiveTexture?.let {
-                    it.onTouch(it, event)
-                }
+                currentActiveTexture?.acceptTouchEvent(event)
                 currentActiveTexture = null
             }
         }
@@ -75,12 +74,6 @@ class MultipleCombineBackgroundTouchGlSurface(
         currentActiveTexture?.let {
             it.onTouch(it, event)
         }
-
-
-//        multipleRender.baseTextureList.any {
-//            it.onTouch(it, event)
-//        }
-
 
         return true
     }

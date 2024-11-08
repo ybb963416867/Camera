@@ -1,6 +1,5 @@
 package com.example.gpengl.multiple
 
-import android.annotation.SuppressLint
 import android.opengl.GLSurfaceView
 import android.util.Log
 import android.view.MotionEvent
@@ -14,7 +13,7 @@ open class BaseBackgroundTexture(
     IBaseTexture {
     val frameTexture = FrameTexture(glSurfaceView.context, vertPath, fragPath)
     private val backgroundTexture = ColorTexture(glSurfaceView.context, vertPath, fragPath)
-    private var isTouch = false
+    private var isDispatch = false
 
     private var currentRegion = CoordinateRegion()
 
@@ -116,8 +115,7 @@ open class BaseBackgroundTexture(
         frameTexture.onDrawFrame()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(baseTexture: IBaseTexture, event: MotionEvent): Boolean {
+    override fun acceptTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 val textureRect = currentRegion.getTextureRect()
@@ -126,20 +124,24 @@ open class BaseBackgroundTexture(
                         event.y.toInt()
                     ) && textureRect.width() < screenWidth && textureRect.height() < screenHeight
                 ) {
-                    isTouch = true
+                    isDispatch = true
                 }
             }
 
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                isTouch = false
+                isDispatch = false
             }
         }
 
-        if (isTouch) {
+        return isDispatch
+    }
+
+    override fun onTouch(baseTexture: IBaseTexture, event: MotionEvent): Boolean {
+        if (isDispatch) {
             Log.e("ybb", "onTouch: ${baseTexture.javaClass.simpleName}")
             handlerTouchDrag.onTouchEvent(event)
         }
-        return isTouch
+        return isDispatch
     }
 
 

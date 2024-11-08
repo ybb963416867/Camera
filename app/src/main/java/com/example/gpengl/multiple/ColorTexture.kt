@@ -5,7 +5,6 @@ import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import com.example.rander.ColorRender
 import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
@@ -217,6 +216,10 @@ class ColorTexture(
 
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(texCoordHandle)
+    }
+
+    override fun acceptTouchEvent(event: MotionEvent): Boolean {
+        return false
     }
 
     override fun onTouch(baseTexture: IBaseTexture, event: MotionEvent): Boolean {
