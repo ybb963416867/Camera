@@ -114,6 +114,9 @@ class ColorTexture(
             Gl2Utils.uRes(surfaceView.context.resources, vertPath),
             Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
+
+        currentRegion =
+            currentRegion.generateCoordinateRegion(0f, 0f, surfaceView.width, surfaceView.height)
         Matrix.setIdentityM(matrix, 0)
         GLES20.glLinkProgram(shaderProgram)
 
@@ -152,7 +155,7 @@ class ColorTexture(
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
 
-        val genColorImage = genColorImage(screenWidth, screenHeight, (0xffA728F0).toInt())
+        val genColorImage = genColorImage(currentRegion.getWidth().toInt(), currentRegion.getHeight().toInt(), (0xffA728F0).toInt())
         colorBuffer = IntBuffer.allocate(genColorImage.size).apply {
             put(genColorImage).position(0)
         }
@@ -162,8 +165,8 @@ class ColorTexture(
             GLES20.GL_TEXTURE_2D,
             0,
             GLES20.GL_RGBA,
-            screenWidth,
-            screenHeight,
+            currentRegion.getWidth().toInt(),
+            currentRegion.getHeight().toInt(),
             0,
             GLES20.GL_RGBA,
             GLES20.GL_UNSIGNED_BYTE,
@@ -182,16 +185,7 @@ class ColorTexture(
         )
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
-
-        if (isRecoverCord) {
-            Matrix.setIdentityM(matrix, 0)
-            currentRegion = CoordinateRegion().generateCoordinateRegion(
-                0f, 0f, screenWidth, screenHeight
-            )
-            updateTexCord(
-                currentRegion
-            )
-        }
+        Matrix.setIdentityM(matrix, 0)
     }
 
     override fun onDrawFrame() {

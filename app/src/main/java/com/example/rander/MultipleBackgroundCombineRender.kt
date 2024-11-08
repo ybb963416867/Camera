@@ -28,8 +28,8 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
     private var baseTextureList = listOf<IBaseTexture>(
         PicBackgroundTextureT(surfaceView),
         PicBackgroundTexture(surfaceView),
+        PicBackgroundTexture2(surfaceView),
         PicBackgroundTexture1(surfaceView),
-        PicBackgroundTexture2(surfaceView)
     )
 
     private var mMediaRecorder: MediaRecorder? = null

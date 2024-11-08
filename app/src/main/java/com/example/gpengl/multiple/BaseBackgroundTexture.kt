@@ -69,8 +69,7 @@ open class BaseBackgroundTexture(
         }
         frameTexture.updateTextureInfo(textureInfo, isRecoverCord)
         backgroundTexture.updateTextureInfo(textureInfo, isRecoverCord)
-        frameTexture.updateTexCord(currentRegion)
-        backgroundTexture.updateTexCord(currentRegion)
+        updateTexCord(currentRegion)
     }
 
     override fun getTextureInfo(): TextureInfo {

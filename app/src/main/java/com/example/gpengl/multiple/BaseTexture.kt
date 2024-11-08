@@ -121,16 +121,16 @@ open class BaseTexture(
         this.textureInfo.textureId = textureInfo.textureId
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
+        Matrix.setIdentityM(matrix, 0)
         if (isRecoverCord) {
-            Matrix.setIdentityM(matrix, 0)
             currentRegion = CoordinateRegion().generateCoordinateRegion(
                 0f,
                 0f,
                 screenWidth,
                 screenHeight
             )
-            updateTexCord(currentRegion)
         }
+        updateTexCord(currentRegion)
 
     }
 
