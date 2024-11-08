@@ -1,27 +1,82 @@
 package com.example.gpengl.multiple
 
-import android.content.Context
+import android.annotation.SuppressLint
+import android.opengl.GLSurfaceView
+import android.util.Log
+import android.view.MotionEvent
+import com.example.util.HandlerTouchDrag
 
 open class BaseBackgroundTexture(
-    context: Context,
+    glSurfaceView: GLSurfaceView,
     vertPath: String,
     fragPath: String
 ) :
     IBaseTexture {
-    val frameTexture = FrameTexture(context, vertPath, fragPath)
-    private val backgroundTexture = ColorTexture(context, vertPath, fragPath)
+    val frameTexture = FrameTexture(glSurfaceView.context, vertPath, fragPath)
+    private val backgroundTexture = ColorTexture(glSurfaceView.context, vertPath, fragPath)
+    private var isTouch = false
+
+    private var currentRegion = CoordinateRegion()
 
     private var screenWidth = 0
     private var screenHeight = 0
 
+    private var handlerTouchDrag = HandlerTouchDrag()
+
+    init {
+        handlerTouchDrag.touchDragListenerHV = object :
+            HandlerTouchDrag.TouchDragListenerHV {
+            override fun onDrag(
+                startPoint: FloatArray,
+                endPoint: FloatArray,
+                xDiff: Float,
+                yDiff: Float
+            ) {
+                Log.e("ybb", "onDrag 前: xDiff = $xDiff yDiff = $yDiff width = ${currentRegion.getWidth()} height = ${currentRegion.getHeight()}")
+                glSurfaceView.queueEvent {
+                    currentRegion = currentRegion.copyCoordinateRegion().offSet(xDiff, -yDiff)
+                    updateTexCord(currentRegion)
+                    glSurfaceView.requestRender()
+
+                    Log.e("ybb", "onDrag 后: xDiff = $xDiff yDiff = $yDiff width = ${currentRegion.getWidth()} height = ${currentRegion.getHeight()}")
+                }
+            }
+
+            override fun onZoomX(
+                centerX: Float,
+                centerY: Float,
+                zoomDist: Float,
+                startPoint: FloatArray,
+                endPoint: FloatArray
+            ) {
+
+            }
+
+            override fun onZoomY(
+                centerX: Float,
+                centerY: Float,
+                zoomDist: Float,
+                startPoint: FloatArray,
+                endPoint: FloatArray
+            ) {
+
+            }
+
+        }
+    }
+
     override fun updateTexCord(coordinateRegion: CoordinateRegion) {
+        currentRegion = coordinateRegion.copyCoordinateRegion()
         frameTexture.updateTexCord(coordinateRegion)
         backgroundTexture.updateTexCord(coordinateRegion)
     }
 
     override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
+        currentRegion = currentRegion.generateCoordinateRegion(0f, 0f, screenWidth, screenHeight)
         frameTexture.updateTextureInfo(textureInfo, isRecoverCord)
         backgroundTexture.updateTextureInfo(textureInfo, isRecoverCord)
+        frameTexture.updateTexCord(currentRegion)
+        backgroundTexture.updateTexCord(currentRegion)
     }
 
     override fun getTextureInfo(): TextureInfo {
@@ -51,6 +106,32 @@ open class BaseBackgroundTexture(
     override fun onDrawFrame() {
         backgroundTexture.onDrawFrame()
         frameTexture.onDrawFrame()
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouch(baseTexture: IBaseTexture, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                val textureRect = currentRegion.getTextureRect()
+                if (textureRect.contains(
+                        event.x.toInt(),
+                        event.y.toInt()
+                    ) && textureRect.width() < screenWidth && textureRect.height() < screenHeight
+                ) {
+                    isTouch = true
+                }
+            }
+
+            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                isTouch = false
+            }
+        }
+
+        if (isTouch) {
+            Log.e("ybb", "onTouch: ${baseTexture.javaClass.simpleName}")
+            handlerTouchDrag.onTouchEvent(event)
+        }
+        return isTouch
     }
 
 

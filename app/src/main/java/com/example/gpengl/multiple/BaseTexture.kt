@@ -1,9 +1,12 @@
 package com.example.gpengl.multiple
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
+import android.view.MotionEvent
+import android.view.View
 import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -57,12 +60,12 @@ open class BaseTexture(
 
 
     override fun updateTexCord(coordinateRegion: CoordinateRegion) {
-        GLES20.glViewport(
-            coordinateRegion.leftTop.x.toInt(),
-            coordinateRegion.leftTop.y.toInt(),
-            coordinateRegion.getWidth().toInt(),
-            coordinateRegion.getHeight().toInt()
-        )
+//        GLES20.glViewport(
+//            coordinateRegion.leftTop.x.toInt(),
+//            coordinateRegion.leftTop.y.toInt(),
+//            coordinateRegion.getWidth().toInt(),
+//            coordinateRegion.getHeight().toInt()
+//        )
 
         vertexBuffer.clear()
         val newVertices = coordinateRegion.getFloatArray(
@@ -146,6 +149,12 @@ open class BaseTexture(
 
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(texCoordHandle)
+    }
+
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouch(baseTexture: IBaseTexture, event: MotionEvent): Boolean {
+        return false
     }
 
 }

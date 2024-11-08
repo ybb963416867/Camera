@@ -1,8 +1,11 @@
 package com.example.rander
 
+import android.annotation.SuppressLint
 import android.opengl.EGL14
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.view.MotionEvent
+import android.view.View
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.FboCombineTexture
 import com.example.gpengl.multiple.IBaseTexture
@@ -20,16 +23,16 @@ import java.io.IOException
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
+class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceView) :
     GLSurfaceView.Renderer {
 
 
     private var combineTexture = FboCombineTexture(surfaceView.context)
-    private var baseTextureList = listOf<IBaseTexture>(
+    var baseTextureList = listOf<IBaseTexture>(
         PicBackgroundTextureT(surfaceView),
-        PicBackgroundTexture(surfaceView),
-        PicBackgroundTexture1(surfaceView),
-        PicBackgroundTexture2(surfaceView)
+//        PicBackgroundTexture(surfaceView),
+//        PicBackgroundTexture1(surfaceView),
+//        PicBackgroundTexture2(surfaceView)
     )
 
     private var mMediaRecorder: MediaRecorder? = null
@@ -41,13 +44,9 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
         baseTextureList.forEach {
             it.onSurfaceCreated()
         }
-        mMediaRecorder =
-            MediaRecorder(
-                surfaceView.context,
-                surfaceView.width,
-                surfaceView.height,
-                EGL14.eglGetCurrentContext()
-            )
+        mMediaRecorder = MediaRecorder(
+            surfaceView.context, surfaceView.width, surfaceView.height, EGL14.eglGetCurrentContext()
+        )
 
     }
 
@@ -92,8 +91,7 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
                 2 -> {
                     iBaseTexture.updateTexCord(
                         coordinateRegion.offSet(
-                            0f,
-                            coordinateRegion.getHeight() + 50f
+                            0f, coordinateRegion.getHeight() + 50f
                         )
                     )
                 }
@@ -101,8 +99,7 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
                 3 -> {
                     iBaseTexture.updateTexCord(
                         coordinateRegion.offSet(
-                            0f,
-                            coordinateRegion.getHeight() * 2 + 100f
+                            0f, coordinateRegion.getHeight() * 2 + 100f
                         )
                     )
                 }

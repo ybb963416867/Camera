@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
         <activity
+            android:name=".MultipleTextureTouchActivity"
+            android:exported="false" />
+        <activity
             android:name=".MultipleTextureBackgroundActivity"
             android:exported="false" />
         <activity

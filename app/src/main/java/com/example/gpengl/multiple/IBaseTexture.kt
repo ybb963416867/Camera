@@ -1,6 +1,6 @@
 package com.example.gpengl.multiple
 
-interface IBaseTexture: ITexture {
+interface IBaseTexture: ITexture, TextureTouchEvent {
     fun updateTexCord(coordinateRegion: CoordinateRegion)
     fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean = false)
     fun getTextureInfo(): TextureInfo

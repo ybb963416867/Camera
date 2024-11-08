@@ -1,14 +1,14 @@
 package com.example.gpengl.multiple
 
-import android.content.Context
+import android.opengl.GLSurfaceView
 import com.example.util.MatrixUtil
 import com.example.util.PositionType
 
 class PicBackgroundTexture2(
-    context: Context,
+    glSurfaceView: GLSurfaceView,
     vertPath: String = "shader/base_vert.glsl",
     fragPath: String = "shader/base_frag.glsl"
-) : BaseBackgroundTexture(context, vertPath, fragPath) {
+) : BaseBackgroundTexture(glSurfaceView, vertPath, fragPath) {
 
     override fun updateTexCord(coordinateRegion: CoordinateRegion) {
         super.updateTexCord(coordinateRegion)

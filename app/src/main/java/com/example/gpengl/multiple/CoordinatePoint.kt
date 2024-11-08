@@ -2,6 +2,7 @@ package com.example.gpengl.multiple
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.graphics.Rect
 import android.opengl.GLES20
 import android.opengl.GLUtils
 import android.util.Log
@@ -101,6 +102,16 @@ data class CoordinateRegion(
     var leftBottom: CoordinatePoint = CoordinatePoint(),
     var rightBottom: CoordinatePoint = CoordinatePoint()
 )
+
+fun CoordinateRegion.getTextureRect(): Rect{
+    this.check()
+    return Rect().apply {
+        left = leftTop.x.toInt()
+        top = leftTop.y.toInt()
+        right = rightBottom.x.toInt()
+        bottom = rightBottom.y.toInt()
+    }
+}
 
 fun CoordinateRegion.generateCoordinateRegion(left: Float, top: Float, width: Int, height: Int) = this.apply {
     leftTop.x = left

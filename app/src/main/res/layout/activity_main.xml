@@ -147,6 +147,13 @@
             />
 
         <Button
+            android:id="@+id/but_multi_texture_touch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="多纹理触摸事件"
+            />
+
+        <Button
             android:id="@+id/but_test"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
