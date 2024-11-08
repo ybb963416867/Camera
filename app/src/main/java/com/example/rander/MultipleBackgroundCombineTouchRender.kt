@@ -1,11 +1,8 @@
 package com.example.rander
 
-import android.annotation.SuppressLint
 import android.opengl.EGL14
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.view.MotionEvent
-import android.view.View
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.FboCombineTexture
 import com.example.gpengl.multiple.IBaseTexture
