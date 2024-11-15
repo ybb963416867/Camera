@@ -7,11 +7,11 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import com.example.util.Gl2Utils
+import com.example.util.Gl2Utils.genColorImage
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
-import java.util.Arrays
 
 class ColorTexture(
     private var surfaceView: SurfaceView,
@@ -24,7 +24,7 @@ class ColorTexture(
     private var textureInfo = TextureInfo()
     private var vertexBuffer: FloatBuffer
     private var texCoordBuffer: FloatBuffer
-    val matrix: FloatArray = Gl2Utils.getOriginalMatrix()
+    val matrix: FloatArray = Gl2Utils.originalMatrix
     private var textureWidth = 0
     private var textureHeight = 0
 
@@ -237,19 +237,16 @@ class ColorTexture(
         this.iTextureVisibility = visibility
     }
 
+    override fun clearTexture(colorString: String) {
+
+    }
+
     override fun acceptTouchEvent(event: MotionEvent): Boolean {
         return false
     }
 
     override fun onTouch(baseTexture: IBaseTexture, event: MotionEvent): Boolean {
         return false
-    }
-
-    private fun genColorImage(width: Int, height: Int, color: String): IntArray {
-        val pixels = IntArray(width * height)
-        val colorPixel = Color.parseColor(color)
-        Arrays.fill(pixels, colorPixel)
-        return pixels
     }
 
 }

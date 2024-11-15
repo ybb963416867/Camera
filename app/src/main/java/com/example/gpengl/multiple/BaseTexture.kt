@@ -2,6 +2,7 @@ package com.example.gpengl.multiple
 
 import android.annotation.SuppressLint
 import android.opengl.GLES20
+import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.view.MotionEvent
 import android.view.SurfaceView
@@ -9,9 +10,10 @@ import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.nio.IntBuffer
 
 open class BaseTexture(
-    private var surfaceView: SurfaceView, private var vertPath: String, private var fragPath: String
+    private var surfaceView: GLSurfaceView, private var vertPath: String, private var fragPath: String
 ) : IBaseTexture {
     private var screenWidth = 0
     private var screenHeight = 0
@@ -19,7 +21,7 @@ open class BaseTexture(
     private var textureInfo = TextureInfo()
     private var vertexBuffer: FloatBuffer
     private var texCoordBuffer: FloatBuffer
-    val matrix: FloatArray = Gl2Utils.getOriginalMatrix()
+    val matrix: FloatArray = Gl2Utils.originalMatrix
     var textureWidth = 0
     var textureHeight = 0
 
@@ -29,6 +31,7 @@ open class BaseTexture(
     private var matrixHandle = 0
     private var currentRegion = CoordinateRegion()
     private var iTextureVisibility = ITextureVisibility.INVISIBLE
+    private var frameBuffer: IntBuffer? = null
 
     private val texCoords = floatArrayOf(
         0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f
@@ -180,6 +183,43 @@ open class BaseTexture(
 
     override fun setVisibility(visibility: ITextureVisibility) {
         this.iTextureVisibility = visibility
+    }
+
+    override fun clearTexture(colorString: String) {
+        surfaceView.queueEvent {
+            if (textureInfo.width == 0) {
+                textureInfo.width = getScreenWidth()
+            }
+
+            if (textureInfo.height == 0) {
+                textureInfo.height = getScreenHeight()
+            }
+
+            val genColorImage =
+                Gl2Utils.genColorImage(textureInfo.width, textureInfo.height, "#00000000")
+            if (frameBuffer == null || frameBuffer!!.capacity() != textureInfo.width * textureInfo.height * Integer.BYTES) {
+                frameBuffer =
+                    ByteBuffer.allocateDirect(textureInfo.width * textureInfo.height * Integer.BYTES)
+                        .order(
+                            ByteOrder.nativeOrder()
+                        ).asIntBuffer().apply {
+                            position(0)
+                        }
+            }
+
+            frameBuffer!!.put(genColorImage).position(0)
+
+            updateTextureInfo(
+                getTextureInfo().generateTexture(
+                    getTextureInfo().textureId,
+                    frameBuffer!!,
+                    textureInfo.width,
+                    textureInfo.height
+                ), false
+            )
+
+            surfaceView.requestRender()
+        }
     }
 
     override fun acceptTouchEvent(event: MotionEvent): Boolean {

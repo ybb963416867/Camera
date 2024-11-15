@@ -5,10 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.opengl.GLES20
+import android.opengl.GLES30
 import android.opengl.GLUtils
 import android.util.Log
 import com.example.util.Gl2Utils
 import com.example.util.MatrixUtil
+import java.nio.IntBuffer
 import kotlin.math.abs
 
 data class CoordinatePoint(var x: Float = 0f, var y: Float = 0f, var c: Float = 0f)
@@ -53,6 +55,43 @@ fun TextureInfo.generateBitmapTexture(context: Context, resourceId: Int): Textur
         Log.e("TextureInfo", "textureId == 0 ")
     }
 
+    return this
+}
+
+fun TextureInfo.generateTexture(
+    createTextureID: Int,
+    buffer: IntBuffer,
+    width: Int,
+    height: Int
+): TextureInfo {
+    this.textureId = createTextureID
+    this.width = width
+    this.height = height
+    GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureId)
+    GLES30.glTexImage2D(
+        GLES30.GL_TEXTURE_2D,
+        0,
+        GLES30.GL_RGBA,
+        width,
+        height,
+        0,
+        GLES30.GL_RGBA,
+        GLES30.GL_UNSIGNED_BYTE,
+        buffer
+    )
+
+    GLES20.glTexParameteri(
+        GLES20.GL_TEXTURE_2D,
+        GLES20.GL_TEXTURE_MIN_FILTER,
+        GLES20.GL_LINEAR
+    )
+    GLES20.glTexParameteri(
+        GLES20.GL_TEXTURE_2D,
+        GLES20.GL_TEXTURE_MAG_FILTER,
+        GLES20.GL_LINEAR
+    )
+    buffer.clear()
+    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
     return this
 }
 

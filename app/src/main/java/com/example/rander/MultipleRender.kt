@@ -15,7 +15,7 @@ import com.example.gpengl.multiple.offSet
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-open class MultipleRender(private var surfaceView: SurfaceView) : GLSurfaceView.Renderer {
+open class MultipleRender(private var surfaceView: GLSurfaceView) : GLSurfaceView.Renderer {
 
     private var baseTextureList = listOf<IBaseTexture>(
         PicTextureT(surfaceView),

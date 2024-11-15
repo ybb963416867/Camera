@@ -1,10 +1,10 @@
 package com.example.gpengl.multiple
 
+import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import android.view.SurfaceView
 
 class FrameTexture(
-    private var surfaceView: SurfaceView,
+    private var surfaceView: GLSurfaceView,
     vertPath: String = "shader/base_vert.glsl",
     fragPath: String = "shader/base_frag.glsl"
 ) : BaseTexture(surfaceView, vertPath, fragPath) {

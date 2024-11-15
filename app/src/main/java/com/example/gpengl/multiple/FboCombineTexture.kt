@@ -191,4 +191,8 @@ class FboCombineTexture(
     override fun setVisibility(visibility: ITextureVisibility) {
 
     }
+
+    override fun clearTexture(colorString: String) {
+
+    }
 }

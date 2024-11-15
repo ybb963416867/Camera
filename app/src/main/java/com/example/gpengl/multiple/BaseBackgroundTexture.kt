@@ -144,6 +144,10 @@ open class BaseBackgroundTexture(
         this.iTextureVisibility = visibility
     }
 
+    override fun clearTexture(colorString: String) {
+
+    }
+
     override fun acceptTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
