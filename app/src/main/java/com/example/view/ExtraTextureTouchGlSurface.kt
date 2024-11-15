@@ -88,21 +88,17 @@ class ExtraTextureTouchGlSurface(
         multipleRender.setRecodeView(root, viewWidth, viewHeight)
     }
 
-}
-
-
-
-fun saveImage(oldBitmap: Bitmap, sNewImagePath: String?): Boolean {
-    try {
-        val fileOut = FileOutputStream(sNewImagePath)
-        oldBitmap.compress(CompressFormat.JPEG, 80, fileOut)
-        fileOut.flush()
-        fileOut.close()
-        return true
-    } catch (e: Exception) {
-        e.printStackTrace()
-        System.gc()
-        return false
+    fun capture1() {
+        multipleRender.capture1()
     }
+
+    fun capture2() {
+        multipleRender.capture2()
+    }
+
 }
+
+
+
+
 

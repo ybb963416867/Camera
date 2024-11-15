@@ -36,7 +36,7 @@ class ViewBackgroundTexture(
         )
     }
 
-
+//"#4DFF0080"
     override fun onDrawFrame() {
         rootView?.post {
             updateBitmap()
@@ -46,7 +46,7 @@ class ViewBackgroundTexture(
                 updateTextureInfo(
                     getTextureInfo().generateBitmapTexture(
                         getTextureInfo().textureId, it, false
-                    ), false, "#4DFF0080"
+                    ), false,
                 )
             }
 
@@ -65,6 +65,7 @@ class ViewBackgroundTexture(
         }
 
         updateBitmap()
+        surfaceView.requestRender()
     }
 
     private fun updateBitmap() {

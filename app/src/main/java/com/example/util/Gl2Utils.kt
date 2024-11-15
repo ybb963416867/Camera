@@ -12,6 +12,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
+import android.opengl.GLES30
 import android.opengl.GLUtils
 import android.opengl.Matrix
 import android.util.Log
@@ -1433,6 +1434,87 @@ object Gl2Utils {
         fb.put(coords)
         fb.position(0)
         return fb
+    }
+
+
+    /**
+     * @param count 数量
+     * @return 创建一个纹理数组
+     * 这个纹理用于视频
+     */
+    fun createTextureId(count: Int): IntArray {
+        val texture = IntArray(count)
+        GLES30.glGenTextures(count, texture, 0)
+        //设置缩小过滤为使用纹理中坐标最接近的一个像素的颜色作为需要绘制的像素颜色
+        GLES30.glTexParameterf(
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+            GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR.toFloat()
+        )
+        //设置放大过滤为使用纹理中坐标最接近的若干个颜色，通过加权平均算法得到需要绘制的像素颜色
+        GLES30.glTexParameterf(
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+            GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR.toFloat()
+        )
+        //设置环绕方向S，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
+        GLES30.glTexParameteri(
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+            GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE
+        )
+        //设置环绕方向T，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
+        GLES30.glTexParameteri(
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+            GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE
+        )
+        return texture
+    }
+
+    fun readPixelsToByteBuffer(x: Int = 0, y: Int = 0, width: Int, height: Int): ByteArray {
+        // 计算像素数据的大小（RGBA格式，每个像素4字节）
+        val byteCount = width * height * 4
+
+        // 创建一个 ByteBuffer 来存储像素数据
+        val pixelBuffer = ByteBuffer.allocateDirect(byteCount)
+        pixelBuffer.order(ByteOrder.nativeOrder())
+
+        // 将 OpenGL 上下文中的帧缓冲区内容读取到 ByteBuffer 中
+        GLES30.glReadPixels(
+            x,
+            y,
+            width,
+            height,
+            GLES30.GL_RGBA,
+            GLES30.GL_UNSIGNED_BYTE,
+            pixelBuffer
+        )
+        flipVertical(pixelBuffer, width, height)
+        val byteArray = ByteArray(pixelBuffer.remaining())
+        pixelBuffer.get(byteArray)
+//        Log.d("ybb", "width: $width  height: $height length: ${byteArray.size}")
+        return byteArray
+    }
+
+    private fun flipVertical(buffer: ByteBuffer, width: Int, height: Int, bytesPerPixel: Int = 4) {
+        buffer.rewind() // 重置缓冲区位置
+        val rowBuffer = ByteArray(width * bytesPerPixel) // 临时存储每行数据的缓冲区
+        // 逐行翻转
+        for (i in 0 until height / 2) {
+            // 计算当前行和对应的对称行的索引
+            val rowIndex1 = i * width * bytesPerPixel
+            val rowIndex2 = (height - 1 - i) * width * bytesPerPixel
+
+            // 将当前行数据复制到临时缓冲区
+            buffer.position(rowIndex1)
+            buffer[rowBuffer]
+
+            // 将对称行数据复制到当前行位置
+            buffer.position(rowIndex1)
+            buffer.put(buffer.array(), rowIndex2, width * bytesPerPixel)
+
+            // 将临时缓冲区中的数据复制到对称行位置
+            buffer.position(rowIndex2)
+            buffer.put(rowBuffer)
+        }
+        buffer.rewind() // 重置缓冲区位置
     }
 
 

@@ -1,8 +1,10 @@
 package com.example.rander
 
+import android.graphics.Bitmap
 import android.opengl.EGL14
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.util.Log
 import android.widget.FrameLayout
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.IBaseTexture
@@ -18,7 +20,11 @@ import com.example.gpengl.multiple.getHeight
 import com.example.gpengl.multiple.getWidth
 import com.example.gpengl.multiple.offSet
 import com.example.gpengl.third.record.MediaRecorder
+import com.example.util.FileUtils
+import com.example.util.Gl2Utils
+import java.io.File
 import java.io.IOException
+import java.nio.ByteBuffer
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -190,5 +196,62 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     fun setRecodeView(root: FrameLayout, viewWidth: Int, viewHeight: Int) {
         pic5.second.setViewInfo(root, viewWidth, viewHeight)
     }
+
+    fun capture1() {
+        surfaceView.queueEvent {
+            val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "a")
+            val bitmap = getFramebufferPixels(
+                combineTexture.getFboFrameBuffer()[0],
+                combineTexture.getScreenWidth(),
+                combineTexture.getScreenHeight()
+            ).toBitmap().savaFile(storagePicture)
+
+            Log.e(TAG, "capture1: $storagePicture")
+        }
+    }
+
+    fun capture2() {
+        surfaceView.queueEvent {
+            val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
+            val bitmap = getFramebufferPixels(
+                combineTexture.getFboFrameBuffer()[1],
+                combineTexture.getScreenWidth(),
+                combineTexture.getScreenHeight()
+            ).toBitmap().savaFile(storagePicture)
+            Log.e(TAG, "capture2: $storagePicture")
+        }
+    }
+
+    private fun getFramebufferPixels(
+        fboId: Int,
+        width: Int,
+        height: Int
+    ): Triple<ByteArray, Int, Int> {
+        // 绑定 FBO
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fboId)
+
+        val buffer = Gl2Utils.readPixelsToByteBuffer(0, 0, width, height)
+
+        // 解绑 FBO
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
+
+        // 返回缓冲区
+        return Triple(buffer, width, height)
+    }
+
+    companion object {
+        private const val TAG = "ExtraTextureTouchRender"
+    }
 }
+
+/**
+ *
+ */
+fun Triple<ByteArray, Int, Int>.toBitmap(): Bitmap {
+    return Bitmap.createBitmap(this.second, this.third, Bitmap.Config.ARGB_8888).also {
+        it.copyPixelsFromBuffer(ByteBuffer.wrap(this.first))
+    }
+}
+
+fun Bitmap.savaFile(path: String): Boolean = FileUtils.saveImage(this, path)
 
