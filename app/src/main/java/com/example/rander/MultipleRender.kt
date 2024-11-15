@@ -2,7 +2,6 @@ package com.example.rander
 
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.view.SurfaceView
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.IBaseTexture
 import com.example.gpengl.multiple.PicTexture

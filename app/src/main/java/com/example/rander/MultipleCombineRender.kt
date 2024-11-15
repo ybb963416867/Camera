@@ -3,7 +3,6 @@ package com.example.rander
 import android.opengl.EGL14
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.util.Log
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.FboCombineTexture
 import com.example.gpengl.multiple.IBaseTexture
@@ -37,12 +36,17 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
-        combineTexture.onSurfaceCreated()
+        combineTexture.onSurfaceCreated(surfaceView.width, surfaceView.height)
         baseTextureList.forEach {
             it.onSurfaceCreated()
         }
         mMediaRecorder =
-            MediaRecorder(surfaceView.context, surfaceView.width, surfaceView.height, EGL14.eglGetCurrentContext())
+            MediaRecorder(
+                surfaceView.context,
+                surfaceView.width,
+                surfaceView.height,
+                EGL14.eglGetCurrentContext()
+            )
 
     }
 
@@ -65,9 +69,7 @@ class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceV
             it.onDrawFrame()
         }
 
-        Log.e("ybb", "onDrawFrame")
-
-        combineTexture.onDrawFrame()
+        combineTexture.onDrawFrame(0)
         //进行录制
         mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[0], System.nanoTime())
     }

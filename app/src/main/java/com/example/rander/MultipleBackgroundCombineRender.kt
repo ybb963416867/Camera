@@ -37,7 +37,7 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
-        combineTexture.onSurfaceCreated()
+        combineTexture.onSurfaceCreated(surfaceView.width, surfaceView.height)
         baseTextureList.forEach {
             it.onSurfaceCreated()
         }
@@ -66,7 +66,7 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
             it.onDrawFrame()
         }
 
-        combineTexture.onDrawFrame()
+        combineTexture.onDrawFrame(0)
         //进行录制
         mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[0], System.nanoTime())
     }

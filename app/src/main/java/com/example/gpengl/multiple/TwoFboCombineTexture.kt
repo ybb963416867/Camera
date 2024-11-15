@@ -9,7 +9,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-class FboCombineTexture(
+class TwoFboCombineTexture(
     private var context: Context,
     private var vertPath: String = "shader/base_vert.glsl",
     private var fragPath: String = "shader/base_frag.glsl"
@@ -18,8 +18,8 @@ class FboCombineTexture(
     private var combinedProjectionMatrix: FloatArray = FloatArray(16)
 
     // FBO 和合并纹理
-    private val fbo = IntArray(1)
-    private val combinedTexture = IntArray(1)
+    private val fbo = IntArray(2)
+    private val combinedTexture = IntArray(2)
 
 
     private val combinedVertexBuffer: FloatBuffer
@@ -84,49 +84,47 @@ class FboCombineTexture(
     }
 
     override fun onSurfaceCreated(screenWidth: Int, screenHeight: Int) {
-        if (screenWidth == 0 || screenHeight == 0) {
-            throw IllegalArgumentException("Invalid screen dimensions: $screenWidth x $screenHeight")
-        }
-
         Matrix.setIdentityM(combinedProjectionMatrix, 0)
-        GLES20.glGenFramebuffers(1, fbo, 0)
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0])
+        GLES20.glGenFramebuffers(2, fbo, 0)
 
         // 创建合并纹理
-        GLES20.glGenTextures(1, combinedTexture, 0)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0])
-        GLES20.glTexImage2D(
-            GLES20.GL_TEXTURE_2D,
-            0,
-            GLES20.GL_RGBA,
-            100,
-            200,
-            0,
-            GLES20.GL_RGBA,
-            GLES20.GL_UNSIGNED_BYTE,
-            null
-        )
+        GLES20.glGenTextures(2, combinedTexture, 0)
 
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+        for (i in 0 until 2) {
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[i])
+            GLES20.glTexImage2D(
+                GLES20.GL_TEXTURE_2D,
+                0,
+                GLES20.GL_RGBA,
+                100,
+                200,
+                0,
+                GLES20.GL_RGBA,
+                GLES20.GL_UNSIGNED_BYTE,
+                null
+            )
 
-        // 将合并纹理附加到 FBO
-        GLES20.glFramebufferTexture2D(
-            GLES20.GL_FRAMEBUFFER,
-            GLES20.GL_COLOR_ATTACHMENT0,
-            GLES20.GL_TEXTURE_2D,
-            combinedTexture[0],
-            0
-        )
-        // 检查 FBO 状态
-        val status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER)
-        if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) {
-            Log.e("GLRenderer", "Framebuffer incomplete: $status")
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[i])
+
+            // 将合并纹理附加到 FBO
+            GLES20.glFramebufferTexture2D(
+                GLES20.GL_FRAMEBUFFER,
+                GLES20.GL_COLOR_ATTACHMENT0,
+                GLES20.GL_TEXTURE_2D,
+                combinedTexture[i],
+                0
+            )
+            // 检查 FBO 状态
+            val status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER)
+            if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+                Log.e("GLRenderer", "Framebuffer incomplete: $status")
+            }
+            // 解绑 FBO
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
         }
-
-        // 解绑 FBO
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
-
 
         // 创建 OpenGL 程序
 
@@ -148,23 +146,30 @@ class FboCombineTexture(
     override fun onSurfaceChanged(screenWidth: Int, screenHeight: Int) {
         this.screenWidth = screenWidth
         this.screenHeight = screenHeight
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0])
-        GLES20.glTexImage2D(
-            GLES20.GL_TEXTURE_2D,
-            0,
-            GLES20.GL_RGBA,
-            screenWidth,
-            screenHeight,
-            0,
-            GLES20.GL_RGBA,
-            GLES20.GL_UNSIGNED_BYTE,
-            null
-        )
+
+        for (i in 0 until 2) {
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[i])
+            GLES20.glTexImage2D(
+                GLES20.GL_TEXTURE_2D,
+                0,
+                GLES20.GL_RGBA,
+                screenWidth,
+                screenHeight,
+                0,
+                GLES20.GL_RGBA,
+                GLES20.GL_UNSIGNED_BYTE,
+                null
+            )
+        }
+
         // 设置合并纹理的正交投影矩阵，确保宽高比一致
         Matrix.setIdentityM(combinedProjectionMatrix, 0)
     }
 
-    override fun onDrawFrame(textureIdIndex: Int) {
+    override fun onDrawFrame(textureIdIndex : Int) {
+        if (textureIdIndex >= combinedTexture.size){
+            throw IllegalArgumentException("textureIdIndex >= combinedTexture.size")
+        }
         // 解绑 FBO 并恢复视口大小
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
         GLES20.glViewport(0, 0, screenWidth, screenHeight)
@@ -180,12 +185,9 @@ class FboCombineTexture(
             positionHandle, 3, GLES20.GL_FLOAT, false, 12, combinedVertexBuffer
         )
         GLES20.glVertexAttribPointer(texCoordHandle, 2, GLES20.GL_FLOAT, false, 8, texCoordBuffer)
-
-
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
 
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(texCoordHandle)
     }
-
 }

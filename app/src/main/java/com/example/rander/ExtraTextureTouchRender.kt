@@ -1,19 +1,17 @@
 package com.example.rander
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.opengl.EGL14
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.view.View
 import android.widget.FrameLayout
 import com.example.gpengl.multiple.CoordinateRegion
-import com.example.gpengl.multiple.FboCombineTexture
 import com.example.gpengl.multiple.IBaseTexture
 import com.example.gpengl.multiple.PicBackgroundTexture
 import com.example.gpengl.multiple.PicBackgroundTexture1
 import com.example.gpengl.multiple.PicBackgroundTexture2
 import com.example.gpengl.multiple.PicBackgroundTextureT
+import com.example.gpengl.multiple.TwoFboCombineTexture
+import com.example.gpengl.multiple.ViewBackgroundTexture
 import com.example.gpengl.multiple.generateBitmapTexture
 import com.example.gpengl.multiple.generateCoordinateRegion
 import com.example.gpengl.multiple.getHeight
@@ -28,19 +26,24 @@ import javax.microedition.khronos.opengles.GL10
 class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     GLSurfaceView.Renderer {
 
-    private var rootView: View? = null
+    private var combineTexture = TwoFboCombineTexture(surfaceView.context)
 
-    private var combineTexture = FboCombineTexture(surfaceView.context)
-    private var viewTexture = PicBackgroundTexture(surfaceView)
-    private var baseTextureList1 = mutableListOf<IBaseTexture>(
-        PicBackgroundTextureT(surfaceView),
-        PicBackgroundTexture(surfaceView),
-        PicBackgroundTexture1(surfaceView),
-        PicBackgroundTexture2(surfaceView)
+    private var pic1 = "PicBackgroundTextureT" to PicBackgroundTextureT(surfaceView)
+    private var pic2 = "PicBackgroundTexture" to PicBackgroundTexture(surfaceView)
+    private var pic3 = "PicBackgroundTexture1" to PicBackgroundTexture1(surfaceView)
+    private var pic4 = "PicBackgroundTexture2" to PicBackgroundTexture2(surfaceView)
+    private var pic5 = "ViewTexture" to ViewBackgroundTexture(surfaceView)
+
+    private var baseTextureList1 = mapOf<String, IBaseTexture>(
+        pic1,
+        pic2,
+        pic3,
+        pic4,
+        pic5,
     )
 
     var baseTextureList = CopyOnWriteArrayList(
-        baseTextureList1.toList()
+        baseTextureList1.values
     )
 
     private var mMediaRecorder: MediaRecorder? = null
@@ -48,8 +51,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
-        combineTexture.onSurfaceCreated()
-        viewTexture.onSurfaceCreated()
+        combineTexture.onSurfaceCreated(surfaceView.width, surfaceView.height)
         baseTextureList.forEach {
             it.onSurfaceCreated()
         }
@@ -62,7 +64,6 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
         combineTexture.onSurfaceChanged(width, height)
-        viewTexture.onSurfaceChanged(width, height)
         baseTextureList.forEach {
             it.onSurfaceChanged(width, height)
         }
@@ -76,51 +77,61 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
         baseTextureList.forEach {
+            if (it != baseTextureList1[pic5.first]) {
+                it.onDrawFrame()
+            }
+        }
+
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, combineTexture.getTextureArray()[1])
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+
+
+
+        baseTextureList.forEach {
             it.onDrawFrame()
         }
 
-        viewTexture.onDrawFrame()
-
-        combineTexture.onDrawFrame()
+        combineTexture.onDrawFrame(0)
         //进行录制
         mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[0], System.nanoTime())
     }
 
     fun updateTexCord(coordinateRegion: CoordinateRegion) {
         baseTextureList.forEachIndexed { index, iBaseTexture ->
-            when (index) {
-                1 -> {
-                    iBaseTexture.updateTexCord(
-                        CoordinateRegion().generateCoordinateRegion(
-                            (iBaseTexture.getScreenWidth() - coordinateRegion.getWidth() - 200),
-                            200f,
-                            coordinateRegion.getWidth().toInt(),
-                            coordinateRegion.getHeight().toInt()
+            if (iBaseTexture != baseTextureList1[pic5.first]) {
+                when (index) {
+                    1 -> {
+                        iBaseTexture.updateTexCord(
+                            CoordinateRegion().generateCoordinateRegion(
+                                (iBaseTexture.getScreenWidth() - coordinateRegion.getWidth() - 200),
+                                200f,
+                                coordinateRegion.getWidth().toInt(),
+                                coordinateRegion.getHeight().toInt()
+                            )
                         )
-                    )
-                }
+                    }
 
-                2 -> {
-                    iBaseTexture.updateTexCord(
-                        coordinateRegion.offSet(
-                            0f, coordinateRegion.getHeight() + 50f
+                    2 -> {
+                        iBaseTexture.updateTexCord(
+                            coordinateRegion.offSet(
+                                0f, coordinateRegion.getHeight() + 50f
+                            )
                         )
-                    )
-                }
+                    }
 
-                3 -> {
-                    iBaseTexture.updateTexCord(
-                        coordinateRegion.offSet(
-                            0f, coordinateRegion.getHeight() * 2 + 100f
+                    3 -> {
+                        iBaseTexture.updateTexCord(
+                            coordinateRegion.offSet(
+                                0f, coordinateRegion.getHeight() * 2 + 100f
+                            )
                         )
-                    )
-                }
+                    }
 
-                else -> {
-                    iBaseTexture.updateTexCord(coordinateRegion)
+                    else -> {
+                        iBaseTexture.updateTexCord(coordinateRegion)
+                    }
                 }
             }
-
         }
     }
 
@@ -128,33 +139,39 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     fun loadTexture(resourceId: Int) {
 
         baseTextureList.forEachIndexed { index, iBaseTexture ->
-            when (index) {
-                0 -> iBaseTexture.updateTextureInfo(
-                    iBaseTexture.getTextureInfo().generateBitmapTexture(
-                        iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                    ), true
-                )
 
-                1 -> iBaseTexture.updateTextureInfo(
-                    iBaseTexture.getTextureInfo().generateBitmapTexture(
-                        iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                    ), false, "#80A728F0"
-                )
-
-                2 -> iBaseTexture.updateTextureInfo(
-                    iBaseTexture.getTextureInfo().generateBitmapTexture(
-                        iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                    ), false, "#3872F0"
-                )
-
-                else -> {
-                    iBaseTexture.updateTextureInfo(
+            if (iBaseTexture != baseTextureList1[pic5.first]) {
+                when (index) {
+                    0 -> iBaseTexture.updateTextureInfo(
                         iBaseTexture.getTextureInfo().generateBitmapTexture(
                             iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                        ), false, "#4D000000"
+                        ), true
                     )
+
+                    1 -> iBaseTexture.updateTextureInfo(
+                        iBaseTexture.getTextureInfo().generateBitmapTexture(
+                            iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
+                        ), false, "#80A728F0"
+                    )
+
+                    2 -> iBaseTexture.updateTextureInfo(
+                        iBaseTexture.getTextureInfo().generateBitmapTexture(
+                            iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
+                        ), false, "#3872F0"
+                    )
+
+                    else -> {
+                        iBaseTexture.updateTextureInfo(
+                            iBaseTexture.getTextureInfo().generateBitmapTexture(
+                                iBaseTexture.getTextureInfo().textureId,
+                                surfaceView.context,
+                                resourceId
+                            ), false, "#4D000000"
+                        )
+                    }
                 }
             }
+
         }
     }
 
@@ -170,32 +187,8 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
         mMediaRecorder?.stop()
     }
 
-    fun setRecodeView(root: FrameLayout) {
-        this.rootView = root
-        val bitmap = root.toBitmap(root.width, root.height)
-        surfaceView.queueEvent {
-            viewTexture.updateTextureInfo(
-                viewTexture.getTextureInfo().generateBitmapTexture(
-                    viewTexture.getTextureInfo().textureId, bitmap
-                ), false, "#4DFF0080"
-            )
-
-            viewTexture.updateTexCord(
-                coordinateRegion = CoordinateRegion().generateCoordinateRegion(
-                    200f,
-                    200f,
-                    600,
-                    700
-                )
-            )
-            surfaceView.requestRender()
-        }
+    fun setRecodeView(root: FrameLayout, viewWidth: Int, viewHeight: Int) {
+        pic5.second.setViewInfo(root, viewWidth, viewHeight)
     }
 }
 
-fun View.toBitmap(viewWidth: Int, viewHeight: Int): Bitmap {
-    val bitmap = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bitmap)
-    draw(canvas)
-    return bitmap
-}

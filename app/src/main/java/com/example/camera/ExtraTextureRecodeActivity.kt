@@ -81,8 +81,13 @@ class ExtraTextureRecodeActivity : AppCompatActivity() {
             glSurfaceView.stopRecord()
         }
 
+        val rootView = findViewById<FrameLayout>(R.id.fl_root)
+        rootView.post {
+            glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
+        }
+
         findViewById<Button>(R.id.text).setOnClickListener {
-            glSurfaceView.setRecodeView(findViewById(R.id.fl_root))
+
         }
     }
 }

@@ -95,7 +95,7 @@ fun TextureInfo.generateTexture(
     return this
 }
 
-fun TextureInfo.generateBitmapTexture(createTextureID: Int, bitmap: Bitmap): TextureInfo {
+fun TextureInfo.generateBitmapTexture(createTextureID: Int, bitmap: Bitmap, isRecycle: Boolean = true): TextureInfo {
     if (createTextureID != 0) {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, createTextureID)
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
@@ -112,7 +112,9 @@ fun TextureInfo.generateBitmapTexture(createTextureID: Int, bitmap: Bitmap): Tex
         width = bitmap.width
         height = bitmap.height
         textureId = createTextureID
-        bitmap.recycle()
+        if (isRecycle){
+            bitmap.recycle()
+        }
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
     } else {
         Log.e("TextureInfo", "textureId == 0 ")

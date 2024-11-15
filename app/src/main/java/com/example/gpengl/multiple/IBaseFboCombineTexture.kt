@@ -1,6 +1,6 @@
 package com.example.gpengl.multiple
 
-interface IBaseFboCombineTexture: ITexture {
+interface IBaseFboCombineTexture: IFboTexture {
     fun getTextureArray(): IntArray
     fun getScreenWidth(): Int
     fun getScreenHeight(): Int

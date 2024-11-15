@@ -86,16 +86,8 @@ class ExtraTextureTouchGlSurface(
         return true
     }
 
-    fun setRecodeView(root: FrameLayout) {
-        multipleRender.setRecodeView(root)
-//        thread {
-//            val bitmap = root.toBitmap(root.width, root.height)
-//            FileUtils.getStoragePicture(root.context, ExtraTextureTouchGlSurface::javaClass.name)
-//                ?.let {
-//                    Log.d("saveImage", "saveImage: $it")
-//                    saveImage(bitmap, it)
-//                }
-//        }
+    fun setRecodeView(root: FrameLayout, viewWidth: Int, viewHeight: Int) {
+        multipleRender.setRecodeView(root, viewWidth, viewHeight)
     }
 
 }
