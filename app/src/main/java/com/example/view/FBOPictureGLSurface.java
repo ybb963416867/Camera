@@ -27,7 +27,7 @@ public class FBOPictureGLSurface extends GLSurfaceView {
     }
 
     private void init() {
-        Log.e("ybb", "init");
+//        Log.e("ybb", "init");
         setEGLContextClientVersion(2);
         pictureRender = new FBOPictureRender(getResources());
         setRenderer(pictureRender);
@@ -36,7 +36,7 @@ public class FBOPictureGLSurface extends GLSurfaceView {
     }
 
     public void setBitmap(Bitmap bitmap) {
-        Log.e("ybb", "setBitmap");
+//        Log.e("ybb", "setBitmap");
         pictureRender.setBitmap(bitmap);
         requestRender();
     }

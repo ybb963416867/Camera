@@ -26,7 +26,7 @@ import javax.microedition.khronos.opengles.GL10
 class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     GLSurfaceView.Renderer {
 
-    private var combineTexture = TwoFboCombineTexture(surfaceView.context)
+    private var combineTexture = TwoFboCombineTexture(2, surfaceView.context)
 
     private var pic1 = "PicBackgroundTextureT" to PicBackgroundTextureT(surfaceView)
     private var pic2 = "PicBackgroundTexture" to PicBackgroundTexture(surfaceView)
@@ -77,7 +77,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
         baseTextureList.forEach {
-            if (it != baseTextureList1[pic5.first]) {
+            if (it != pic5.second) {
                 it.onDrawFrame()
             }
         }
@@ -93,12 +93,12 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
 
         combineTexture.onDrawFrame(0)
         //进行录制
-        mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[0], System.nanoTime())
+        mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[1], System.nanoTime())
     }
 
     fun updateTexCord(coordinateRegion: CoordinateRegion) {
         baseTextureList.forEachIndexed { index, iBaseTexture ->
-            if (iBaseTexture != baseTextureList1[pic5.first]) {
+            if (iBaseTexture != pic5.second) {
                 when (index) {
                     1 -> {
                         iBaseTexture.updateTexCord(
@@ -140,7 +140,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
 
         baseTextureList.forEachIndexed { index, iBaseTexture ->
 
-            if (iBaseTexture != baseTextureList1[pic5.first]) {
+            if (iBaseTexture != pic5.second) {
                 when (index) {
                     0 -> iBaseTexture.updateTextureInfo(
                         iBaseTexture.getTextureInfo().generateBitmapTexture(

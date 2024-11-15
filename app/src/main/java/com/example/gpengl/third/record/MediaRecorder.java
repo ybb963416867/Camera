@@ -61,7 +61,7 @@ public class MediaRecorder {
     public void start(float speed) throws IOException {
         mSpeed = speed;
         mPath = FileUtils.getStorageMp4(mContext, String.valueOf(System.currentTimeMillis()));
-        Log.d("ybb", mPath);
+//        Log.d("ybb", mPath);
         /**
          * 配置MediaCodec 编码器
          */
@@ -206,7 +206,7 @@ public class MediaRecorder {
     public void stop() {
         isStart = false;
         mHandler.post(() -> {
-            Log.d("ybb", "停止了");
+//            Log.d("ybb", "停止了");
             getCodec(true);
             mMediaCodec.stop();
             mMediaCodec.release();

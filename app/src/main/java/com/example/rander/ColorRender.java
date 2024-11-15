@@ -92,7 +92,7 @@ public class ColorRender implements GLSurfaceView.Renderer {
         // 重新组合成小端格式的整数
         int colorPixel = convertToLittleEndian(color);
 
-        Log.d("ybb", "colorPixel: " + colorPixel);
+//        Log.d("ybb", "colorPixel: " + colorPixel);
         Arrays.fill(pixels, colorPixel);
         return pixels;
     }
@@ -112,7 +112,7 @@ public class ColorRender implements GLSurfaceView.Renderer {
         if (alpha == 0) {
             alpha = (byte) 0xFF;
         }
-        Log.d("ybb", "red: " + red + " green: " + green + " blue: " + blue + " alpha:" + (alpha & 0xFF));
+//        Log.d("ybb", "red: " + red + " green: " + green + " blue: " + blue + " alpha:" + (alpha & 0xFF));
         // 重新组合成小端格式的整
         //return ((blue & 0xFF)) |
         //        ((green & 0xFF) << 8) |

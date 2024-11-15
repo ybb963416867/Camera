@@ -48,7 +48,7 @@ public class CameraMediaControl implements LifecycleObserver {
     }
 
     public void bindSurface(List<SurfaceTexture> surface, float rate) {
-        Log.e("ybb","bindSurface");
+//        Log.e("ybb","bindSurface");
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(context, videoUrl);
         kitkatCamera.setPreviewTexture(surface.get(0));

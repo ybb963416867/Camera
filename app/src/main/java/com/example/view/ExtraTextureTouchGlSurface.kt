@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
-import android.graphics.Canvas
 import android.graphics.PixelFormat
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import android.widget.FrameLayout
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.IBaseTexture

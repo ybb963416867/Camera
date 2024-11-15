@@ -49,7 +49,7 @@ public class CameraMediaControl2 implements LifecycleObserver {
     }
 
     public void bindSurface(List<SurfaceTexture> surface, float rate) {
-        Log.e("ybb","bindSurface");
+//        Log.e("ybb","bindSurface");
         CameraCapture.get().setRatio(rate);
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(context, videoUrl);

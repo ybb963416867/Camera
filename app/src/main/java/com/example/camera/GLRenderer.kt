@@ -125,7 +125,7 @@ class GLRenderer(private val surfaceView: GLSurfaceView) : GLSurfaceView.Rendere
         // 创建合并纹理
         GLES20.glGenTextures(1, combinedTexture, 0)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[0])
-        Log.d("ybb", "width = " + surfaceView.width + "height = " + surfaceView.height)
+//        Log.d("ybb", "width = " + surfaceView.width + "height = " + surfaceView.height)
         GLES20.glTexImage2D(
             GLES20.GL_TEXTURE_2D,
             0,

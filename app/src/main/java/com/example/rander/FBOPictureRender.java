@@ -66,7 +66,7 @@ public class FBOPictureRender implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl10) {
         if (mBitmap != null && !mBitmap.isRecycled()) {
-            Log.e("ybb", "onDrawFrame");
+//            Log.e("ybb", "onDrawFrame");
             createTexture();
             //将一个2D纹理的某个mip级别或者立方图面连接到帧缓存区附着点
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, fTexture[1], 0);

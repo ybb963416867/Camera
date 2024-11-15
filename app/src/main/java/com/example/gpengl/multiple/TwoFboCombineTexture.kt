@@ -10,6 +10,7 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 class TwoFboCombineTexture(
+    private var numFbo: Int,
     private var context: Context,
     private var vertPath: String = "shader/base_vert.glsl",
     private var fragPath: String = "shader/base_frag.glsl"
@@ -18,8 +19,8 @@ class TwoFboCombineTexture(
     private var combinedProjectionMatrix: FloatArray = FloatArray(16)
 
     // FBO 和合并纹理
-    private val fbo = IntArray(2)
-    private val combinedTexture = IntArray(2)
+    private var fbo: IntArray = IntArray(numFbo)
+    private var combinedTexture: IntArray = IntArray(numFbo)
 
 
     private val combinedVertexBuffer: FloatBuffer
@@ -54,6 +55,8 @@ class TwoFboCombineTexture(
     private var screenHeight = 0
 
     init {
+
+
         texCoordBuffer =
             ByteBuffer.allocateDirect(texCoords.size * 4).order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
@@ -88,24 +91,32 @@ class TwoFboCombineTexture(
         GLES20.glGenFramebuffers(2, fbo, 0)
 
         // 创建合并纹理
-        GLES20.glGenTextures(2, combinedTexture, 0)
+        GLES20.glGenTextures(combinedTexture.size, combinedTexture, 0)
 
-        for (i in 0 until 2) {
+        for (i in combinedTexture.indices) {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[i])
             GLES20.glTexImage2D(
                 GLES20.GL_TEXTURE_2D,
                 0,
                 GLES20.GL_RGBA,
-                100,
-                200,
+                screenWidth,
+                screenHeight,
                 0,
                 GLES20.GL_RGBA,
                 GLES20.GL_UNSIGNED_BYTE,
                 null
             )
 
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+            GLES20.glTexParameteri(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_LINEAR
+            )
+            GLES20.glTexParameteri(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_LINEAR
+            )
 
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[i])
 
@@ -147,8 +158,8 @@ class TwoFboCombineTexture(
         this.screenWidth = screenWidth
         this.screenHeight = screenHeight
 
-        for (i in 0 until 2) {
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[i])
+        for (element in combinedTexture) {
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, element)
             GLES20.glTexImage2D(
                 GLES20.GL_TEXTURE_2D,
                 0,
@@ -166,8 +177,8 @@ class TwoFboCombineTexture(
         Matrix.setIdentityM(combinedProjectionMatrix, 0)
     }
 
-    override fun onDrawFrame(textureIdIndex : Int) {
-        if (textureIdIndex >= combinedTexture.size){
+    override fun onDrawFrame(textureIdIndex: Int) {
+        if (textureIdIndex >= combinedTexture.size) {
             throw IllegalArgumentException("textureIdIndex >= combinedTexture.size")
         }
         // 解绑 FBO 并恢复视口大小

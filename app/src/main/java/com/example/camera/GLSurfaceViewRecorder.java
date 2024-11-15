@@ -241,7 +241,7 @@ public class GLSurfaceViewRecorder extends GLSurfaceView implements GLSurfaceVie
 //            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
             // 在此处使用 glTexSubImage2D 将 pixelBuffer 数据加载到一个纹理上，然后将纹理绘制到屏幕上
-            Log.e("ybb", "eglSwapBuffers");
+//            Log.e("ybb", "eglSwapBuffers");
             EGL14.eglSwapBuffers(eglDisplay, eglSurface);
             // 切换回默认的 EGL 上下文
 //            if (eglDisplay != null && !EGL14.eglMakeCurrent(eglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)) {

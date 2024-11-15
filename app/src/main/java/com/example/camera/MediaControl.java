@@ -41,7 +41,7 @@ public class MediaControl implements LifecycleObserver {
     }
 
     public void bindSurface(SurfaceTexture surface, float rate) {
-        Log.e("ybb","bindSurface");
+//        Log.e("ybb","bindSurface");
 //        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 //        retriever.setDataSource(context, videoUrl);
         mediaPlayer.setSurface(new Surface(surface));

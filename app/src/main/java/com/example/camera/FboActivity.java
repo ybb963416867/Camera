@@ -27,11 +27,11 @@ public class FboActivity extends BaseActivity {
         pictureGLSurface.setPicCallBack(byteBuffer -> {
             Bitmap bitmap1 = Bitmap.createBitmap(copy.getWidth(), copy.getHeight(), Bitmap.Config.ARGB_8888);
             bitmap1.copyPixelsFromBuffer(byteBuffer);
-            Log.e("ybb", "width:" + bitmap1.getWidth() + "height" + bitmap1.getHeight() + "");
+//            Log.e("ybb", "width:" + bitmap1.getWidth() + "height" + bitmap1.getHeight() + "");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e("ybb", "运行了");
+//                    Log.e("ybb", "运行了");
                     iv.setImageBitmap(bitmap1);
                 }
             });
