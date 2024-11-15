@@ -154,11 +154,19 @@
             />
 
         <Button
+            android:id="@+id/but_recode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="录制额外的纹理"
+            />
+
+        <Button
             android:id="@+id/but_test"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="测试"
             />
+
 
 
     </LinearLayout>

@@ -1,6 +1,7 @@
 package com.example.gpengl.multiple
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.opengl.GLES20
@@ -32,6 +33,32 @@ fun TextureInfo.generateBitmapTexture(context: Context, resourceId: Int): Textur
         val options = BitmapFactory.Options()
         options.inScaled = false
         val bitmap = BitmapFactory.decodeResource(context.resources, resourceId, options)
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_MIN_FILTER,
+            GLES20.GL_LINEAR
+        )
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_MAG_FILTER,
+            GLES20.GL_LINEAR
+        )
+        width = bitmap.width
+        height = bitmap.height
+        textureId = createTextureID
+        bitmap.recycle()
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+    } else {
+        Log.e("TextureInfo", "textureId == 0 ")
+    }
+
+    return this
+}
+
+fun TextureInfo.generateBitmapTexture(createTextureID: Int, bitmap: Bitmap): TextureInfo {
+    if (createTextureID != 0) {
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, createTextureID)
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
         GLES20.glTexParameteri(
             GLES20.GL_TEXTURE_2D,

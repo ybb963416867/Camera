@@ -183,4 +183,12 @@ class FboCombineTexture(
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(texCoordHandle)
     }
+
+    override fun getVisibility(): ITextureVisibility {
+        return ITextureVisibility.VISIBLE
+    }
+
+    override fun setVisibility(visibility: ITextureVisibility) {
+
+    }
 }

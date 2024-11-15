@@ -28,6 +28,7 @@ open class BaseTexture(
     private var uTextureHandle = 0
     private var matrixHandle = 0
     private var currentRegion = CoordinateRegion()
+    private var iTextureVisibility = ITextureVisibility.INVISIBLE
 
     private val texCoords = floatArrayOf(
         0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f
@@ -110,10 +111,15 @@ open class BaseTexture(
         return currentRegion
     }
 
-    override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
+    override fun updateTextureInfo(
+        textureInfo: TextureInfo,
+        isRecoverCord: Boolean,
+        iTextureVisibility: ITextureVisibility
+    ) {
         this.textureInfo.textureId = textureInfo.textureId
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
+        this.iTextureVisibility = iTextureVisibility
         Matrix.setIdentityM(matrix, 0)
         if (isRecoverCord) {
             currentRegion = CoordinateRegion().generateCoordinateRegion(
@@ -125,28 +131,55 @@ open class BaseTexture(
     }
 
     override fun updateTextureInfo(
-        textureInfo: TextureInfo, isRecoverCord: Boolean, backgroundColor: String?
+        textureInfo: TextureInfo,
+        isRecoverCord: Boolean,
+        backgroundColor: String?,
+        iTextureVisibility: ITextureVisibility
     ) {
-        this.updateTextureInfo(textureInfo, isRecoverCord)
+        this.updateTextureInfo(textureInfo, isRecoverCord, iTextureVisibility)
     }
 
     override fun onDrawFrame() {
-        GLES20.glEnableVertexAttribArray(positionHandle)
-        GLES20.glEnableVertexAttribArray(texCoordHandle)
+        if (iTextureVisibility == ITextureVisibility.VISIBLE) {
+            GLES20.glEnableVertexAttribArray(positionHandle)
+            GLES20.glEnableVertexAttribArray(texCoordHandle)
 
-        GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer)
-        GLES20.glVertexAttribPointer(texCoordHandle, 2, GLES20.GL_FLOAT, false, 8, texCoordBuffer)
+            GLES20.glVertexAttribPointer(
+                positionHandle,
+                3,
+                GLES20.GL_FLOAT,
+                false,
+                12,
+                vertexBuffer
+            )
+            GLES20.glVertexAttribPointer(
+                texCoordHandle,
+                2,
+                GLES20.GL_FLOAT,
+                false,
+                8,
+                texCoordBuffer
+            )
 
-        GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
+            GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
 
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
-        GLES20.glUniform1i(uTextureHandle, 0)
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
+            GLES20.glUniform1i(uTextureHandle, 0)
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
 
-        GLES20.glDisableVertexAttribArray(positionHandle)
-        GLES20.glDisableVertexAttribArray(texCoordHandle)
+            GLES20.glDisableVertexAttribArray(positionHandle)
+            GLES20.glDisableVertexAttribArray(texCoordHandle)
+        }
+    }
+
+    override fun getVisibility(): ITextureVisibility {
+        return iTextureVisibility
+    }
+
+    override fun setVisibility(visibility: ITextureVisibility) {
+        this.iTextureVisibility = visibility
     }
 
     override fun acceptTouchEvent(event: MotionEvent): Boolean {

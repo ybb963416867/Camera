@@ -20,6 +20,7 @@ open class BaseBackgroundTexture(
     private var screenHeight = 0
 
     private var handlerTouchDrag = HandlerTouchDrag()
+    private var iTextureVisibility = ITextureVisibility.INVISIBLE
 
     init {
         handlerTouchDrag.touchDragListenerHV = object :
@@ -63,11 +64,16 @@ open class BaseBackgroundTexture(
         backgroundTexture.updateTexCord(coordinateRegion)
     }
 
-    override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
+    override fun updateTextureInfo(
+        textureInfo: TextureInfo,
+        isRecoverCord: Boolean,
+        iTextureVisibility: ITextureVisibility
+    ) {
         if (isRecoverCord) {
             currentRegion =
                 CoordinateRegion().generateCoordinateRegion(0f, 0f, screenWidth, screenHeight)
         }
+        this.iTextureVisibility = iTextureVisibility
         frameTexture.updateTextureInfo(textureInfo, isRecoverCord)
         backgroundTexture.updateTextureInfo(textureInfo, isRecoverCord)
         updateTexCord(currentRegion)
@@ -76,12 +82,14 @@ open class BaseBackgroundTexture(
     override fun updateTextureInfo(
         textureInfo: TextureInfo,
         isRecoverCord: Boolean,
-        backgroundColor: String?
+        backgroundColor: String?,
+        iTextureVisibility: ITextureVisibility
     ) {
         if (isRecoverCord) {
             currentRegion =
                 CoordinateRegion().generateCoordinateRegion(0f, 0f, screenWidth, screenHeight)
         }
+        this.iTextureVisibility = iTextureVisibility
         frameTexture.updateTextureInfo(textureInfo, isRecoverCord)
         backgroundTexture.updateTextureInfo(textureInfo, isRecoverCord, backgroundColor)
         updateTexCord(currentRegion)
@@ -122,8 +130,18 @@ open class BaseBackgroundTexture(
     }
 
     override fun onDrawFrame() {
-        backgroundTexture.onDrawFrame()
-        frameTexture.onDrawFrame()
+        if (iTextureVisibility == ITextureVisibility.VISIBLE) {
+            backgroundTexture.onDrawFrame()
+            frameTexture.onDrawFrame()
+        }
+    }
+
+    override fun getVisibility(): ITextureVisibility {
+        return iTextureVisibility
+    }
+
+    override fun setVisibility(visibility: ITextureVisibility) {
+        this.iTextureVisibility = visibility
     }
 
     override fun acceptTouchEvent(event: MotionEvent): Boolean {

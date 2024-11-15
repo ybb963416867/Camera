@@ -1,9 +1,20 @@
 package com.example.gpengl.multiple
 
-interface IBaseTexture: ITexture, TextureTouchEvent {
+interface IBaseTexture : ITexture, TextureTouchEvent {
     fun updateTexCord(coordinateRegion: CoordinateRegion)
-    fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean = false)
-    fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean = false, backgroundColor: String?)
+    fun updateTextureInfo(
+        textureInfo: TextureInfo,
+        isRecoverCord: Boolean = false,
+        iTextureVisibility: ITextureVisibility = ITextureVisibility.VISIBLE
+    )
+
+    fun updateTextureInfo(
+        textureInfo: TextureInfo,
+        isRecoverCord: Boolean = false,
+        backgroundColor: String?,
+        iTextureVisibility: ITextureVisibility = ITextureVisibility.VISIBLE
+    )
+
     fun getTextureInfo(): TextureInfo
     fun getScreenWidth(): Int
     fun getScreenHeight(): Int

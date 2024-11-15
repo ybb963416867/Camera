@@ -79,6 +79,15 @@ public class FileUtils {
         return mediaFile.getPath();
     }
 
+    public static String getStoragePicture(Context context, String s) {
+        File dirFile = getCacheMovieDir(context);
+        dirFile.mkdirs();
+        // 创建保存文件
+        File mediaFile = new File(dirFile, FileUtils.getDateName(s) + ".png");
+
+        return mediaFile.getPath();
+    }
+
 
 
 }

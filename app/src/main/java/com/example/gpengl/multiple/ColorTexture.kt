@@ -34,6 +34,7 @@ class ColorTexture(
     private var matrixHandle = 0
     private var currentRegion = CoordinateRegion()
     private var colorStr = "#00000000"
+    private var iTextureVisibility = ITextureVisibility.INVISIBLE
 
     private var colorBuffer: IntBuffer? = null
 
@@ -146,9 +147,10 @@ class ColorTexture(
         return currentRegion
     }
 
-    override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
+    override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean, iTextureVisibility: ITextureVisibility) {
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
+        this.iTextureVisibility = iTextureVisibility
 
         val genColorImage = genColorImage(
             currentRegion.getWidth().toInt(), currentRegion.getHeight().toInt(), colorStr
@@ -182,32 +184,57 @@ class ColorTexture(
     }
 
     override fun updateTextureInfo(
-        textureInfo: TextureInfo, isRecoverCord: Boolean, backgroundColor: String?
+        textureInfo: TextureInfo, isRecoverCord: Boolean, backgroundColor: String?, iTextureVisibility: ITextureVisibility
     ) {
         if (backgroundColor != null) {
             colorStr = backgroundColor
         }
         this.updateTextureInfo(textureInfo, isRecoverCord)
+        this.iTextureVisibility
     }
 
     override fun onDrawFrame() {
-        GLES20.glEnableVertexAttribArray(positionHandle)
-        GLES20.glEnableVertexAttribArray(texCoordHandle)
-        GLES20.glEnable(GLES20.GL_BLEND)
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
-        GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer)
-        GLES20.glVertexAttribPointer(texCoordHandle, 2, GLES20.GL_FLOAT, false, 8, texCoordBuffer)
+        if (iTextureVisibility == ITextureVisibility.VISIBLE) {
+            GLES20.glEnableVertexAttribArray(positionHandle)
+            GLES20.glEnableVertexAttribArray(texCoordHandle)
+            GLES20.glEnable(GLES20.GL_BLEND)
+            GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
+            GLES20.glVertexAttribPointer(
+                positionHandle,
+                3,
+                GLES20.GL_FLOAT,
+                false,
+                12,
+                vertexBuffer
+            )
+            GLES20.glVertexAttribPointer(
+                texCoordHandle,
+                2,
+                GLES20.GL_FLOAT,
+                false,
+                8,
+                texCoordBuffer
+            )
 
-        GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
+            GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
 
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
-        GLES20.glUniform1i(uTextureHandle, 0)
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
+            GLES20.glUniform1i(uTextureHandle, 0)
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
 
-        GLES20.glDisableVertexAttribArray(positionHandle)
-        GLES20.glDisableVertexAttribArray(texCoordHandle)
+            GLES20.glDisableVertexAttribArray(positionHandle)
+            GLES20.glDisableVertexAttribArray(texCoordHandle)
+        }
+    }
+
+    override fun getVisibility(): ITextureVisibility {
+        return iTextureVisibility
+    }
+
+    override fun setVisibility(visibility: ITextureVisibility) {
+        this.iTextureVisibility = visibility
     }
 
     override fun acceptTouchEvent(event: MotionEvent): Boolean {

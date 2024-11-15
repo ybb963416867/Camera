@@ -9,10 +9,11 @@ class FrameTexture(
     fragPath: String = "shader/base_frag.glsl"
 ) : BaseTexture(surfaceView, vertPath, fragPath) {
 
-    override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean) {
+    override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean, iTextureVisibility: ITextureVisibility) {
         getTextureInfo().textureId = textureInfo.textureId
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
+        setVisibility(iTextureVisibility)
         Matrix.setIdentityM(matrix, 0)
     }
 }
