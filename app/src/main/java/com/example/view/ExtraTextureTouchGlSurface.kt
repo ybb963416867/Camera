@@ -2,8 +2,6 @@ package com.example.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Bitmap.CompressFormat
 import android.graphics.PixelFormat
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
@@ -12,7 +10,6 @@ import android.widget.FrameLayout
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.IBaseTexture
 import com.example.rander.ExtraTextureTouchRender
-import java.io.FileOutputStream
 
 class ExtraTextureTouchGlSurface(
     context: Context,
@@ -94,6 +91,10 @@ class ExtraTextureTouchGlSurface(
 
     fun capture2() {
         multipleRender.capture2()
+    }
+
+    fun release(){
+        multipleRender.release()
     }
 
 }

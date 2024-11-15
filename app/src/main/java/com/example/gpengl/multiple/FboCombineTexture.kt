@@ -52,6 +52,7 @@ class FboCombineTexture(
     private var matrixHandle = 0
     private var screenWidth = 0
     private var screenHeight = 0
+    private var program = 0
 
     init {
         texCoordBuffer =
@@ -130,11 +131,9 @@ class FboCombineTexture(
 
         // 创建 OpenGL 程序
 
-        val program = Gl2Utils.createGlProgram(
+        program = Gl2Utils.createGlProgram(
             Gl2Utils.uRes(context.resources, vertPath), Gl2Utils.uRes(context.resources, fragPath)
         )
-
-        GLES20.glLinkProgram(program)
 
         GLES20.glUseProgram(program)
 
@@ -186,6 +185,12 @@ class FboCombineTexture(
 
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(texCoordHandle)
+    }
+
+    override fun release() {
+        GLES20.glDeleteTextures(1, combinedTexture, 0)
+        GLES20.glDeleteFramebuffers(1, fbo, 0)
+        GLES20.glDeleteProgram(program)
     }
 
 }

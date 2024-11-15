@@ -148,6 +148,11 @@ open class BaseBackgroundTexture(
 
     }
 
+    override fun release() {
+        frameTexture.release()
+        backgroundTexture.release()
+    }
+
     override fun acceptTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {

@@ -1468,6 +1468,18 @@ object Gl2Utils {
         return texture
     }
 
+    fun getFramebufferPixels(
+        fboId: Int,
+        width: Int,
+        height: Int
+    ): Triple<ByteArray, Int, Int> {
+        // 绑定 FBO
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fboId)
+        val buffer = readPixelsToByteBuffer(0, 0, width, height)
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
+        return Triple(buffer, width, height)
+    }
+
     fun readPixelsToByteBuffer(x: Int = 0, y: Int = 0, width: Int, height: Int): ByteArray {
         // 计算像素数据的大小（RGBA格式，每个像素4字节）
         val byteCount = width * height * 4

@@ -1,9 +1,7 @@
 package com.example.gpengl.multiple
 
-import android.graphics.Color
 import android.opengl.GLES20
 import android.opengl.Matrix
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import com.example.util.Gl2Utils
@@ -35,6 +33,7 @@ class ColorTexture(
     private var currentRegion = CoordinateRegion()
     private var colorStr = "#00000000"
     private var iTextureVisibility = ITextureVisibility.INVISIBLE
+    private var shaderProgram = 0
 
     private var colorBuffer: IntBuffer? = null
 
@@ -106,7 +105,7 @@ class ColorTexture(
 
     override fun onSurfaceCreated() {
 
-        val shaderProgram = Gl2Utils.createGlProgram(
+        shaderProgram = Gl2Utils.createGlProgram(
             Gl2Utils.uRes(surfaceView.context.resources, vertPath),
             Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
@@ -227,6 +226,11 @@ class ColorTexture(
             GLES20.glDisableVertexAttribArray(positionHandle)
             GLES20.glDisableVertexAttribArray(texCoordHandle)
         }
+    }
+
+    override fun release() {
+        GLES20.glDeleteProgram(shaderProgram)
+        GLES20.glDeleteTextures(1, IntArray(textureInfo.textureId), 0)
     }
 
     override fun getVisibility(): ITextureVisibility {

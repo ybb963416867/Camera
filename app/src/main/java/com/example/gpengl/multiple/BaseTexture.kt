@@ -5,7 +5,6 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.view.MotionEvent
-import android.view.SurfaceView
 import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -13,7 +12,9 @@ import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
 open class BaseTexture(
-    private var surfaceView: GLSurfaceView, private var vertPath: String, private var fragPath: String
+    private var surfaceView: GLSurfaceView,
+    private var vertPath: String,
+    private var fragPath: String
 ) : IBaseTexture {
     private var screenWidth = 0
     private var screenHeight = 0
@@ -32,6 +33,7 @@ open class BaseTexture(
     private var currentRegion = CoordinateRegion()
     private var iTextureVisibility = ITextureVisibility.INVISIBLE
     private var frameBuffer: IntBuffer? = null
+    private var shaderProgram = 0
 
     private val texCoords = floatArrayOf(
         0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f
@@ -72,7 +74,7 @@ open class BaseTexture(
 
     override fun onSurfaceCreated() {
 
-        val shaderProgram = Gl2Utils.createGlProgram(
+        shaderProgram = Gl2Utils.createGlProgram(
             Gl2Utils.uRes(surfaceView.context.resources, vertPath),
             Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
@@ -80,8 +82,6 @@ open class BaseTexture(
         Matrix.setIdentityM(matrix, 0)
         currentRegion =
             currentRegion.generateCoordinateRegion(0f, 0f, surfaceView.width, surfaceView.height)
-
-        GLES20.glLinkProgram(shaderProgram)
 
         GLES20.glUseProgram(shaderProgram)
 
@@ -220,6 +220,11 @@ open class BaseTexture(
 
             surfaceView.requestRender()
         }
+    }
+
+    override fun release() {
+        GLES20.glDeleteProgram(shaderProgram)
+        GLES20.glDeleteTextures(1, IntArray(textureInfo.textureId), 0)
     }
 
     override fun acceptTouchEvent(event: MotionEvent): Boolean {

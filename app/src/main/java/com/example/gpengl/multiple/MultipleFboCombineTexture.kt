@@ -9,8 +9,8 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-class TwoFboCombineTexture(
-    private var numFbo: Int,
+class MultipleFboCombineTexture(
+    numFbo: Int,
     private var context: Context,
     private var vertPath: String = "shader/base_vert.glsl",
     private var fragPath: String = "shader/base_frag.glsl"
@@ -54,9 +54,9 @@ class TwoFboCombineTexture(
     private var screenWidth = 0
     private var screenHeight = 0
 
+    private var program = 0
+
     init {
-
-
         texCoordBuffer =
             ByteBuffer.allocateDirect(texCoords.size * 4).order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
@@ -139,11 +139,9 @@ class TwoFboCombineTexture(
 
         // 创建 OpenGL 程序
 
-        val program = Gl2Utils.createGlProgram(
+        program = Gl2Utils.createGlProgram(
             Gl2Utils.uRes(context.resources, vertPath), Gl2Utils.uRes(context.resources, fragPath)
         )
-
-        GLES20.glLinkProgram(program)
 
         GLES20.glUseProgram(program)
 
@@ -200,5 +198,11 @@ class TwoFboCombineTexture(
 
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(texCoordHandle)
+    }
+
+    override fun release() {
+        GLES20.glDeleteTextures(combinedTexture.size, combinedTexture, 0)
+        GLES20.glDeleteFramebuffers(fbo.size, fbo, 0)
+        GLES20.glDeleteProgram(program)
     }
 }

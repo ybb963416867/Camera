@@ -12,4 +12,5 @@ interface ITexture {
     fun getVisibility(): ITextureVisibility
     fun setVisibility(visibility: ITextureVisibility)
     fun clearTexture(colorString: String)
+    fun release()
 }
