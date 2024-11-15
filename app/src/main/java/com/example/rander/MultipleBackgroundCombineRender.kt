@@ -155,5 +155,13 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
         mMediaRecorder?.stop()
     }
 
+    fun release() {
+        baseTextureList.forEach {
+            it.release()
+        }
+
+        combineTexture.release()
+    }
+
 
 }

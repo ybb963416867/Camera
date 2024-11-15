@@ -107,4 +107,10 @@ open class MultipleRender(private var surfaceView: GLSurfaceView) : GLSurfaceVie
         }
     }
 
+    fun release() {
+        baseTextureList.forEach {
+            it.release()
+        }
+    }
+
 }

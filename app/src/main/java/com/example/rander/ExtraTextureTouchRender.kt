@@ -223,6 +223,9 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
 
     fun release() {
         combineTexture.release()
+        baseTextureList.forEach {
+            it.release()
+        }
     }
 
     companion object {

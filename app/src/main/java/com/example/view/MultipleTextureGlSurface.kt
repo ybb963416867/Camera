@@ -32,4 +32,8 @@ class MultipleTextureGlSurface(
         multipleRender.updateTexCord(coordinateRegion)
         requestRender()
     }
+
+    fun release() {
+        multipleRender.release()
+    }
 }

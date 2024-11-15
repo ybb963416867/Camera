@@ -82,4 +82,10 @@ class MultipleTextureBackgroundActivity : AppCompatActivity() {
             glSurfaceView.stopRecord()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        glSurfaceView.release()
+    }
 }

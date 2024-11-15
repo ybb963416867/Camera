@@ -48,6 +48,9 @@ class MultipleCombineTextureGlSurface(
 
     }
 
+    fun release() {
+        multipleRender.release()
+    }
 
 
 }

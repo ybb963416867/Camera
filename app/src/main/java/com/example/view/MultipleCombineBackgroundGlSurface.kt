@@ -48,6 +48,9 @@ class MultipleCombineBackgroundGlSurface(
 
     }
 
+    fun release() {
+        multipleRender.release()
+    }
 
 
 }

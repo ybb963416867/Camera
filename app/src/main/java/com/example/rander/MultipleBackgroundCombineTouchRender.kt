@@ -159,4 +159,12 @@ class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceVie
     fun stopRecord() {
         mMediaRecorder?.stop()
     }
+
+    fun release() {
+        baseTextureList.forEach {
+            it.release()
+        }
+
+        combineTexture.release()
+    }
 }

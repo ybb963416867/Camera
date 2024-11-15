@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import android.os.Build
 import android.view.MotionEvent
+import androidx.annotation.RequiresApi
 import com.example.util.Gl2Utils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -185,6 +187,7 @@ open class BaseTexture(
         this.iTextureVisibility = visibility
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun clearTexture(colorString: String) {
         surfaceView.queueEvent {
             if (textureInfo.width == 0) {

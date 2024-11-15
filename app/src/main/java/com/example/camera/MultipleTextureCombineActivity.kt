@@ -81,4 +81,9 @@ class MultipleTextureCombineActivity : AppCompatActivity() {
 
 
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        glSurfaceView.release()
+    }
 }

@@ -80,4 +80,8 @@ class MultipleCombineBackgroundTouchGlSurface(
         return true
     }
 
+    fun release() {
+        multipleRender.release()
+    }
+
 }
