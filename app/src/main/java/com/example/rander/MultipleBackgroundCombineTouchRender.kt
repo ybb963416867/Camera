@@ -25,7 +25,7 @@ class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceVie
     GLSurfaceView.Renderer {
 
 
-    private var combineTexture = FboCombineTexture(surfaceView.context)
+    private var combineTexture = FboCombineTexture(surfaceView)
     private var baseTextureList1 = mutableListOf<IBaseTexture>(
         PicBackgroundTextureT(surfaceView),
         PicBackgroundTexture(surfaceView),

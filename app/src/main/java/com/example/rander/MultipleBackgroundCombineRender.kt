@@ -24,7 +24,7 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
     GLSurfaceView.Renderer {
 
 
-    private var combineTexture = FboCombineTexture(surfaceView.context)
+    private var combineTexture = FboCombineTexture(surfaceView)
     private var baseTextureList = listOf<IBaseTexture>(
         PicBackgroundTextureT(surfaceView),
         PicBackgroundTexture(surfaceView),

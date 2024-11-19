@@ -1,6 +1,5 @@
 package com.example.rander
 
-import android.graphics.Bitmap
 import android.opengl.EGL14
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
@@ -22,8 +21,9 @@ import com.example.gpengl.multiple.offSet
 import com.example.gpengl.third.record.MediaRecorder
 import com.example.util.FileUtils
 import com.example.util.Gl2Utils
+import com.example.util.Gl2Utils.savaFile
+import com.example.util.Gl2Utils.toBitmap
 import java.io.IOException
-import java.nio.ByteBuffer
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -37,7 +37,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     private var pic2 = "PicBackgroundTexture" to PicBackgroundTexture(surfaceView)
     private var pic3 = "PicBackgroundTexture1" to PicBackgroundTexture1(surfaceView)
     private var pic4 = "PicBackgroundTexture2" to PicBackgroundTexture2(surfaceView)
-    private var pic5 = "ViewTexture" to ViewBackgroundTexture(surfaceView)
+    private var pic5 = "ViewTexture" to ViewBackgroundTexture<FrameLayout>(surfaceView)
 
     private var baseTextureList1 = mapOf<String, IBaseTexture>(
         pic1,
@@ -199,7 +199,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     fun capture1() {
         surfaceView.queueEvent {
             val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "a")
-            val bitmap = Gl2Utils.getFramebufferPixels(
+            Gl2Utils.getFramebufferPixels(
                 combineTexture.getFboFrameBuffer()[0],
                 combineTexture.getScreenWidth(),
                 combineTexture.getScreenHeight()
@@ -212,7 +212,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     fun capture2() {
         surfaceView.queueEvent {
             val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
-            val bitmap = Gl2Utils.getFramebufferPixels(
+            Gl2Utils.getFramebufferPixels(
                 combineTexture.getFboFrameBuffer()[1],
                 combineTexture.getScreenWidth(),
                 combineTexture.getScreenHeight()
@@ -233,14 +233,5 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     }
 }
 
-/**
- *
- */
-fun Triple<ByteArray, Int, Int>.toBitmap(): Bitmap {
-    return Bitmap.createBitmap(this.second, this.third, Bitmap.Config.ARGB_8888).also {
-        it.copyPixelsFromBuffer(ByteBuffer.wrap(this.first))
-    }
-}
 
-fun Bitmap.savaFile(path: String): Boolean = FileUtils.saveImage(this, path)
 

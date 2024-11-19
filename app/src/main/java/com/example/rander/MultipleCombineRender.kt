@@ -21,7 +21,7 @@ import javax.microedition.khronos.opengles.GL10
 class MultipleCombineRender(private var surfaceView: GLSurfaceView) : GLSurfaceView.Renderer {
 
 
-    private var combineTexture = FboCombineTexture(surfaceView.context)
+    private var combineTexture = FboCombineTexture(surfaceView)
     private var baseTextureList = listOf<IBaseTexture>(
         PicTextureT(surfaceView),
         PicTexture(surfaceView),

@@ -1,7 +1,7 @@
 package com.example.gpengl.multiple
 
-import android.content.Context
 import android.opengl.GLES20
+import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.util.Log
 import com.example.util.Gl2Utils
@@ -10,7 +10,7 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 class FboCombineTexture(
-    private var context: Context,
+    private var surfaceView: GLSurfaceView,
     private var vertPath: String = "shader/base_vert.glsl",
     private var fragPath: String = "shader/base_frag.glsl"
 ) : IBaseFboCombineTexture {
@@ -132,7 +132,7 @@ class FboCombineTexture(
         // 创建 OpenGL 程序
 
         program = Gl2Utils.createGlProgram(
-            Gl2Utils.uRes(context.resources, vertPath), Gl2Utils.uRes(context.resources, fragPath)
+            Gl2Utils.uRes(surfaceView.context.resources, vertPath), Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
 
         GLES20.glUseProgram(program)

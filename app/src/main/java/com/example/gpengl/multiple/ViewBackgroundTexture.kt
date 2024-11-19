@@ -4,18 +4,18 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.widget.FrameLayout
+import android.view.ViewGroup
 import com.example.util.MatrixUtil
 import com.example.util.PositionType
 import java.util.concurrent.atomic.AtomicReference
 
-class ViewBackgroundTexture(
+class ViewBackgroundTexture<T: ViewGroup>(
     val surfaceView: GLSurfaceView,
     vertPath: String = "shader/base_vert.glsl",
     fragPath: String = "shader/base_frag.glsl"
 ) : BaseBackgroundTexture(surfaceView, vertPath, fragPath) {
 
-    private var rootView: FrameLayout? = null
+    private var rootView: T? = null
     private var rootViewWidth = 0
     private var rootViewHeight = 0
     private var currentBitmapRef = AtomicReference<Bitmap?>(null)
@@ -54,7 +54,7 @@ class ViewBackgroundTexture(
         super.onDrawFrame()
     }
 
-    fun setViewInfo(rootView: FrameLayout, viewWidth: Int, viewHeight: Int) {
+    fun setViewInfo(rootView: T, viewWidth: Int, viewHeight: Int) {
         this.rootView = rootView
         this.rootViewWidth = viewWidth
         this.rootViewHeight = viewHeight
@@ -76,5 +76,12 @@ class ViewBackgroundTexture(
                 currentBitmapRef.set(backBitmap)
             }
         }
+    }
+
+    override fun release() {
+        super.release()
+        backBitmap?.recycle()
+        backBitmap = null
+        currentBitmapRef.get()?.recycle()
     }
 }
