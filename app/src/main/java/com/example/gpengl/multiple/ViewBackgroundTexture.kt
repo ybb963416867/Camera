@@ -2,6 +2,7 @@ package com.example.gpengl.multiple
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.view.ViewGroup
@@ -71,6 +72,7 @@ class ViewBackgroundTexture<T: ViewGroup>(
     private fun updateBitmap() {
         backBitmap?.let {
             if (!it.isRecycled) {
+                it.eraseColor(Color.TRANSPARENT)
                 val canvas = Canvas(it)
                 rootView?.draw(canvas)
                 currentBitmapRef.set(backBitmap)

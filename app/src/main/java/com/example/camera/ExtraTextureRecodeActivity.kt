@@ -24,7 +24,7 @@ class ExtraTextureRecodeActivity : AppCompatActivity() {
             insets
         }
 
-
+        val rootView = findViewById<FrameLayout>(R.id.fl_root)
         // 创建 GLSurfaceView 并设置 OpenGL 版本
         glSurfaceView = findViewById(R.id.glSurfaceView)
 
@@ -81,7 +81,11 @@ class ExtraTextureRecodeActivity : AppCompatActivity() {
             glSurfaceView.stopRecord()
         }
 
-        val rootView = findViewById<FrameLayout>(R.id.fl_root)
+        findViewById<Button>(R.id.but_test).setOnClickListener {
+            glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
+        }
+
+
         rootView.post {
             glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
         }

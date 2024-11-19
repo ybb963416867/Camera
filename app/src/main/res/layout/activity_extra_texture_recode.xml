@@ -21,7 +21,8 @@
         <FrameLayout
             android:id="@+id/fl_root"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,6 +67,12 @@
                     android:text="调整位置1" />
 
                 <Button
+                    android:id="@+id/but_test"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="测试" />
+
+                <Button
                     android:id="@+id/but_recorder_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,7 +97,6 @@
                     android:text="截屏2" />
 
             </LinearLayout>
-
 
             <ImageView
                 android:layout_width="90dp"
@@ -126,6 +132,13 @@
                 android:layout_gravity="right|top"
                 android:scaleType="fitXY"
                 android:src="@mipmap/cc" />
+
+
+            <com.example.view.MovableFrameLayout
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:background="#80000000"
+                />
 
         </FrameLayout>
 

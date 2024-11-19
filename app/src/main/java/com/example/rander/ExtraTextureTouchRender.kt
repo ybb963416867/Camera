@@ -91,12 +91,11 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
 
-
         baseTextureList.forEach {
             it.onDrawFrame()
         }
 
-        combineTexture.onDrawFrame(0)
+        combineTexture.onDrawFrame(1)
         //进行录制
         mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[1], System.nanoTime())
     }
