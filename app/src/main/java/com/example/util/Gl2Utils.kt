@@ -1034,7 +1034,14 @@ object Gl2Utils {
     fun genColorImage(width: Int, height: Int, color: String): IntArray {
         val pixels = IntArray(width * height)
         val colorPixel = Color.parseColor(color)
-        Arrays.fill(pixels, colorPixel)
+        val red = Color.red(colorPixel)
+        val green = Color.green(colorPixel)
+        val blue = Color.blue(colorPixel)
+        val alpha = Color.alpha(colorPixel)
+//        val openGLColor = (red shl 24) or (green shl 16) or (blue shl 8) or alpha
+//        val openGLColor = Color.argb(alpha, red, green, blue)
+        val openGLColor = (alpha shl 24) or (blue shl 16) or (green shl 8) or red
+        Arrays.fill(pixels, openGLColor)
         return pixels
     }
 

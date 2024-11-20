@@ -85,7 +85,6 @@ class ExtraTextureRecodeActivity : AppCompatActivity() {
             glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
         }
 
-
         rootView.post {
             glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
         }

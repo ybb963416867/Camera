@@ -129,7 +129,7 @@ class MultipleBackgroundCombineRender(private var surfaceView: GLSurfaceView) :
                 2 -> iBaseTexture.updateTextureInfo(
                     iBaseTexture.getTextureInfo().generateBitmapTexture(
                         iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                    ), false, "#3872F0"
+                    ), false, "#FF0000"
                 )
 
                 else -> {

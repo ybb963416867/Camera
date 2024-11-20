@@ -12,7 +12,7 @@ import com.example.gpengl.multiple.PicBackgroundTexture1
 import com.example.gpengl.multiple.PicBackgroundTexture2
 import com.example.gpengl.multiple.PicBackgroundTextureT
 import com.example.gpengl.multiple.MultipleFboCombineTexture
-import com.example.gpengl.multiple.ViewBackgroundTexture
+import com.example.gpengl.multiple.ViewTexture
 import com.example.gpengl.multiple.generateBitmapTexture
 import com.example.gpengl.multiple.generateCoordinateRegion
 import com.example.gpengl.multiple.getHeight
@@ -37,7 +37,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     private var pic2 = "PicBackgroundTexture" to PicBackgroundTexture(surfaceView)
     private var pic3 = "PicBackgroundTexture1" to PicBackgroundTexture1(surfaceView)
     private var pic4 = "PicBackgroundTexture2" to PicBackgroundTexture2(surfaceView)
-    private var pic5 = "ViewTexture" to ViewBackgroundTexture<FrameLayout>(surfaceView)
+    private var pic5 = "ViewTexture" to ViewTexture<FrameLayout>(surfaceView)
 
     private var baseTextureList1 = mapOf<String, IBaseTexture>(
         pic1,
@@ -77,6 +77,8 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     override fun onDrawFrame(gl: GL10?) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         // 使用着色器程序
+        GLES20.glEnable(GLES20.GL_BLEND)
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, combineTexture.getFboFrameBuffer()[0])
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
@@ -90,14 +92,14 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, combineTexture.getTextureArray()[1])
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
-
         baseTextureList.forEach {
             it.onDrawFrame()
         }
 
-        combineTexture.onDrawFrame(1)
+        combineTexture.onDrawFrame(0)
         //进行录制
         mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[1], System.nanoTime())
+        GLES20.glDisable(GLES20.GL_BLEND)
     }
 
     fun updateTexCord(coordinateRegion: CoordinateRegion) {
@@ -181,6 +183,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
 
     fun startRecord() {
         try {
+            pic5.second.start()
             mMediaRecorder?.start(1f)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -188,6 +191,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     }
 
     fun stopRecord() {
+        pic5.second.stop()
         mMediaRecorder?.stop()
     }
 
@@ -196,6 +200,9 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     }
 
     fun capture1() {
+        pic5.second.updateViewTexture(true) {
+
+        }
         surfaceView.queueEvent {
             val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "a")
             Gl2Utils.getFramebufferPixels(
@@ -209,14 +216,16 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     }
 
     fun capture2() {
-        surfaceView.queueEvent {
-            val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
-            Gl2Utils.getFramebufferPixels(
-                combineTexture.getFboFrameBuffer()[1],
-                combineTexture.getScreenWidth(),
-                combineTexture.getScreenHeight()
-            ).toBitmap().savaFile(storagePicture)
-            Log.e(TAG, "capture2: $storagePicture")
+        pic5.second.updateViewTexture(true) {
+            surfaceView.queueEvent {
+                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
+                Gl2Utils.getFramebufferPixels(
+                    combineTexture.getFboFrameBuffer()[1],
+                    combineTexture.getScreenWidth(),
+                    combineTexture.getScreenHeight()
+                ).toBitmap().savaFile(storagePicture)
+                Log.e(TAG, "capture2: $storagePicture")
+            }
         }
     }
 

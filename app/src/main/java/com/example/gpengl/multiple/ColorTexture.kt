@@ -61,6 +61,40 @@ class ColorTexture(
 
 
     override fun updateTexCord(coordinateRegion: CoordinateRegion) {
+        if (coordinateRegion.getWidth() != currentRegion.getWidth() || coordinateRegion.getHeight() != currentRegion.getHeight()) {
+            val genColorImage = genColorImage(
+                currentRegion.getWidth().toInt(), currentRegion.getHeight().toInt(), colorStr
+            )
+
+//        colorBuffer = ByteBuffer.allocateDirect(genColorImage.size * Int.SIZE_BYTES).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer()
+
+            colorBuffer = IntBuffer.allocate(genColorImage.size).apply {
+                put(genColorImage).position(0)
+            }
+
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
+            GLES20.glTexImage2D(
+                GLES20.GL_TEXTURE_2D,
+                0,
+                GLES20.GL_RGBA,
+                currentRegion.getWidth().toInt(),
+                currentRegion.getHeight().toInt(),
+                0,
+                GLES20.GL_RGBA,
+                GLES20.GL_UNSIGNED_BYTE,
+                colorBuffer
+            )
+
+            GLES20.glTexParameteri(
+                GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR
+            )
+            GLES20.glTexParameteri(
+                GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR
+            )
+
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+        }
+
         currentRegion = coordinateRegion.copyCoordinateRegion()
         vertexBuffer.clear()
         val newVertices = currentRegion.getFloatArray(
@@ -72,35 +106,6 @@ class ColorTexture(
             newVertices
         ).position(0)
 
-
-        val genColorImage = genColorImage(
-            currentRegion.getWidth().toInt(), currentRegion.getHeight().toInt(), colorStr
-        )
-        colorBuffer = IntBuffer.allocate(genColorImage.size).apply {
-            put(genColorImage).position(0)
-        }
-
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.textureId)
-        GLES20.glTexImage2D(
-            GLES20.GL_TEXTURE_2D,
-            0,
-            GLES20.GL_RGBA,
-            currentRegion.getWidth().toInt(),
-            currentRegion.getHeight().toInt(),
-            0,
-            GLES20.GL_RGBA,
-            GLES20.GL_UNSIGNED_BYTE,
-            colorBuffer
-        )
-
-        GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR
-        )
-        GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR
-        )
-
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
     }
 
     override fun onSurfaceCreated() {
@@ -146,7 +151,11 @@ class ColorTexture(
         return currentRegion
     }
 
-    override fun updateTextureInfo(textureInfo: TextureInfo, isRecoverCord: Boolean, iTextureVisibility: ITextureVisibility) {
+    override fun updateTextureInfo(
+        textureInfo: TextureInfo,
+        isRecoverCord: Boolean,
+        iTextureVisibility: ITextureVisibility
+    ) {
         textureWidth = textureInfo.width
         textureHeight = textureInfo.height
         this.iTextureVisibility = iTextureVisibility
@@ -154,9 +163,14 @@ class ColorTexture(
         val genColorImage = genColorImage(
             currentRegion.getWidth().toInt(), currentRegion.getHeight().toInt(), colorStr
         )
-        colorBuffer = IntBuffer.allocate(genColorImage.size).apply {
-            put(genColorImage).position(0)
-        }
+//        colorBuffer = IntBuffer.allocate(genColorImage.size).apply {
+//            put(genColorImage).position(0)
+//        }
+
+        colorBuffer = ByteBuffer.allocateDirect(genColorImage.size * Int.SIZE_BYTES)
+            .order(ByteOrder.nativeOrder()).asIntBuffer().apply {
+                put(genColorImage).position(0)
+            }
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, this.textureInfo.textureId)
         GLES20.glTexImage2D(
@@ -183,7 +197,10 @@ class ColorTexture(
     }
 
     override fun updateTextureInfo(
-        textureInfo: TextureInfo, isRecoverCord: Boolean, backgroundColor: String?, iTextureVisibility: ITextureVisibility
+        textureInfo: TextureInfo,
+        isRecoverCord: Boolean,
+        backgroundColor: String?,
+        iTextureVisibility: ITextureVisibility
     ) {
         if (backgroundColor != null) {
             colorStr = backgroundColor

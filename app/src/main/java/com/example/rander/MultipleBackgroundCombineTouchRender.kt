@@ -41,7 +41,8 @@ class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceVie
 
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
+//        GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
+        GLES20.glClearColor(0f, 0f, 0f, 0f)
         combineTexture.onSurfaceCreated(surfaceView.width, surfaceView.height)
         baseTextureList.forEach {
             it.onSurfaceCreated()
@@ -134,14 +135,14 @@ class MultipleBackgroundCombineTouchRender(private var surfaceView: GLSurfaceVie
                 2 -> iBaseTexture.updateTextureInfo(
                     iBaseTexture.getTextureInfo().generateBitmapTexture(
                         iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                    ), false, "#3872F0"
+                    ), false, "#ff3872F0"
                 )
 
                 else -> {
                     iBaseTexture.updateTextureInfo(
                         iBaseTexture.getTextureInfo().generateBitmapTexture(
                             iBaseTexture.getTextureInfo().textureId, surfaceView.context, resourceId
-                        ), false, "#4D000000"
+                        ), false, "#ffff3399"
                     )
                 }
             }
