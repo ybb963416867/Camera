@@ -161,6 +161,15 @@
             />
 
         <Button
+            android:id="@+id/but_recode_off_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="录制额外的纹理-离屏渲染"
+            />
+
+
+
+        <Button
             android:id="@+id/but_test"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

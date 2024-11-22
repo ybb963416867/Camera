@@ -161,7 +161,6 @@ class GLRenderer(private val surfaceView: GLSurfaceView) : GLSurfaceView.Rendere
 
         // 创建 OpenGL 程序
         program = createProgram(vertexShaderCode, fragmentShaderCode)
-        GLES20.glUseProgram(program)
 
         // 获取属性和 Uniform 位置
         aPositionHandle = GLES20.glGetAttribLocation(program, "a_Position")
@@ -230,6 +229,7 @@ class GLRenderer(private val surfaceView: GLSurfaceView) : GLSurfaceView.Rendere
     override fun onDrawFrame(gl: GL10) {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0])
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        GLES20.glUseProgram(program)
 
         // 绘制纹理到 FBO
         for (i in textures.indices) {

@@ -96,7 +96,6 @@ public class GLSurfaceViewRecorder extends GLSurfaceView implements GLSurfaceVie
 
         // 初始化 OpenGL 程序
         program = createProgram(vertexShaderCode, fragmentShaderCode);
-        GLES20.glUseProgram(program);
 
         aPositionHandle = GLES20.glGetAttribLocation(program, "a_Position");
         aTexCoordHandle = GLES20.glGetAttribLocation(program, "a_TexCoord");
@@ -216,6 +215,7 @@ public class GLSurfaceViewRecorder extends GLSurfaceView implements GLSurfaceVie
         // 渲染到 FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        GLES20.glUseProgram(program);
         renderScene();
 
         // 渲染到显示的 Surface

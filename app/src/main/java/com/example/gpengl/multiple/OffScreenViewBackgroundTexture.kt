@@ -12,11 +12,11 @@ import com.example.util.MatrixUtil
 import com.example.util.PositionType
 import java.lang.ref.WeakReference
 
-class OffScreenViewTexture<T : ViewGroup>(
+class OffScreenViewBackgroundTexture<T : ViewGroup>(
     val surfaceView: GLSurfaceView,
     vertPath: String = "shader/oes_base_vertex.vert",
     fragPath: String = "shader/oes_base_fragment.frag"
-) : BaseOesTexture(surfaceView, vertPath, fragPath) {
+) : BaseOesGroundTexture(surfaceView, vertPath, fragPath) {
 
     private var rootViewWeakReference: WeakReference<T>? = null
     private var rootViewWidth = 0
@@ -62,7 +62,7 @@ class OffScreenViewTexture<T : ViewGroup>(
         synchronized(this) {
             if (newFrameAvailable) {
                 surfaceTexture?.updateTexImage()
-                surfaceTexture?.getTransformMatrix(coordsMatrix)
+                surfaceTexture?.getTransformMatrix(frameTexture.coordsMatrix)
                 updateTextureInfo(
                     getTextureInfo().apply {
                         width = rootViewWidth
@@ -81,7 +81,7 @@ class OffScreenViewTexture<T : ViewGroup>(
     override fun updateTexCord(coordinateRegion: CoordinateRegion) {
         super.updateTexCord(coordinateRegion)
         MatrixUtil.getPicOriginMatrix(
-            matrix,
+            frameTexture.matrix,
             getTextureInfo().width,
             getTextureInfo().height,
             coordinateRegion.getWidth().toInt(),
@@ -117,10 +117,9 @@ class OffScreenViewTexture<T : ViewGroup>(
                 width = rootViewWidth
                 height = rootViewHeight
             }
-            , false, getVisibility()
+            , false,"#4DFF0000", getVisibility()
         )
         setVisibility(ITextureVisibility.VISIBLE)
-//        updateTexCord(CoordinateRegion().generateCoordinateRegion(200f, 100f, 800, 300))
     }
 
     fun updateViewTexture() {

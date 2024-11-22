@@ -33,7 +33,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.but_multi_texture_background).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, MultipleTextureBackgroundActivity.class)));
         findViewById(R.id.but_multi_texture_touch).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, MultipleTextureTouchActivity.class)));
         findViewById(R.id.but_recode).setOnClickListener(v -> startActivity(new Intent(this, ExtraTextureRecodeActivity.class)));
-
+        findViewById(R.id.but_recode_off_screen).setOnClickListener(v -> startActivity(new Intent(this, ExtraTextureRecodeOffScreenActivity.class)));
         findViewById(R.id.but_test).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, Test2Activity.class)));
     }
 

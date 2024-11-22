@@ -135,8 +135,6 @@ class FboCombineTexture(
             Gl2Utils.uRes(surfaceView.context.resources, vertPath), Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
 
-        GLES20.glUseProgram(program)
-
         // 获取属性和 Uniform 位置
         positionHandle = GLES20.glGetAttribLocation(program, "vPosition")
         texCoordHandle = GLES20.glGetAttribLocation(program, "vCoord")
@@ -167,7 +165,7 @@ class FboCombineTexture(
         // 解绑 FBO 并恢复视口大小
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
         GLES20.glViewport(0, 0, screenWidth, screenHeight)
-
+        GLES20.glUseProgram(program)
         // 使用合并投影矩阵绘制合并纹理到屏幕
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, combinedTexture[textureIdIndex])

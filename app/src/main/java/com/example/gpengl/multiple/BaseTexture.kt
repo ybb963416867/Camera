@@ -88,8 +88,6 @@ open class BaseTexture(
         currentRegion =
             currentRegion.generateCoordinateRegion(0f, 0f, surfaceView.width, surfaceView.height)
 
-        GLES20.glUseProgram(shaderProgram)
-
         positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
         texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
         uTextureHandle = GLES20.glGetUniformLocation(shaderProgram, "vTexture")
@@ -149,6 +147,7 @@ open class BaseTexture(
 
     override fun onDrawFrame() {
         if (iTextureVisibility == ITextureVisibility.VISIBLE) {
+            GLES20.glUseProgram(shaderProgram)
             GLES20.glEnableVertexAttribArray(positionHandle)
             GLES20.glEnableVertexAttribArray(texCoordHandle)
 

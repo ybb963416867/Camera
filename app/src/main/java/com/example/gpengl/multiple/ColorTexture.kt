@@ -2,6 +2,7 @@ package com.example.gpengl.multiple
 
 import android.opengl.GLES20
 import android.opengl.Matrix
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import com.example.util.Gl2Utils
@@ -101,7 +102,7 @@ class ColorTexture(
             screenWidth = screenWidth.toFloat(), screenHeight = screenHeight.toFloat()
         )
 
-//        Log.e("ybb", "newVertices: " + newVertices.contentToString())
+        Log.e("colorTexture", "newVertices: " + newVertices.contentToString())
         vertexBuffer.put(
             newVertices
         ).position(0)
@@ -119,8 +120,6 @@ class ColorTexture(
             currentRegion.generateCoordinateRegion(0f, 0f, surfaceView.width, surfaceView.height)
         Matrix.setIdentityM(matrix, 0)
         GLES20.glLinkProgram(shaderProgram)
-
-        GLES20.glUseProgram(shaderProgram)
 
         positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
         texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
@@ -211,6 +210,7 @@ class ColorTexture(
 
     override fun onDrawFrame() {
         if (iTextureVisibility == ITextureVisibility.VISIBLE) {
+            GLES20.glUseProgram(shaderProgram)
             GLES20.glEnableVertexAttribArray(positionHandle)
             GLES20.glEnableVertexAttribArray(texCoordHandle)
             GLES20.glEnable(GLES20.GL_BLEND)
