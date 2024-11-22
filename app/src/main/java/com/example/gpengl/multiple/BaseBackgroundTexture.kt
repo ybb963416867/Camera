@@ -136,6 +136,11 @@ open class BaseBackgroundTexture(
         }
     }
 
+    override fun initCoordinate() {
+        backgroundTexture.initCoordinate()
+        frameTexture.initCoordinate()
+    }
+
     override fun getVisibility(): ITextureVisibility {
         return iTextureVisibility
     }

@@ -38,7 +38,10 @@ open class BaseTexture(
     private var shaderProgram = 0
 
     private val texCoords = floatArrayOf(
-        0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f
     )
 
     private var vertices: FloatArray = floatArrayOf(
@@ -75,7 +78,7 @@ open class BaseTexture(
     }
 
     override fun onSurfaceCreated() {
-
+        initCoordinate()
         shaderProgram = Gl2Utils.createGlProgram(
             Gl2Utils.uRes(surfaceView.context.resources, vertPath),
             Gl2Utils.uRes(surfaceView.context.resources, fragPath)
@@ -92,7 +95,7 @@ open class BaseTexture(
         uTextureHandle = GLES20.glGetUniformLocation(shaderProgram, "vTexture")
         matrixHandle = GLES20.glGetUniformLocation(shaderProgram, "vMatrix")
 
-        textureInfo.textureId = Gl2Utils.createTextureID(1)[0]
+        textureInfo.textureId = Gl2Utils.create2DTexture(1)[0]
     }
 
     override fun onSurfaceChanged(screenWidth: Int, screenHeight: Int) {
@@ -177,6 +180,10 @@ open class BaseTexture(
             GLES20.glDisableVertexAttribArray(positionHandle)
             GLES20.glDisableVertexAttribArray(texCoordHandle)
         }
+    }
+
+    override fun initCoordinate() {
+
     }
 
     override fun getVisibility(): ITextureVisibility {

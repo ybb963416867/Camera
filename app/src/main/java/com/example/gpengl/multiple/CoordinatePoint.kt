@@ -95,6 +95,29 @@ fun TextureInfo.generateTexture(
     return this
 }
 
+fun TextureInfo.generateTexture(
+    createTextureID: Int,
+    width: Int,
+    height: Int
+): TextureInfo {
+    this.textureId = createTextureID
+    this.width = width
+    this.height = height
+    GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureId)
+    GLES20.glTexParameteri(
+        GLES20.GL_TEXTURE_2D,
+        GLES20.GL_TEXTURE_MIN_FILTER,
+        GLES20.GL_LINEAR
+    )
+    GLES20.glTexParameteri(
+        GLES20.GL_TEXTURE_2D,
+        GLES20.GL_TEXTURE_MAG_FILTER,
+        GLES20.GL_LINEAR
+    )
+    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+    return this
+}
+
 fun TextureInfo.generateBitmapTexture(createTextureID: Int, bitmap: Bitmap, isRecycle: Boolean = true): TextureInfo {
     if (createTextureID != 0) {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, createTextureID)
@@ -272,5 +295,18 @@ fun CoordinateRegion.getFloatArray(screenWidth: Float, screenHeight: Float): Flo
         lb.first, lb.second, lb.third,
         rb.first, rb.second, rb.third,
         rt.first, rt.second, rt.third
+    )
+}
+
+fun CoordinateRegion.getFloatArray2(screenWidth: Float, screenHeight: Float): FloatArray {
+    val lt = leftTop.toFloatSize(screenWidth, screenHeight)
+    val lb = leftBottom.toFloatSize(screenWidth, screenHeight)
+    val rt = rightTop.toFloatSize(screenWidth, screenHeight)
+    val rb = rightBottom.toFloatSize(screenWidth, screenHeight)
+    return floatArrayOf(
+        lb.first, lb.second, lb.third,
+        lt.first, lt.second, lt.third,
+        rt.first, rt.second, rt.third,
+        rb.first, rb.second, rb.third,
     )
 }

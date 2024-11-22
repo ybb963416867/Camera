@@ -7,17 +7,14 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
-import com.example.manager.CameraMediaControl;
 import com.example.manager.CameraMediaControl2;
 import com.example.rander.CameraDrawer2;
 import com.example.rander.IDrawer;
 import com.example.rander.VideoDrawer;
 import com.example.util.Gl2Utils;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -67,7 +64,7 @@ public class VideoCameraGlSurfaceView extends GLSurfaceView implements GLSurface
     @SuppressLint("Recycle")
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-        int[] textureID = Gl2Utils.createTextureID(2);
+        int[] textureID = Gl2Utils.createOESTextureID(2);
         for (int i : textureID) {
             SurfaceTexture surfaceTexture = new SurfaceTexture(i);
             mSurfaceTextures.add(surfaceTexture);

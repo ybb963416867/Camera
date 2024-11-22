@@ -85,9 +85,9 @@ class ExtraTextureRecodeActivity : AppCompatActivity() {
             glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
         }
 
-        rootView.post {
-            glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
-        }
+//        rootView.post {
+//            glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
+//        }
 
         findViewById<Button>(R.id.but_capture1).setOnClickListener {
             glSurfaceView.capture1()

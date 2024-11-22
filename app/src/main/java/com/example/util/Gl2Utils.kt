@@ -900,7 +900,7 @@ object Gl2Utils {
      * 这个纹理用于视频
      */
     @JvmStatic
-    fun createTextureID(count: Int): IntArray {
+    fun createOESTextureID(count: Int): IntArray {
         val texture = IntArray(count)
         GLES20.glGenTextures(count, texture, 0)
         //设置缩小过滤为使用纹理中坐标最接近的一个像素的颜色作为需要绘制的像素颜色
@@ -920,6 +920,31 @@ object Gl2Utils {
             GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE
         )
 
+        return texture
+    }
+
+    @JvmStatic
+    fun create2DTexture(count: Int): IntArray {
+        val texture = IntArray(count)
+        //生成纹理
+        GLES20.glGenTextures(count, texture, 0)
+        //生成纹理
+        //设置缩小过滤为使用纹理中坐标最接近的一个像素的颜色作为需要绘制的像素颜色
+        GLES20.glTexParameterf(
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST.toFloat()
+        )
+        //设置放大过滤为使用纹理中坐标最接近的若干个颜色，通过加权平均算法得到需要绘制的像素颜色
+        GLES20.glTexParameterf(
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR.toFloat()
+        )
+        //设置环绕方向S，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
+        GLES20.glTexParameterf(
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE.toFloat()
+        )
+        //设置环绕方向T，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
+        GLES20.glTexParameterf(
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE.toFloat()
+        )
         return texture
     }
 

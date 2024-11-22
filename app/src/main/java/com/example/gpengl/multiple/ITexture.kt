@@ -9,6 +9,7 @@ interface ITexture {
     fun onSurfaceCreated()
     fun onSurfaceChanged(screenWidth: Int, screenHeight: Int)
     fun onDrawFrame()
+    fun initCoordinate()
     fun getVisibility(): ITextureVisibility
     fun setVisibility(visibility: ITextureVisibility)
     fun clearTexture(colorString: String)
