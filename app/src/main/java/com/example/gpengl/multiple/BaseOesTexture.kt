@@ -38,34 +38,50 @@ open class BaseOesTexture(
     private var iTextureVisibility = ITextureVisibility.INVISIBLE
     private var frameBuffer: IntBuffer? = null
     private var shaderProgram = 0
-//
+
 //    private val texCoords = floatArrayOf(
 //        0.0f, 1.0f,
 //        0.0f, 0.0f,
 //        1.0f, 0.0f,
 //        1.0f, 1.0f
 //    )
-
-    private var vertices: FloatArray = floatArrayOf(
-        -1f, 1f, 0.0f,  // 左上角
-        -1f, -1f, 0.0f,  // 左下角
-        1f, -1f, 0.0f,  // 右下角
-        1f, 1f, 0.0f // 右上角
-    )
-
-    private val texCoords = floatArrayOf(
-        0.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f,
-        1.0f, 0.0f
-    )
 //
 //    private var vertices: FloatArray = floatArrayOf(
-//        -1.0f, -1.0f, 0.0f,  // 左上角
-//        1.0f, -1.0f, 0.0f,  // 左下角
-//        -1.0f, 1.0f, 0.0f,  // 右下角
+//        -1f, 1f, 0.0f,  // 左上角
+//        -1f, -1f, 0.0f,  // 左下角
+//        1f, -1f, 0.0f,  // 右下角
 //        1f, 1f, 0.0f // 右上角
 //    )
+
+    /**
+     * 图片的定点坐标
+     */
+    private val vertices = floatArrayOf(
+        -1.0f, -1.0f, 0.0f,   //top left
+        1.0f, -1.0f, 0.0f,  //bottom left
+        -1.0f, 1.0f, 0.0f,  // top right
+        1.0f, 1.0f, 0.0f,  //bottom right
+    )
+
+//    /**
+//     * 纹理坐标
+//     */
+//    private val texCoords = floatArrayOf(
+//        0.0f, 0.0f,
+//        1.0f, 0.0f,
+//        0.0f, 1.0f,
+//        1.0f, 1.0f,
+//    )
+
+    /**
+     * 纹理坐标
+     */
+    private val texCoords = floatArrayOf(
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+    )
 
 
     init {
@@ -84,10 +100,9 @@ open class BaseOesTexture(
         currentRegion = coordinateRegion.copyCoordinateRegion()
 
         vertexBuffer.clear()
-        val newVertices = currentRegion.getFloatArray(
+        val newVertices = currentRegion.getOESFloatArray(
             screenWidth = screenWidth.toFloat(), screenHeight = screenHeight.toFloat()
         )
-
         vertexBuffer.put(
             newVertices
         ).position(0)
@@ -174,9 +189,9 @@ open class BaseOesTexture(
             GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
             GLES20.glUniformMatrix4fv(mHCoordMatrix, 1, false, coordsMatrix, 0)
 
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE1)
             GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureInfo.textureId)
-            GLES20.glUniform1i(uTextureHandle, 0)
+            GLES20.glUniform1i(uTextureHandle, 1)
 
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
 

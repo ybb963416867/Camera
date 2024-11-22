@@ -13,12 +13,17 @@ import com.example.gpengl.multiple.PicBackgroundTexture2
 import com.example.gpengl.multiple.PicBackgroundTextureT
 import com.example.gpengl.multiple.MultipleFboCombineTexture
 import com.example.gpengl.multiple.OffScreenViewTexture
+import com.example.gpengl.multiple.ViewTexture
 import com.example.gpengl.multiple.generateBitmapTexture
 import com.example.gpengl.multiple.generateCoordinateRegion
 import com.example.gpengl.multiple.getHeight
 import com.example.gpengl.multiple.getWidth
 import com.example.gpengl.multiple.offSet
 import com.example.gpengl.third.record.MediaRecorder
+import com.example.util.FileUtils
+import com.example.util.Gl2Utils
+import com.example.util.Gl2Utils.savaFile
+import com.example.util.Gl2Utils.toBitmap
 import java.io.IOException
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.microedition.khronos.egl.EGLConfig
@@ -33,7 +38,7 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     private var pic2 = "PicBackgroundTexture" to PicBackgroundTexture(surfaceView)
     private var pic3 = "PicBackgroundTexture1" to PicBackgroundTexture1(surfaceView)
     private var pic4 = "PicBackgroundTexture2" to PicBackgroundTexture2(surfaceView)
-    private var pic5 = "ViewTexture" to OffScreenViewTexture<FrameLayout>(surfaceView)
+    private var pic5 = "ViewTexture" to ViewTexture<FrameLayout>(surfaceView)
 
     private var baseTextureList1 = mapOf<String, IBaseTexture>(
         pic1,
@@ -196,35 +201,31 @@ class ExtraTextureTouchRender(private var surfaceView: GLSurfaceView) :
     }
 
     fun capture1() {
-        pic5.second.updateViewTexture()
-//        pic5.second.updateViewTexture(true) {
-//
-//        }
-//        surfaceView.queueEvent {
-//            val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "a")
-//            Gl2Utils.getFramebufferPixels(
-//                combineTexture.getFboFrameBuffer()[0],
-//                combineTexture.getScreenWidth(),
-//                combineTexture.getScreenHeight()
-//            ).toBitmap().savaFile(storagePicture)
-//
-//            Log.e(TAG, "capture1: $storagePicture")
-//        }
+        pic5.second.updateViewTexture(true) {
+            surfaceView.queueEvent {
+                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
+                Gl2Utils.getFramebufferPixels(
+                    combineTexture.getFboFrameBuffer()[0],
+                    combineTexture.getScreenWidth(),
+                    combineTexture.getScreenHeight()
+                ).toBitmap().savaFile(storagePicture)
+                Log.e(TAG, "capture2: $storagePicture")
+            }
+        }
     }
 
     fun capture2() {
-        pic5.second.updateViewTexture()
-//        pic5.second.updateViewTexture(true) {
-//            surfaceView.queueEvent {
-//                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
-//                Gl2Utils.getFramebufferPixels(
-//                    combineTexture.getFboFrameBuffer()[1],
-//                    combineTexture.getScreenWidth(),
-//                    combineTexture.getScreenHeight()
-//                ).toBitmap().savaFile(storagePicture)
-//                Log.e(TAG, "capture2: $storagePicture")
-//            }
-//        }
+        pic5.second.updateViewTexture(true) {
+            surfaceView.queueEvent {
+                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
+                Gl2Utils.getFramebufferPixels(
+                    combineTexture.getFboFrameBuffer()[1],
+                    combineTexture.getScreenWidth(),
+                    combineTexture.getScreenHeight()
+                ).toBitmap().savaFile(storagePicture)
+                Log.e(TAG, "capture2: $storagePicture")
+            }
+        }
     }
 
     fun release() {

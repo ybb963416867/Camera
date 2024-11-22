@@ -11,8 +11,6 @@ import android.view.ViewGroup
 import com.example.util.MatrixUtil
 import com.example.util.PositionType
 import java.lang.ref.WeakReference
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 class OffScreenViewTexture<T : ViewGroup>(
     val surfaceView: GLSurfaceView,
@@ -64,11 +62,11 @@ class OffScreenViewTexture<T : ViewGroup>(
                 surfaceTexture?.updateTexImage()
                 surfaceTexture?.getTransformMatrix(coordsMatrix)
                 updateTextureInfo(
-                    getTextureInfo().generateTexture(
-                        getTextureInfo().textureId,
-                        rootViewWidth,
-                        rootViewHeight
-                    ), false, getVisibility()
+                    getTextureInfo().apply {
+                        width = rootViewWidth
+                        height = rootViewHeight
+                    }
+                    , false, getVisibility()
                 )
 
                 newFrameAvailable = false
@@ -112,7 +110,15 @@ class OffScreenViewTexture<T : ViewGroup>(
         this.rootViewWeakReference = WeakReference(rootView)
         this.rootViewWidth = viewWidth
         this.rootViewHeight = viewHeight
+        updateTextureInfo(
+            getTextureInfo().apply {
+                width = rootViewWidth
+                height = rootViewHeight
+            }
+            , false, getVisibility()
+        )
         setVisibility(ITextureVisibility.VISIBLE)
+//        updateTexCord(CoordinateRegion().generateCoordinateRegion(200f, 100f, 800, 300))
     }
 
     fun updateViewTexture() {
