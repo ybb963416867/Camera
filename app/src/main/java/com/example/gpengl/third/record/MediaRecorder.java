@@ -207,18 +207,23 @@ public class MediaRecorder {
         isStart = false;
         mHandler.post(() -> {
 //            Log.d("ybb", "停止了");
-            getCodec(true);
-            mMediaCodec.stop();
-            mMediaCodec.release();
-            mMediaCodec = null;
-            mMediaMuxer.stop();
-            mMediaMuxer.release();
-            mMediaMuxer = null;
-            mEglBase.release();
-            mEglBase = null;
-            mInputSurface = null;
-            mHandler.getLooper().quitSafely();
-            mHandler = null;
+            try {
+                getCodec(true);
+                mMediaCodec.stop();
+                mMediaCodec.release();
+                mMediaMuxer.stop();
+                mMediaMuxer.release();
+                mEglBase.release();
+                mHandler.getLooper().quitSafely();
+            } catch (Exception e) {
+                Log.e("MediaRecorder", "Error during stop: " + e.getMessage());
+            } finally {
+                mMediaCodec = null;
+                mMediaMuxer = null;
+                mEglBase = null;
+                mInputSurface = null;
+                mHandler = null;
+            }
         });
     }
 }

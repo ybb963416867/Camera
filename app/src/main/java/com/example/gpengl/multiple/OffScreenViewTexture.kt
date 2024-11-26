@@ -29,6 +29,7 @@ class OffScreenViewTexture<T : ViewGroup>(
     private val handlerThread = HandlerThread("RenderThread")
     private val renderHandler: Handler
     private var newFrameAvailable = false
+    private var drawFrameCompleteListener: (() -> Unit)? = null
 
     init {
         handlerThread.start()
@@ -71,6 +72,8 @@ class OffScreenViewTexture<T : ViewGroup>(
                     , false, getVisibility()
                 )
 
+                drawFrameCompleteListener?.invoke()
+                drawFrameCompleteListener = null
                 newFrameAvailable = false
             }
         }
@@ -123,7 +126,7 @@ class OffScreenViewTexture<T : ViewGroup>(
 //        updateTexCord(CoordinateRegion().generateCoordinateRegion(200f, 100f, 800, 300))
     }
 
-    fun updateViewTexture() {
+    fun updateViewTexture(isUpdate: Boolean = false, listener: (() -> Unit)? = null) {
         surfaceTexture?.setDefaultBufferSize(rootViewWidth, rootViewHeight)
         rootViewWeakReference?.get()?.let { rootView ->
             renderHandler.post {
@@ -140,6 +143,9 @@ class OffScreenViewTexture<T : ViewGroup>(
                             Log.e("ybb", "Finished drawing rootView")
                         } finally {
                             surface.unlockCanvasAndPost(canvas)
+                        }
+                        if (isUpdate){
+                            drawFrameCompleteListener = listener
                         }
                     } else {
                         Log.e("ybb", "Failed to lock canvas")

@@ -3,6 +3,7 @@ package com.example.rander
 import android.opengl.EGL14
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.util.Log
 import android.widget.FrameLayout
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.IBaseTexture
@@ -18,6 +19,10 @@ import com.example.gpengl.multiple.getHeight
 import com.example.gpengl.multiple.getWidth
 import com.example.gpengl.multiple.offSet
 import com.example.gpengl.third.record.MediaRecorder
+import com.example.util.FileUtils
+import com.example.util.Gl2Utils
+import com.example.util.Gl2Utils.savaFile
+import com.example.util.Gl2Utils.toBitmap
 import java.io.IOException
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.microedition.khronos.egl.EGLConfig
@@ -33,6 +38,7 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
     private var pic3 = "PicBackgroundTexture1" to PicBackgroundTexture1(surfaceView)
     private var pic4 = "PicBackgroundTexture2" to PicBackgroundTexture2(surfaceView)
     private var pic5 = "ViewTexture" to OffScreenViewBackgroundTexture<FrameLayout>(surfaceView)
+    private var index = 0L
 
     private var baseTextureList1 = mapOf<String, IBaseTexture>(
         pic1,
@@ -83,7 +89,6 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
         // 使用着色器程序
         GLES20.glEnable(GLES20.GL_BLEND)
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
-
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, combineTexture.getFboFrameBuffer()[0])
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT or GLES20.GL_COLOR_BUFFER_BIT)
 
@@ -92,18 +97,22 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
                 it.onDrawFrame()
             }
         }
+        GLES20.glDisable(GLES20.GL_BLEND)
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, combineTexture.getTextureArray()[1])
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT or GLES20.GL_COLOR_BUFFER_BIT)
 
+        GLES20.glEnable(GLES20.GL_BLEND)
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
         baseTextureList.forEach {
             it.onDrawFrame()
         }
 
         combineTexture.onDrawFrame(1)
-        //进行录制
-        mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[1], System.nanoTime())
         GLES20.glDisable(GLES20.GL_BLEND)
+        //进行录制
+        index++
+        mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[1], System.nanoTime())
     }
 
     fun updateTexCord(coordinateRegion: CoordinateRegion) {
@@ -204,33 +213,31 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
     }
 
     fun capture1() {
-        pic5.second.updateViewTexture()
-//        pic5.second.updateViewTexture(true) {
-//            surfaceView.queueEvent {
-//                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
-//                Gl2Utils.getFramebufferPixels(
-//                    combineTexture.getFboFrameBuffer()[0],
-//                    combineTexture.getScreenWidth(),
-//                    combineTexture.getScreenHeight()
-//                ).toBitmap().savaFile(storagePicture)
-//                Log.e(TAG, "capture2: $storagePicture")
-//            }
-//        }
+        pic5.second.updateViewTexture(true) {
+            surfaceView.queueEvent {
+                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
+                Gl2Utils.getFramebufferPixels(
+                    combineTexture.getFboFrameBuffer()[0],
+                    combineTexture.getScreenWidth(),
+                    combineTexture.getScreenHeight()
+                ).toBitmap().savaFile(storagePicture)
+                Log.e(TAG, "capture2: $storagePicture")
+            }
+        }
     }
 
     fun capture2() {
-        pic5.second.updateViewTexture()
-//        pic5.second.updateViewTexture(true) {
-//            surfaceView.queueEvent {
-//                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
-//                Gl2Utils.getFramebufferPixels(
-//                    combineTexture.getFboFrameBuffer()[1],
-//                    combineTexture.getScreenWidth(),
-//                    combineTexture.getScreenHeight()
-//                ).toBitmap().savaFile(storagePicture)
-//                Log.e(TAG, "capture2: $storagePicture")
-//            }
-//        }
+        pic5.second.updateViewTexture(true) {
+            surfaceView.queueEvent {
+                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
+                Gl2Utils.getFramebufferPixels(
+                    combineTexture.getFboFrameBuffer()[1],
+                    combineTexture.getScreenWidth(),
+                    combineTexture.getScreenHeight()
+                ).toBitmap().savaFile(storagePicture)
+                Log.e(TAG, "capture2: $storagePicture")
+            }
+        }
     }
 
     fun release() {

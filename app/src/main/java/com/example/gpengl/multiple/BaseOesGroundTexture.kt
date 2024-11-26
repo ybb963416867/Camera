@@ -32,8 +32,10 @@ open class BaseOesGroundTexture(
                 xDiff: Float,
                 yDiff: Float
             ) {
-                updateTexCord(currentRegion.offSet(xDiff, yDiff))
-                glSurfaceView.requestRender()
+                glSurfaceView.queueEvent {
+                    updateTexCord(currentRegion.offSet(xDiff, yDiff))
+                    glSurfaceView.requestRender()
+                }
             }
 
             override fun onZoomX(

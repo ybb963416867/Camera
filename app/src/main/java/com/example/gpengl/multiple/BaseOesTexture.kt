@@ -165,6 +165,7 @@ open class BaseOesTexture(
     override fun onDrawFrame() {
         if (iTextureVisibility == ITextureVisibility.VISIBLE) {
             GLES20.glUseProgram(shaderProgram)
+
             GLES20.glEnableVertexAttribArray(positionHandle)
             GLES20.glEnableVertexAttribArray(texCoordHandle)
 

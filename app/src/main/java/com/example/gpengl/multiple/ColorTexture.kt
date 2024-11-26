@@ -97,12 +97,13 @@ class ColorTexture(
         }
 
         currentRegion = coordinateRegion.copyCoordinateRegion()
-        vertexBuffer.clear()
+
         val newVertices = currentRegion.getFloatArray(
             screenWidth = screenWidth.toFloat(), screenHeight = screenHeight.toFloat()
         )
 
         Log.e("colorTexture", "newVertices: " + newVertices.contentToString())
+        vertexBuffer.clear()
         vertexBuffer.put(
             newVertices
         ).position(0)
