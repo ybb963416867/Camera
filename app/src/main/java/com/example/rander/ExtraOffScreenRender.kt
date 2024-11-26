@@ -240,6 +240,10 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
         }
     }
 
+    fun update(){
+        pic5.second.updateViewTexture()
+    }
+
     fun release() {
         combineTexture.release()
         baseTextureList.forEach {

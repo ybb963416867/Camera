@@ -100,6 +100,10 @@ class ExtraOffScreenGlSurface(
         multipleRender.capture2()
     }
 
+    fun update(){
+        multipleRender.update()
+    }
+
     fun release(){
         multipleRender.release()
     }

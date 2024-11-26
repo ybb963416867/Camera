@@ -44,6 +44,10 @@ class ExtraTextureRecodeOffScreenActivity : AppCompatActivity() {
             glSurfaceView.loadTexture(R.mipmap.yunshen)
         }
 
+        findViewById<Button>(R.id.but_update).setOnClickListener {
+            glSurfaceView.update()
+        }
+
         findViewById<Button>(R.id.but_adjust_position).setOnClickListener {
             glSurfaceView.updateTexCord(
                 CoordinateRegion(
@@ -84,9 +88,9 @@ class ExtraTextureRecodeOffScreenActivity : AppCompatActivity() {
             glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
         }
 
-//        rootView.post {
-//            glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
-//        }
+        rootView.post {
+            glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
+        }
 
         findViewById<Button>(R.id.but_capture1).setOnClickListener {
             glSurfaceView.capture1()

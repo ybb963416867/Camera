@@ -21,8 +21,7 @@
         <FrameLayout
             android:id="@+id/fl_root"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -96,6 +95,12 @@
                     android:layout_height="wrap_content"
                     android:text="截屏2" />
 
+                <Button
+                    android:id="@+id/but_update"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="update" />
+
             </LinearLayout>
 
             <ImageView
@@ -137,8 +142,7 @@
             <com.example.view.MovableFrameLayout
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:background="#80000000"
-                />
+                android:background="#80000000" />
 
         </FrameLayout>
 
