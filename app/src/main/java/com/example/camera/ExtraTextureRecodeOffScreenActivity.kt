@@ -100,19 +100,4 @@ class ExtraTextureRecodeOffScreenActivity : AppCompatActivity() {
             glSurfaceView.capture2()
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        glSurfaceView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        glSurfaceView.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        glSurfaceView.release()
-    }
 }

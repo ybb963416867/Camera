@@ -153,7 +153,6 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
 
 
     fun loadTexture(resourceId: Int) {
-
         baseTextureList.forEachIndexed { index, iBaseTexture ->
 
             if (iBaseTexture != pic5.second) {

@@ -19,6 +19,7 @@ class ExtraOffScreenGlSurface(
 
     private var multipleRender: ExtraOffScreenRender
     private var currentActiveTexture: IBaseTexture? = null
+    private var currentResourceId = -1
 
     init {
         setEGLContextClientVersion(2)
@@ -29,6 +30,7 @@ class ExtraOffScreenGlSurface(
     }
 
     fun loadTexture(resourceId: Int) {
+        currentResourceId = resourceId
         queueEvent {
             multipleRender.loadTexture(resourceId)
             requestRender()
@@ -106,6 +108,11 @@ class ExtraOffScreenGlSurface(
 
     fun release(){
         multipleRender.release()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        release()
     }
 
 }
