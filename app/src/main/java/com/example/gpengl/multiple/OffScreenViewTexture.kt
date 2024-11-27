@@ -47,12 +47,16 @@ class OffScreenViewTexture<T : ViewGroup>(
 
         surfaceTexture?.setOnFrameAvailableListener {
             synchronized(this) {
-                newFrameAvailable = true
-                surfaceViewRef.get()?.requestRender()
+                surfaceViewRef.get()?.queueEvent {
+                    newFrameAvailable = true
+                    surfaceTexture?.updateTexImage()
+                    surfaceTexture?.getTransformMatrix(coordsMatrix)
+                    surfaceViewRef.get()?.requestRender()
+                }
             }
         }
 
-        updateTexCord(CoordinateRegion().generateCoordinateRegion(100f, 100f, 300, 500))
+        updateTexCord(CoordinateRegion().generateCoordinateRegion(100f, 100f, 1000, 500))
     }
 
     companion object {
@@ -62,15 +66,15 @@ class OffScreenViewTexture<T : ViewGroup>(
     override fun onDrawFrame() {
         synchronized(this) {
             if (newFrameAvailable) {
-                surfaceTexture?.updateTexImage()
-                surfaceTexture?.getTransformMatrix(coordsMatrix)
-                updateTextureInfo(
-                    getTextureInfo().apply {
-                        width = rootViewWidth
-                        height = rootViewHeight
-                    }
-                    , false, getVisibility()
-                )
+//                surfaceTexture?.updateTexImage()
+//                surfaceTexture?.getTransformMatrix(coordsMatrix)
+//                updateTextureInfo(
+//                    getTextureInfo().apply {
+//                        width = rootViewWidth
+//                        height = rootViewHeight
+//                    }
+//                    , false, getVisibility()
+//                )
 
                 drawFrameCompleteListener?.invoke()
                 drawFrameCompleteListener = null
@@ -115,40 +119,52 @@ class OffScreenViewTexture<T : ViewGroup>(
         this.rootViewWeakReference = WeakReference(rootView)
         this.rootViewWidth = viewWidth
         this.rootViewHeight = viewHeight
-        updateTextureInfo(
-            getTextureInfo().apply {
-                width = rootViewWidth
-                height = rootViewHeight
-            }
-            , false, getVisibility()
-        )
-        setVisibility(ITextureVisibility.VISIBLE)
+//        updateTextureInfo(
+//            getTextureInfo().apply {
+//                width = rootViewWidth
+//                height = rootViewHeight
+//            }
+//            , false, getVisibility()
+//        )
+//        setVisibility(ITextureVisibility.VISIBLE)
 //        updateTexCord(CoordinateRegion().generateCoordinateRegion(200f, 100f, 800, 300))
+        surfaceView.queueEvent {
+            updateTextureInfo(
+                getTextureInfo().apply {
+                    width = rootViewWidth
+                    height = rootViewHeight
+                }, false, "#4DFF0000", getVisibility()
+            )
+            setVisibility(ITextureVisibility.VISIBLE)
+            updateViewTexture()
+        }
     }
 
     fun updateViewTexture(isUpdate: Boolean = false, listener: (() -> Unit)? = null) {
         surfaceTexture?.setDefaultBufferSize(rootViewWidth, rootViewHeight)
         rootViewWeakReference?.get()?.let { rootView ->
-            renderHandler.post {
-                surface?.let { surface ->
-                    val canvas = surface.lockCanvas(null)
-                    if (canvas != null) {
-                        try {
-                            canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR) // 清空画布
-                            Log.e(
-                                "ybb",
-                                "Drawing rootView with width: $rootViewWidth, height: $rootViewHeight"
-                            )
-                            rootView.draw(canvas) // 绘制 rootView
-                            Log.e("ybb", "Finished drawing rootView")
-                        } finally {
-                            surface.unlockCanvasAndPost(canvas)
+            if (!newFrameAvailable) {
+                renderHandler.post {
+                    surface?.let { surface ->
+                        val canvas = surface.lockCanvas(null)
+                        if (canvas != null) {
+                            try {
+                                canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR) // 清空画布
+                                Log.e(
+                                    "ybb",
+                                    "Drawing rootView with width: $rootViewWidth, height: $rootViewHeight"
+                                )
+                                rootView.draw(canvas) // 绘制 rootView
+                                Log.e("ybb", "Finished drawing rootView")
+                            } finally {
+                                surface.unlockCanvasAndPost(canvas)
+                            }
+                            if (isUpdate) {
+                                drawFrameCompleteListener = listener
+                            }
+                        } else {
+                            Log.e("ybb", "Failed to lock canvas")
                         }
-                        if (isUpdate){
-                            drawFrameCompleteListener = listener
-                        }
-                    } else {
-                        Log.e("ybb", "Failed to lock canvas")
                     }
                 }
             }

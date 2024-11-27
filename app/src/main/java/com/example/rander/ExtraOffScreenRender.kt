@@ -6,7 +6,6 @@ import android.opengl.GLSurfaceView
 import android.util.Log
 import android.widget.FrameLayout
 import com.example.gpengl.multiple.CoordinateRegion
-import com.example.gpengl.multiple.IBaseTexture
 import com.example.gpengl.multiple.MultipleFboCombineTexture
 import com.example.gpengl.multiple.OffScreenViewBackgroundTexture
 import com.example.gpengl.multiple.PicBackgroundTexture
@@ -38,9 +37,8 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
     private var pic3 = "PicBackgroundTexture1" to PicBackgroundTexture1(surfaceView)
     private var pic4 = "PicBackgroundTexture2" to PicBackgroundTexture2(surfaceView)
     private var pic5 = "ViewTexture" to OffScreenViewBackgroundTexture<FrameLayout>(surfaceView)
-    private var index = 0L
 
-    private var baseTextureList1 = mapOf<String, IBaseTexture>(
+    private var baseTextureList1 = mapOf(
         pic1,
         pic2,
         pic3,
@@ -78,8 +76,8 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
             CoordinateRegion().generateCoordinateRegion(
                 200f,
                 100f,
-                800,
-                300
+                1800,
+                900
             )
         )
     }
@@ -111,7 +109,6 @@ class ExtraOffScreenRender(private var surfaceView: GLSurfaceView) :
         combineTexture.onDrawFrame(1)
         GLES20.glDisable(GLES20.GL_BLEND)
         //进行录制
-        index++
         mMediaRecorder?.encodeFrame(combineTexture.getTextureArray()[1], System.nanoTime())
     }
 

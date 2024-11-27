@@ -134,7 +134,6 @@ open class BaseOesGroundTexture(
 
     override fun onDrawFrame() {
         if (iTextureVisibility == ITextureVisibility.VISIBLE) {
-            Log.e("baseOesTexture", "onDrawFrame")
             frameTexture.updateTexCord(currentRegion)
             frameTexture.onDrawFrame()
             backgroundTexture.updateTexCord(currentRegion)

@@ -2,11 +2,9 @@ package com.example.gpengl.multiple
 
 import android.graphics.Color
 import android.graphics.SurfaceTexture
-import android.opengl.GLES20
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.Handler
-import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
 import android.view.Surface
@@ -29,17 +27,9 @@ class OffScreenViewBackgroundTexture<T : ViewGroup>(
     private var surface: Surface? = null
     private val handler = Handler(Looper.getMainLooper())
     private val surfaceViewRef = WeakReference(surfaceView)
-    private val handlerThread = HandlerThread("RenderThread")
-    private val renderHandler: Handler
     private var newFrameAvailable = false
     private var drawFrameCompleteListener: (() -> Unit)? = null
     private val pboIds = IntArray(1)
-
-
-    init {
-        handlerThread.start()
-        renderHandler = Handler(handlerThread.looper)
-    }
 
     override fun onSurfaceCreated() {
         super.onSurfaceCreated()
@@ -59,8 +49,6 @@ class OffScreenViewBackgroundTexture<T : ViewGroup>(
                     surfaceTexture?.getTransformMatrix(frameTexture.coordsMatrix)
                     surfaceViewRef.get()?.requestRender()
                 }
-
-
             }
         }
 
@@ -117,13 +105,17 @@ class OffScreenViewBackgroundTexture<T : ViewGroup>(
         this.rootViewWeakReference = WeakReference(rootView)
         this.rootViewWidth = viewWidth
         this.rootViewHeight = viewHeight
-        updateTextureInfo(
-            getTextureInfo().apply {
-                width = rootViewWidth
-                height = rootViewHeight
-            }, false, "#4DFF0000", getVisibility()
-        )
-        setVisibility(ITextureVisibility.VISIBLE)
+
+        glSurfaceView.queueEvent {
+            updateTextureInfo(
+                getTextureInfo().apply {
+                    width = rootViewWidth
+                    height = rootViewHeight
+                }, false, "#4DFF0000", getVisibility()
+            )
+            setVisibility(ITextureVisibility.VISIBLE)
+            updateViewTexture()
+        }
     }
 
     fun updateViewTexture(isUpdate: Boolean = false, listener: (() -> Unit)? = null) {
@@ -135,9 +127,7 @@ class OffScreenViewBackgroundTexture<T : ViewGroup>(
                         val canvas = surface.lockCanvas(null)
                         if (canvas != null) {
                             try {
-                                // バッファークリア
-                                canvas.drawColor( Color.rgb( 128, 128, 128 ) );
-//                                canvas.drawColor(Color.TRANSPARENT, android.graphics.PorterDuff.Mode.CLEAR) // 清空画布
+                                canvas.drawColor(Color.TRANSPARENT, android.graphics.PorterDuff.Mode.CLEAR) // 清空画布
                                 rootView.draw(canvas) // 绘制 rootView
                                 if (isUpdate) {
                                     drawFrameCompleteListener = listener

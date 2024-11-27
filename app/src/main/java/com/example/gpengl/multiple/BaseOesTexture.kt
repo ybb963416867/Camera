@@ -36,7 +36,6 @@ open class BaseOesTexture(
     private var mHCoordMatrix = 0
     private var currentRegion = CoordinateRegion()
     private var iTextureVisibility = ITextureVisibility.INVISIBLE
-    private var frameBuffer: IntBuffer? = null
     private var shaderProgram = 0
 
 //    private val texCoords = floatArrayOf(
@@ -63,25 +62,25 @@ open class BaseOesTexture(
         1.0f, 1.0f, 0.0f,  //bottom right
     )
 
-//    /**
-//     * 纹理坐标
-//     */
-//    private val texCoords = floatArrayOf(
-//        0.0f, 0.0f,
-//        1.0f, 0.0f,
-//        0.0f, 1.0f,
-//        1.0f, 1.0f,
-//    )
-
     /**
      * 纹理坐标
      */
     private val texCoords = floatArrayOf(
-        0.0f, 1.0f,
-        1.0f, 1.0f,
         0.0f, 0.0f,
         1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
     )
+
+//    /**
+//     * 纹理坐标
+//     */
+//    private val texCoords = floatArrayOf(
+//        0.0f, 1.0f,
+//        1.0f, 1.0f,
+//        0.0f, 0.0f,
+//        1.0f, 0.0f,
+//    )
 
 
     init {

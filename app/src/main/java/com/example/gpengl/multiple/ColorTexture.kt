@@ -102,7 +102,7 @@ class ColorTexture(
             screenWidth = screenWidth.toFloat(), screenHeight = screenHeight.toFloat()
         )
 
-        Log.e("colorTexture", "newVertices: " + newVertices.contentToString())
+//        Log.e("colorTexture", "newVertices: " + newVertices.contentToString())
         vertexBuffer.clear()
         vertexBuffer.put(
             newVertices
