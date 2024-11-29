@@ -260,7 +260,6 @@ class ColorTexture(
 
             GLES20.glDisableVertexAttribArray(positionHandle)
             GLES20.glDisableVertexAttribArray(texCoordHandle)
-            GLES20.glDisable(GLES20.GL_BLEND)
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
         }
     }
