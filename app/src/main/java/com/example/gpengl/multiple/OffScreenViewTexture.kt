@@ -3,7 +3,6 @@ package com.example.gpengl.multiple
 import android.graphics.SurfaceTexture
 import android.opengl.GLSurfaceView
 import android.os.Handler
-import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
 import android.view.Surface
@@ -26,15 +25,8 @@ class OffScreenViewTexture<T : ViewGroup>(
     private var surface: Surface? = null
     private val handler = Handler(Looper.getMainLooper())
     private val surfaceViewRef = WeakReference(surfaceView)
-    private val handlerThread = HandlerThread("RenderThread")
-    private val renderHandler: Handler
     private var newFrameAvailable = false
     private var drawFrameCompleteListener: (() -> Unit)? = null
-
-    init {
-        handlerThread.start()
-        renderHandler = Handler(handlerThread.looper)
-    }
 
     override fun onSurfaceCreated() {
         super.onSurfaceCreated()
@@ -144,7 +136,7 @@ class OffScreenViewTexture<T : ViewGroup>(
         surfaceTexture?.setDefaultBufferSize(rootViewWidth, rootViewHeight)
         rootViewWeakReference?.get()?.let { rootView ->
             if (!newFrameAvailable) {
-                renderHandler.post {
+                handler.post {
                     surface?.let { surface ->
                         val canvas = surface.lockCanvas(null)
                         if (canvas != null) {
@@ -174,11 +166,12 @@ class OffScreenViewTexture<T : ViewGroup>(
 
     override fun release() {
         super.release()
-        renderHandler.post {
+        handler.post {
             surface?.release()
             surface = null
             surfaceTexture?.release()
             surfaceTexture = null
+            handler.removeCallbacks(updateRunnable)
         }
         stop()
     }

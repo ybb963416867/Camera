@@ -52,7 +52,6 @@ class ViewTexture<T : ViewGroup>(
 
     override fun onDrawFrame() {
         super.onDrawFrame()
-        Log.e("ybb", "onDrawFrame")
         drawFrameCompleteListener?.invoke()
         drawFrameCompleteListener = null
     }

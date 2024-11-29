@@ -3,6 +3,7 @@ package com.example.gpengl.multiple
 import android.annotation.SuppressLint
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
+import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.view.MotionEvent
@@ -163,6 +164,8 @@ open class BaseOesTexture(
 
     override fun onDrawFrame() {
         if (iTextureVisibility == ITextureVisibility.VISIBLE) {
+            GLES30.glEnable(GLES30.GL_BLEND)
+            GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA)
             GLES20.glUseProgram(shaderProgram)
 
             GLES20.glEnableVertexAttribArray(positionHandle)
@@ -196,6 +199,7 @@ open class BaseOesTexture(
 
             GLES20.glDisableVertexAttribArray(positionHandle)
             GLES20.glDisableVertexAttribArray(texCoordHandle)
+            GLES30.glDisable(GLES30.GL_BLEND)
         }
     }
 
