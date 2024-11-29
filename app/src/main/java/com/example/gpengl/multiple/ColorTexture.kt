@@ -42,6 +42,8 @@ class ColorTexture(
         0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f
     )
 
+    private var vbo = IntArray(2)
+
     private var vertices: FloatArray = floatArrayOf(
         -1f, 1f, 0.0f,  // 左上角
         -1f, -1f, 0.0f,  // 左下角
@@ -107,7 +109,6 @@ class ColorTexture(
         vertexBuffer.put(
             newVertices
         ).position(0)
-
     }
 
     override fun onSurfaceCreated() {
@@ -121,6 +122,16 @@ class ColorTexture(
             currentRegion.generateCoordinateRegion(0f, 0f, surfaceView.width, surfaceView.height)
         Matrix.setIdentityM(matrix, 0)
         GLES20.glLinkProgram(shaderProgram)
+
+        GLES20.glGenBuffers(2, vbo, 0)
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0])
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER,vertexBuffer.capacity() * 4, vertexBuffer, GLES20.GL_STATIC_DRAW)
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[1])
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, texCoordBuffer.capacity() * 4, texCoordBuffer, GLES20.GL_STATIC_DRAW)
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
 
         positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
         texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
@@ -211,26 +222,32 @@ class ColorTexture(
 
     override fun onDrawFrame() {
         if (iTextureVisibility == ITextureVisibility.VISIBLE) {
-            GLES20.glUseProgram(shaderProgram)
-            GLES20.glEnableVertexAttribArray(positionHandle)
-            GLES20.glEnableVertexAttribArray(texCoordHandle)
             GLES20.glEnable(GLES20.GL_BLEND)
             GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
+            GLES20.glUseProgram(shaderProgram)
+            GLES20.glEnableVertexAttribArray(positionHandle)
+
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0])
+            GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, 0, vertexBuffer.capacity() * 4, vertexBuffer)
             GLES20.glVertexAttribPointer(
                 positionHandle,
                 3,
                 GLES20.GL_FLOAT,
                 false,
                 12,
-                vertexBuffer
+                0
             )
+
+            GLES20.glEnableVertexAttribArray(texCoordHandle)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[1])
+            GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, 0, texCoordBuffer.capacity() * 4, texCoordBuffer)
             GLES20.glVertexAttribPointer(
                 texCoordHandle,
                 2,
                 GLES20.GL_FLOAT,
                 false,
                 8,
-                texCoordBuffer
+                0
             )
 
             GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
@@ -243,6 +260,8 @@ class ColorTexture(
 
             GLES20.glDisableVertexAttribArray(positionHandle)
             GLES20.glDisableVertexAttribArray(texCoordHandle)
+            GLES20.glDisable(GLES20.GL_BLEND)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
         }
     }
 

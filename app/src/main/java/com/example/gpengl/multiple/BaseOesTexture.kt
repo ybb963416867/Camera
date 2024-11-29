@@ -38,6 +38,7 @@ open class BaseOesTexture(
     private var currentRegion = CoordinateRegion()
     private var iTextureVisibility = ITextureVisibility.INVISIBLE
     private var shaderProgram = 0
+    private var vbo = IntArray(2)
 
 //    private val texCoords = floatArrayOf(
 //        0.0f, 1.0f,
@@ -115,6 +116,25 @@ open class BaseOesTexture(
             Gl2Utils.uRes(surfaceView.context.resources, fragPath)
         )
 
+        GLES20.glGenBuffers(vbo.size, vbo, 0)
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0])
+        GLES20.glBufferData(
+            GLES20.GL_ARRAY_BUFFER,
+            vertexBuffer.capacity() * 4,
+            vertexBuffer,
+            GLES20.GL_STATIC_DRAW
+        )
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[1])
+        GLES20.glBufferData(
+            GLES20.GL_ARRAY_BUFFER,
+            texCoordBuffer.capacity() * 4,
+            texCoordBuffer,
+            GLES20.GL_STATIC_DRAW
+        )
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
+
         Matrix.setIdentityM(matrix, 0)
         Matrix.setIdentityM(coordsMatrix, 0)
         currentRegion =
@@ -171,21 +191,37 @@ open class BaseOesTexture(
             GLES20.glEnableVertexAttribArray(positionHandle)
             GLES20.glEnableVertexAttribArray(texCoordHandle)
 
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0])
+            GLES20.glBufferSubData(
+                GLES20.GL_ARRAY_BUFFER,
+                0,
+                vertexBuffer.capacity() * 4,
+                vertexBuffer
+            )
             GLES20.glVertexAttribPointer(
                 positionHandle,
                 3,
                 GLES20.GL_FLOAT,
                 false,
                 12,
-                vertexBuffer
+                0
             )
+
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[1])
+            GLES20.glBufferSubData(
+                GLES20.GL_ARRAY_BUFFER,
+                0,
+                texCoordBuffer.capacity() * 4,
+                texCoordBuffer
+            )
+
             GLES20.glVertexAttribPointer(
                 texCoordHandle,
                 2,
                 GLES20.GL_FLOAT,
                 false,
                 8,
-                texCoordBuffer
+                0
             )
 
             GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
@@ -200,6 +236,7 @@ open class BaseOesTexture(
             GLES20.glDisableVertexAttribArray(positionHandle)
             GLES20.glDisableVertexAttribArray(texCoordHandle)
             GLES30.glDisable(GLES30.GL_BLEND)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
         }
     }
 

@@ -51,6 +51,8 @@ open class BaseTexture(
         1f, 1f, 0.0f // 右上角
     )
 
+    private var vbo = IntArray(2)
+
     init {
         texCoordBuffer =
             ByteBuffer.allocateDirect(texCoords.size * 4).order(ByteOrder.nativeOrder())
@@ -87,6 +89,17 @@ open class BaseTexture(
         Matrix.setIdentityM(matrix, 0)
         currentRegion =
             currentRegion.generateCoordinateRegion(0f, 0f, surfaceView.width, surfaceView.height)
+
+        GLES20.glGenBuffers(2, vbo, 0)
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0])
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER,vertexBuffer.capacity() * 4, vertexBuffer, GLES20.GL_STATIC_DRAW)
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[1])
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, texCoordBuffer.capacity() * 4, texCoordBuffer, GLES20.GL_STATIC_DRAW)
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
+
 
         positionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition")
         texCoordHandle = GLES20.glGetAttribLocation(shaderProgram, "vCoord")
@@ -148,24 +161,29 @@ open class BaseTexture(
     override fun onDrawFrame() {
         if (iTextureVisibility == ITextureVisibility.VISIBLE) {
             GLES20.glUseProgram(shaderProgram)
-            GLES20.glEnableVertexAttribArray(positionHandle)
-            GLES20.glEnableVertexAttribArray(texCoordHandle)
 
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0])
+            GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, 0, vertexBuffer.capacity() * 4, vertexBuffer)
+            GLES20.glEnableVertexAttribArray(positionHandle)
             GLES20.glVertexAttribPointer(
                 positionHandle,
                 3,
                 GLES20.GL_FLOAT,
                 false,
                 12,
-                vertexBuffer
+                0
             )
+
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[1])
+            GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, 0, texCoordBuffer.capacity() * 4, texCoordBuffer)
+            GLES20.glEnableVertexAttribArray(texCoordHandle)
             GLES20.glVertexAttribPointer(
                 texCoordHandle,
                 2,
                 GLES20.GL_FLOAT,
                 false,
                 8,
-                texCoordBuffer
+                0
             )
 
             GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0)
@@ -175,9 +193,9 @@ open class BaseTexture(
             GLES20.glUniform1i(uTextureHandle, 0)
 
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4)
-
             GLES20.glDisableVertexAttribArray(positionHandle)
             GLES20.glDisableVertexAttribArray(texCoordHandle)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
         }
     }
 
