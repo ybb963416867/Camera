@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
         <activity
+            android:name=".OffScreenRenderViewRecodeActivity"
+            android:exported="false" />
+        <activity
             android:name=".ExtraTextureRecodeOffScreenActivity"
             android:exported="false" />
         <activity
