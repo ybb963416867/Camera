@@ -2,7 +2,6 @@ package com.example.gpengl.multiple
 
 import android.opengl.GLES20
 import android.opengl.Matrix
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import com.example.util.Gl2Utils
