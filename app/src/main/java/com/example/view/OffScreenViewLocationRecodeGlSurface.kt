@@ -94,6 +94,10 @@ class OffScreenViewLocationRecodeGlSurface(
         multipleRender.setRecodeView(root, viewWidth, viewHeight)
     }
 
+    fun setLocationViewInfo(rootView: FrameLayout, viewWidth: Int, viewHeight: Int, left: Int, top: Int){
+        multipleRender.setLocationViewInfo(rootView, viewWidth, viewHeight, left, top)
+    }
+
     fun capture1() {
         multipleRender.capture1()
     }

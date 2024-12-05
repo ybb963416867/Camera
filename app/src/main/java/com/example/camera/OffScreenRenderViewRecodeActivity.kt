@@ -1,6 +1,9 @@
 package com.example.camera
 
+import android.graphics.Point
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.activity.enableEdgeToEdge
@@ -9,7 +12,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.gpengl.multiple.CoordinatePoint
 import com.example.gpengl.multiple.CoordinateRegion
-import com.example.gpengl.multiple.check
 import com.example.view.OffScreenViewLocationRecodeGlSurface
 
 class OffScreenRenderViewRecodeActivity : AppCompatActivity() {
@@ -27,7 +29,6 @@ class OffScreenRenderViewRecodeActivity : AppCompatActivity() {
         val rootView = findViewById<FrameLayout>(R.id.fl_root)
         // 创建 GLSurfaceView 并设置 OpenGL 版本
         glSurfaceView = findViewById(R.id.glSurfaceView)
-
 
         findViewById<Button>(R.id.but_load_pic).setOnClickListener {
             glSurfaceView.loadTexture(R.mipmap.bg)
@@ -65,7 +66,43 @@ class OffScreenRenderViewRecodeActivity : AppCompatActivity() {
         }
 
         rootView.post {
-            glSurfaceView.setRecodeView(rootView, rootView.width, rootView.height)
+            val surfaceViewLocation = IntArray(2)
+            glSurfaceView.getLocationOnScreen(surfaceViewLocation)
+
+            val rootViewLocation = IntArray(2)
+            rootView.getLocationOnScreen(rootViewLocation)
+
+            val rootRect = Rect(
+                rootViewLocation[0],
+                rootViewLocation[1],
+                rootViewLocation[0] + rootView.width,
+                rootViewLocation[1] + rootView.height
+            )
+            val surfaceRect = Rect(
+                surfaceViewLocation[0],
+                surfaceViewLocation[1],
+                surfaceViewLocation[0] + glSurfaceView.width,
+                surfaceViewLocation[1] + glSurfaceView.height
+            )
+
+            val point = if (surfaceRect.contains(rootRect)) {
+                Point(rootRect.left - surfaceRect.left, rootRect.top - surfaceRect.top)
+            } else {
+                Point(0, 0)
+            }
+
+
+            Log.d(
+                "ybb",
+                "surfaceViewLocation: ${surfaceViewLocation[0]}, ${surfaceViewLocation[1]} rootViewLocation: ${rootViewLocation[0]}, ${rootViewLocation[1]}"
+            )
+            glSurfaceView.setLocationViewInfo(
+                rootView,
+                rootView.width,
+                rootView.height,
+                point.x,
+                point.y
+            )
         }
 
         findViewById<Button>(R.id.but_capture1).setOnClickListener {

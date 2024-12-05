@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import com.example.util.MatrixUtil
 import com.example.util.PositionType
 import java.lang.ref.WeakReference
+import kotlin.math.min
 
 class OffScreenViewBackgroundTexture<T : ViewGroup>(
     val surfaceView: GLSurfaceView,
@@ -118,6 +119,35 @@ class OffScreenViewBackgroundTexture<T : ViewGroup>(
         }
     }
 
+    /**
+     * left 相对surfaceView的位置
+     * top 相对surfaceView的位置
+     */
+    fun setLocationViewInfo(rootView: T, viewWidth: Int, viewHeight: Int, left: Int, top: Int) {
+        this.rootViewWeakReference = WeakReference(rootView)
+        this.rootViewWidth = viewWidth
+        this.rootViewHeight = viewHeight
+
+        glSurfaceView.queueEvent {
+            updateTexCord(
+                CoordinateRegion().generateCoordinateRegion(
+                    left.toFloat(),
+                    top.toFloat(),
+                    min(getScreenWidth(), viewWidth),
+                    min(getScreenHeight(), viewHeight)
+                )
+            )
+            updateTextureInfo(
+                getTextureInfo().apply {
+                    width = rootViewWidth
+                    height = rootViewHeight
+                }, false, "#4DFF0000", getVisibility()
+            )
+            setVisibility(ITextureVisibility.VISIBLE)
+            updateViewTexture()
+        }
+    }
+
     fun updateViewTexture(isUpdate: Boolean = false, listener: (() -> Unit)? = null) {
         surfaceTexture?.setDefaultBufferSize(rootViewWidth, rootViewHeight)
         rootViewWeakReference?.get()?.let { rootView ->
@@ -127,7 +157,10 @@ class OffScreenViewBackgroundTexture<T : ViewGroup>(
                         val canvas = surface.lockCanvas(null)
                         if (canvas != null) {
                             try {
-                                canvas.drawColor(Color.TRANSPARENT, android.graphics.PorterDuff.Mode.CLEAR) // 清空画布
+                                canvas.drawColor(
+                                    Color.TRANSPARENT,
+                                    android.graphics.PorterDuff.Mode.CLEAR
+                                ) // 清空画布
                                 rootView.draw(canvas) // 绘制 rootView
                                 if (isUpdate) {
                                     drawFrameCompleteListener = listener

@@ -71,15 +71,6 @@ class OffScreenViewLocationRender(private var surfaceView: GLSurfaceView) :
         baseTextureList.forEach {
             it.onSurfaceChanged(width, height)
         }
-
-        pic5.second.updateTexCord(
-            CoordinateRegion().generateCoordinateRegion(
-                200f,
-                100f,
-                1800,
-                900
-            )
-        )
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -206,6 +197,10 @@ class OffScreenViewLocationRender(private var surfaceView: GLSurfaceView) :
 
     fun setRecodeView(root: FrameLayout, viewWidth: Int, viewHeight: Int) {
         pic5.second.setViewInfo(root, viewWidth, viewHeight)
+    }
+
+    fun setLocationViewInfo(rootView: FrameLayout, viewWidth: Int, viewHeight: Int, left: Int, top: Int){
+        pic5.second.setLocationViewInfo(rootView, viewWidth, viewHeight, left, top)
     }
 
     fun capture1() {
