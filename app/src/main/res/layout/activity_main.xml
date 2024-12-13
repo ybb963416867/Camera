@@ -174,6 +174,12 @@
             android:text="录制额外的纹理-离屏渲染-调整位置"
             />
 
+        <Button
+            android:id="@+id/but_recode_ffmpeg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ffmpeg 录制"
+            />
 
 
         <Button

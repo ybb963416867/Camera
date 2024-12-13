@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 读取储存卡权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 写储存卡权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name="com.example.CameraApplication"
@@ -19,6 +18,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
+        <activity
+            android:name=".FFmpegRecodeActivity"
+            android:exported="false" />
         <activity
             android:name=".OffScreenRenderViewRecodeActivity"
             android:exported="false" />

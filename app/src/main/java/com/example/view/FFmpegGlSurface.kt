@@ -1,0 +1,127 @@
+package com.example.view
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.PixelFormat
+import android.opengl.GLSurfaceView
+import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
+import android.widget.FrameLayout
+import com.example.gpengl.multiple.CoordinateRegion
+import com.example.gpengl.multiple.IBaseTexture
+import com.example.rander.FFmpegRecodeRender
+
+class FFmpegGlSurface(
+    context: Context,
+    attrs: AttributeSet? = null,
+) : GLSurfaceView(context, attrs) {
+
+    private var multipleRender: FFmpegRecodeRender
+    private var currentActiveTexture: IBaseTexture? = null
+    private var currentResourceId = -1
+
+    init {
+        setEGLContextClientVersion(2)
+        multipleRender = FFmpegRecodeRender(this)
+        setRenderer(multipleRender)
+        renderMode = RENDERMODE_WHEN_DIRTY
+        holder.setFormat(PixelFormat.TRANSLUCENT)
+    }
+
+    fun loadTexture(resourceId: Int) {
+        currentResourceId = resourceId
+        queueEvent {
+            multipleRender.loadTexture(resourceId)
+            requestRender()
+        }
+
+    }
+
+    fun updateTexCord(coordinateRegion: CoordinateRegion) {
+        multipleRender.updateTexCord(coordinateRegion)
+        requestRender()
+    }
+
+    fun startRecord() {
+        multipleRender.startRecord()
+        queueEvent {
+            renderMode = RENDERMODE_CONTINUOUSLY
+        }
+    }
+
+    fun stopRecord() {
+        multipleRender.stopRecord()
+        queueEvent {
+            renderMode = RENDERMODE_WHEN_DIRTY
+        }
+
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                currentActiveTexture =
+                    multipleRender.baseTextureList.lastOrNull { it.acceptTouchEvent(event) }
+                currentActiveTexture?.let {
+                    multipleRender.baseTextureList.remove(it)
+                    multipleRender.baseTextureList.add(it)
+                    requestRender()
+                }
+
+                if (currentActiveTexture == null) {
+                    Log.e("baseOesTexture", "currentActiveTexture == null")
+                } else {
+                    Log.e("baseOesTexture", "currentActiveTexture != null")
+                }
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                currentActiveTexture?.acceptTouchEvent(event)
+                currentActiveTexture = null
+            }
+        }
+
+        currentActiveTexture?.let {
+            it.onTouch(it, event)
+        }
+
+        return true
+    }
+
+    fun setRecodeView(root: FrameLayout, viewWidth: Int, viewHeight: Int) {
+        multipleRender.setRecodeView(root, viewWidth, viewHeight)
+    }
+
+    fun setLocationViewInfo(rootView: FrameLayout, viewWidth: Int, viewHeight: Int, left: Int, top: Int){
+        multipleRender.setLocationViewInfo(rootView, viewWidth, viewHeight, left, top)
+    }
+
+    fun capture1() {
+        multipleRender.capture1()
+    }
+
+    fun capture2() {
+        multipleRender.capture2()
+    }
+
+    fun update() {
+        multipleRender.update()
+    }
+
+    fun release() {
+        multipleRender.release()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        release()
+    }
+
+}
+
+
+
+
+

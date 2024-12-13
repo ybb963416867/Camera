@@ -1,3 +1,0 @@
-D:/project_android/camera/libffmpeg/.cxx/Debug/3l1t643f/x86/CMakeFiles/libffmpeg.dir
-D:/project_android/camera/libffmpeg/.cxx/Debug/3l1t643f/x86/CMakeFiles/edit_cache.dir
-D:/project_android/camera/libffmpeg/.cxx/Debug/3l1t643f/x86/CMakeFiles/rebuild_cache.dir

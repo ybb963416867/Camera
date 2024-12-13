@@ -5,7 +5,7 @@ android {
     defaultConfig {
         namespace "com.example.camera"
         compileSdk 34
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -44,7 +44,8 @@ dependencies {
     implementation 'com.github.ChillingVan:android-openGL-canvas:v1.5.4.0'
     implementation project(':libffmpeg')
 
-    implementation 'com.arthenica:ffmpeg-kit-full:5.1'
+//    implementation 'com.arthenica:ffmpeg-kit-full:5.1'
+//    implementation 'com.arthenica:ffmpeg-kit-full-gpl:5.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.5.2'
