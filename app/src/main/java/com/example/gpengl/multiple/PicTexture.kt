@@ -1,8 +1,5 @@
 package com.example.gpengl.multiple
-
-import android.content.Context
 import android.opengl.GLSurfaceView
-import android.view.SurfaceView
 import com.example.util.MatrixUtil
 import com.example.util.PositionType
 

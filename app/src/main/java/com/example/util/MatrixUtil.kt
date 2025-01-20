@@ -126,113 +126,113 @@ object MatrixUtil {
         )
         Matrix.multiplyMM(matrix, 0, projection, 0, mViewMatrix, 0)
 
-        var difWidth = 0f
-        var difHeight = 0f
-        if (bitmapAspectRatio > viewAspectRatio) {
-            val originHeight = coordinateRegion.getWidth().div(bitmapAspectRatio)
-            difHeight = abs(
-                screenToGlCoordinateY(
-                    originHeight,
-                    screenHeight = surfaceHeight.toFloat(),
-                    abs(oTop - oBottom) / 2f
-                ) - screenToGlCoordinateY(
-                    coordinateRegion.getHeight(),
-                    screenHeight = surfaceHeight.toFloat(),
-                    abs(oTop - oBottom) / 2f
-                )
-            )
-        } else {
-            val originWidth = coordinateRegion.getHeight().times(bitmapAspectRatio)
-            difWidth = abs(
-                screenToGlCoordinateX(
-                    originWidth,
-                    screenWidth = surfaceWidth.toFloat(),
-                    abs(oLeft - oRight) / 2f
-                ) - screenToGlCoordinateX(
-                    coordinateRegion.getWidth(),
-                    screenWidth = surfaceWidth.toFloat(),
-                    abs(oLeft - oRight) / 2f
-                )
-            )
-        }
-
-
-        when (type) {
-            PositionType.CENTER -> {
-                Matrix.translateM(
-                    matrix, 0,
-                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f,
-                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f, 0f
-                )
-            }
-
-            PositionType.LEFT_TOP -> {
-                Matrix.translateM(
-                    matrix, 0,
-                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f - difWidth.div(
-                        2f
-                    ),
-                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f + difHeight.div(
-                        2f
-                    ), 0f
-                )
-            }
-
-            PositionType.RIGHT_TOP -> {
-                Matrix.translateM(
-                    matrix, 0,
-                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f + difWidth.div(
-                        2f
-                    ),
-                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f + difHeight.div(
-                        2f
-                    ), 0f
-                )
-            }
-
-            PositionType.LEFT_BOTTOM -> {
-                Matrix.translateM(
-                    matrix, 0,
-                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f - difWidth.div(
-                        2f
-                    ),
-                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
-                        2f
-                    ), 0f
-                )
-            }
-
-            PositionType.RIGHT_BOTTOM -> {
-                Matrix.translateM(
-                    matrix, 0,
-                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f + difWidth.div(
-                        2f
-                    ),
-                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
-                        2f
-                    ), 0f
-                )
-            }
-
-            PositionType.MIDDLE_TOP -> {
-                Matrix.translateM(
-                    matrix, 0,
-                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f,
-                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f + difHeight.div(
-                        2f
-                    ), 0f
-                )
-            }
-
-            PositionType.MIDDLE_BOTTOM -> {
-                Matrix.translateM(
-                    matrix, 0,
-                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f,
-                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
-                        2f
-                    ), 0f
-                )
-            }
-        }
+//        var difWidth = 0f
+//        var difHeight = 0f
+//        if (bitmapAspectRatio > viewAspectRatio) {
+//            val originHeight = coordinateRegion.getWidth().div(bitmapAspectRatio)
+//            difHeight = abs(
+//                screenToGlCoordinateY(
+//                    originHeight,
+//                    screenHeight = surfaceHeight.toFloat(),
+//                    abs(oTop - oBottom) / 2f
+//                ) - screenToGlCoordinateY(
+//                    coordinateRegion.getHeight(),
+//                    screenHeight = surfaceHeight.toFloat(),
+//                    abs(oTop - oBottom) / 2f
+//                )
+//            )
+//        } else {
+//            val originWidth = coordinateRegion.getHeight().times(bitmapAspectRatio)
+//            difWidth = abs(
+//                screenToGlCoordinateX(
+//                    originWidth,
+//                    screenWidth = surfaceWidth.toFloat(),
+//                    abs(oLeft - oRight) / 2f
+//                ) - screenToGlCoordinateX(
+//                    coordinateRegion.getWidth(),
+//                    screenWidth = surfaceWidth.toFloat(),
+//                    abs(oLeft - oRight) / 2f
+//                )
+//            )
+//        }
+//
+//
+//        when (type) {
+//            PositionType.CENTER -> {
+//                Matrix.translateM(
+//                    matrix, 0,
+//                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f,
+//                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f, 0f
+//                )
+//            }
+//
+//            PositionType.LEFT_TOP -> {
+//                Matrix.translateM(
+//                    matrix, 0,
+//                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f - difWidth.div(
+//                        2f
+//                    ),
+//                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f + difHeight.div(
+//                        2f
+//                    ), 0f
+//                )
+//            }
+//
+//            PositionType.RIGHT_TOP -> {
+//                Matrix.translateM(
+//                    matrix, 0,
+//                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f + difWidth.div(
+//                        2f
+//                    ),
+//                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f + difHeight.div(
+//                        2f
+//                    ), 0f
+//                )
+//            }
+//
+//            PositionType.LEFT_BOTTOM -> {
+//                Matrix.translateM(
+//                    matrix, 0,
+//                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f - difWidth.div(
+//                        2f
+//                    ),
+//                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
+//                        2f
+//                    ), 0f
+//                )
+//            }
+//
+//            PositionType.RIGHT_BOTTOM -> {
+//                Matrix.translateM(
+//                    matrix, 0,
+//                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f + difWidth.div(
+//                        2f
+//                    ),
+//                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
+//                        2f
+//                    ), 0f
+//                )
+//            }
+//
+//            PositionType.MIDDLE_TOP -> {
+//                Matrix.translateM(
+//                    matrix, 0,
+//                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f,
+//                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f + difHeight.div(
+//                        2f
+//                    ), 0f
+//                )
+//            }
+//
+//            PositionType.MIDDLE_BOTTOM -> {
+//                Matrix.translateM(
+//                    matrix, 0,
+//                    (matrixOriginArea.coordinateRight + matrixOriginArea.coordinateLeft) / 2f,
+//                    (matrixOriginArea.coordinateTop + matrixOriginArea.coordinateBottom) / 2f - difHeight.div(
+//                        2f
+//                    ), 0f
+//                )
+//            }
+//        }
     }
 }
