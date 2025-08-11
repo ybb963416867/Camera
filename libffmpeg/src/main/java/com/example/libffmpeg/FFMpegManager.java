@@ -7,7 +7,7 @@ public class FFMpegManager {
     }
 
 
-    public static native String getFFmpegVersion();
+//    public static native String getFFmpegVersion();
 
-    public native int startRecord(String url, int width, int height, int fps, int bitrate);
+//    public native int startRecord(String url, int width, int height, int fps, int bitrate);
 }

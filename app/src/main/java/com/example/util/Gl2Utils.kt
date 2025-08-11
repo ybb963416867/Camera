@@ -21,6 +21,7 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.util.Arrays
 import javax.microedition.khronos.opengles.GL10
+import androidx.core.graphics.createBitmap
 
 /**
  * Description:
@@ -1082,7 +1083,7 @@ object Gl2Utils {
      *
      */
     fun Triple<ByteArray, Int, Int>.toBitmap(): Bitmap {
-        return Bitmap.createBitmap(this.second, this.third, Bitmap.Config.ARGB_8888).also {
+        return createBitmap(this.second, this.third).also {
             it.copyPixelsFromBuffer(ByteBuffer.wrap(this.first))
         }
     }

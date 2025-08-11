@@ -55,8 +55,7 @@ class FFmpegRecodeActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.but_recorder_start).setOnClickListener {
             glSurfaceView.startRecord()
-            val ffmpegVersion = FFMpegManager.getFFmpegVersion()
-            Log.e("ybb", ffmpegVersion)
+
         }
 
         findViewById<Button>(R.id.but_recorder_stop).setOnClickListener {

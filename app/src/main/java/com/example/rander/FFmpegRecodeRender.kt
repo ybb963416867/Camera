@@ -4,7 +4,6 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.util.Log
 import android.widget.FrameLayout
-import com.example.gpengl.first.util.FileUtils
 import com.example.gpengl.multiple.CoordinateRegion
 import com.example.gpengl.multiple.MultipleFboCombineTexture
 import com.example.gpengl.multiple.OffScreenViewBackgroundTexture
@@ -18,6 +17,8 @@ import com.example.gpengl.multiple.getHeight
 import com.example.gpengl.multiple.getWidth
 import com.example.gpengl.multiple.offSet
 import com.example.libffmpeg.FFMpegManager
+import com.example.libffmpeg.PBOFrameCapture
+import com.example.util.FileUtils
 import com.example.util.Gl2Utils
 import java.io.IOException
 import java.util.concurrent.CopyOnWriteArrayList
@@ -35,6 +36,7 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
     private var pic4 = "PicBackgroundTexture2" to PicBackgroundTexture2(surfaceView)
     private var pic5 = "ViewTexture" to OffScreenViewBackgroundTexture<FrameLayout>(surfaceView)
 
+    private var isRecording = false
 
     private var baseTextureList1 = mapOf(
         pic1,
@@ -48,7 +50,7 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
         baseTextureList1.values
     )
 
-    private var recode = FFMpegManager()
+    private var pboCapture : PBOFrameCapture? = null
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.96f, 0.8f, 0.156f, 1.0f)
@@ -56,7 +58,6 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
         baseTextureList.forEach {
             it.onSurfaceCreated()
         }
-
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -65,6 +66,7 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
         baseTextureList.forEach {
             it.onSurfaceChanged(width, height)
         }
+        initializePBO()
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -93,6 +95,10 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
 
         combineTexture.onDrawFrame(1)
         GLES20.glDisable(GLES20.GL_BLEND)
+
+        if (isRecording && pboCapture != null) {
+            captureCurrentFrame()
+        }
     }
 
     fun updateTexCord(coordinateRegion: CoordinateRegion) {
@@ -173,13 +179,47 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
         }
     }
 
+    private fun  initializePBO() {
+        val width = combineTexture.getScreenWidth()
+        val height = combineTexture.getScreenHeight()
+
+        if (width > 0 && height > 0) {
+            pboCapture?.release() // 释放之前的PBO
+            pboCapture = PBOFrameCapture(width, height, surfaceView.context)
+            pboCapture?.initialize()
+            Log.i("ybb", "PBO initialized with size: ${width}x${height}")
+        }
+    }
+
+    private fun captureCurrentFrame() {
+        try {
+            // 绑定到combineTexture的最终输出FBO
+            // 这里需要根据你的combineTexture实现来确定最终输出的FBO
+            val finalFBO = combineTexture.getFboFrameBuffer()[1] // 或者其他最终输出的FBO
+
+            // 绑定到最终输出的FBO进行读取
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, finalFBO)
+
+            // 使用PBO捕获帧
+            val success = pboCapture?.captureFrame() ?: false
+            if (!success) {
+                Log.w(TAG, "PBO frame capture failed")
+            }
+
+            // 恢复默认framebuffer
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error capturing frame: ${e.message}")
+        }
+    }
+
     fun startRecord() {
         try {
             pic5.second.start()
+            isRecording = true
             val mPath = FileUtils.getStorageMp4(surfaceView.context, System.currentTimeMillis().toString())
-            Log.d("ybb", mPath ?: "")
-            recode.startRecord(mPath, combineTexture.getScreenWidth(), combineTexture.getScreenHeight(), 30, 1024 * 1024)
-
+            pboCapture?.startRecording(mPath)
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -187,6 +227,8 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
 
     fun stopRecord() {
         pic5.second.stop()
+        isRecording = false
+        pboCapture?.stopRecording()
     }
 
     fun setRecodeView(root: FrameLayout, viewWidth: Int, viewHeight: Int) {
@@ -200,7 +242,6 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
     fun capture1() {
         pic5.second.updateViewTexture(true) {
             surfaceView.queueEvent {
-//                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
                 val recodeInfo = Gl2Utils.getFramebufferPixels(
                     combineTexture.getFboFrameBuffer()[0],
                     combineTexture.getScreenWidth(),
@@ -213,7 +254,7 @@ class FFmpegRecodeRender(private var surfaceView: GLSurfaceView) :
     fun capture2() {
         pic5.second.updateViewTexture(true) {
             surfaceView.queueEvent {
-//                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
+                val storagePicture = FileUtils.getStoragePicture(surfaceView.context, "b")
                 val recodeInfo = Gl2Utils.getFramebufferPixels(
                     combineTexture.getFboFrameBuffer()[1],
                     combineTexture.getScreenWidth(),
